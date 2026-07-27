@@ -4,211 +4,124 @@ local chiraoluo = fk.CreateSkill{
   name = "chiraoluo",
 }
 
-local function normalize_choose_result(ret)
-  if not ret then return nil end
-  if type(ret) == "table" then
-    if #ret > 0 then return ret[1] end
-    return nil
-  end
-  return ret
+local function can_gufu(player)
+  return not player:isNude()
+    and not table.contains(player.sealedSlots, Player.JudgeSlot)
+    and common.get_unremoved_count(player) > 0
 end
 
-local function choose_one_target(room, player, skill_name, prompt)
-  local targets = {}
-  for _, p in ipairs(room.alive_players) do
-    table.insert(targets, p.id)
-  end
-  if #targets == 0 then return nil end
-  if #targets == 1 then return room:getPlayerById(targets[1]) end
+local function use_gufu(room, player)
+  local max_num = common.get_unremoved_count(player)
+  local cards = room:askToCards(player, {
+    min_num = 1,
+    max_num = max_num,
+    include_equip = true,
+    skill_name = chiraoluo.name,
+    cancelable = false,
+    pattern = ".|.|.|he",
+    prompt = "#chiraoluo-gufu",
+  })
+  if #cards == 0 then return end
 
-  local ret
-
-  if room.askForChoosePlayers then
-    local ok, res = pcall(room.askForChoosePlayers, room, player, targets, 1, 1, prompt, skill_name, true)
-    if ok then
-      ret = normalize_choose_result(res)
-      if ret then return room:getPlayerById(ret) end
-    end
-  end
-
-  if player.askForChoosePlayers then
-    local ok, res = pcall(player.askForChoosePlayers, player, targets, 1, 1, prompt, skill_name, true)
-    if ok then
-      ret = normalize_choose_result(res)
-      if ret then return room:getPlayerById(ret) end
-    end
-  end
-
-  if room.askForChoosePlayer then
-    local tries = {
-      function() return room:askForChoosePlayer(player, targets, skill_name, prompt, true, true) end,
-      function() return room:askForChoosePlayer(player, targets, prompt, skill_name, true) end,
-      function() return room:askForChoosePlayer(player, targets, prompt, skill_name) end,
-      function() return room:askForChoosePlayer(player, targets, skill_name, prompt) end,
-    }
-    for _, f in ipairs(tries) do
-      local ok, res = pcall(f)
-      if ok then
-        ret = normalize_choose_result(res)
-        if ret then return room:getPlayerById(ret) end
-      end
-    end
-  end
-
-  return nil
+  local place = room:askToChoice(player, {
+    choices = { "Top", "Bottom" },
+    skill_name = chiraoluo.name,
+    prompt = "#chiraoluo-gufu-place",
+  })
+  room:recastCard(cards, player, chiraoluo.name)
+  common.premeditate_n(room, player, #cards, place == "Bottom" and "bottom" or "top", chiraoluo.name)
 end
 
-local function discard_one_from_target(room, player, target, skill_name)
+local function discard_from_area(room, chooser, target)
   if target:isAllNude() then return false end
-
-  local id = room:askForCardChosen(
-    player,
-    target,
-    "hej",
-    skill_name,
-    "#chiraoluo-discard::" .. target.id,
-    true,
-    fk.ReasonDiscard
-  )
-
-  if id and id ~= -1 then
-    room:throwCard({ id }, skill_name, target, player)
-    return true
-  end
-  return false
+  local id = room:askToChooseCard(chooser, {
+    target = target,
+    flag = "hej",
+    skill_name = chiraoluo.name,
+    prompt = "#chiraoluo-discard::" .. target.id,
+  })
+  if not id or id == -1 then return false end
+  room:throwCard({ id }, chiraoluo.name, target, chooser)
+  return true
 end
 
-local function get_premeditate_ids(player)
-  if common.get_premeditate_ids then
-    local ok, ids = pcall(common.get_premeditate_ids, player)
-    if ok and type(ids) == "table" then return ids end
-  end
-  if common.getPremeditateIds then
-    local ok, ids = pcall(common.getPremeditateIds, player)
-    if ok and type(ids) == "table" then return ids end
-  end
-
-  local pile_names = { "premeditate", "$premeditate", "xumou", "$xumou" }
-  if player.getPile then
-    for _, pile_name in ipairs(pile_names) do
-      local ok, ids = pcall(player.getPile, player, pile_name)
-      if ok and type(ids) == "table" and #ids > 0 then
-        return ids
-      end
-    end
-  end
-
-  return {}
+local function choose_target(room, player)
+  local targets = room.alive_players
+  local chosen = room:askToChoosePlayers(player, {
+    targets = targets,
+    min_num = 1,
+    max_num = 1,
+    skill_name = chiraoluo.name,
+    prompt = "#chiraoluo-choose",
+    cancelable = true,
+  })
+  return #chosen > 0 and chosen[1] or nil
 end
 
-local function try_do_gufu(room, target)
-  if target.dead then return end
+local function do_chiraoluo(room, player)
+  local target = choose_target(room, player)
+  if not target or target.dead then return end
 
-  if room.askForUseActiveSkill then
-    local ok = pcall(room.askForUseActiveSkill, room, target, "chigufu", "#chiraoluo-gufu")
-    if ok then return end
-  end
+  local can_gufu_now = can_gufu(target)
+  local can_discard_now = not target:isAllNude()
+  local choices = {}
+  if can_gufu_now then table.insert(choices, "chiraoluo_opt1") end
+  if can_discard_now then table.insert(choices, "chiraoluo_opt2") end
+  if can_gufu_now and can_discard_now then table.insert(choices, "chiraoluo_opt3") end
+  if #choices == 0 then return end
 
-  if room.askForUseCard then
-    pcall(room.askForUseCard, room, target, ".|.|.|.|.|.", "#chiraoluo-gufu", nil, "chigufu")
-  end
-end
-
-local function flip_player(room, target)
-  if target.dead then return end
-  if room.turnOver then
-    local ok = pcall(room.turnOver, room, target)
-    if ok then return end
-  end
-  if target.turnOver then
-    pcall(target.turnOver, target)
-  end
-end
-
-local function obtain_one_from_judge(room, player, target, skill_name)
-  if target:isAllNude() then return false end
-  
-  local judge_cards = target:getCardIds("j")
-  if #judge_cards == 0 then return false end
-  
-  local chosen = room:askForCardChosen(
-    player,
-    target,
-    "j",
-    skill_name,
-    "#chiraoluo-obtain::" .. target.id,
-    true
-  )
-  
-  if chosen and chosen ~= -1 then
-    room:moveCards({
-      ids = { chosen },
-      from = target.id,
-      to = player.id,
-      toArea = Card.PlayerHand,
-      reason = fk.ReasonJustMove,
-      skillName = skill_name,
-    })
-    return true
-  end
-  return false
-end
-
-local function do_chiraoluo(room, player, skill_name)
-  local target = choose_one_target(room, player, skill_name, "#chiraoluo-choose")
-  if not target then return end
-
-  discard_one_from_target(room, player, target, skill_name)
-  if target.dead then return end
-
-  local choices = { "chiraoluo_opt1", "chiraoluo_opt2", "chiraoluo_opt3" }
-  local choice = room:askForChoice(target, choices, skill_name, "#chiraoluo-choice::" .. player.id)
+  local choice = #choices == 1 and choices[1] or room:askToChoice(target, {
+    choices = choices,
+    skill_name = chiraoluo.name,
+    prompt = "#chiraoluo-choice::" .. player.id,
+  })
 
   if choice == "chiraoluo_opt1" then
-    try_do_gufu(room, target)
-    return
-  end
-
-  if choice == "chiraoluo_opt2" then
-    obtain_one_from_judge(room, player, target, skill_name)
-    return
-  end
-
-  try_do_gufu(room, target)
-  if not target.dead then
-    obtain_one_from_judge(room, player, target, skill_name)
-  end
-  if not target.dead then
-    flip_player(room, target)
+    use_gufu(room, target)
+  elseif choice == "chiraoluo_opt2" then
+    discard_from_area(room, player, target)
+  elseif choice == "chiraoluo_opt3" then
+    if not discard_from_area(room, player, target) then return end
+    use_gufu(room, target)
+    if not target.dead and not target:isAllNude() then
+      discard_from_area(room, player, target)
+    end
+    if not target.dead then
+      room:turnOver(target)
+    end
   end
 end
 
-chiraoluo:addEffect(fk.Damaged, {
+local spec = {
   anim_type = "control",
   can_trigger = function(self, event, target, player, data)
-    return player
-      and target == player
-      and player:hasSkill(chiraoluo.name)
-      and not player.dead
+    return target == player and player:hasSkill(chiraoluo.name) and not player.dead
+      and table.find(player.room.alive_players, function(p) return not p:isAllNude() end)
+  end,
+  on_cost = function(self, event, target, player, data)
+    return player.room:askToSkillInvoke(player, {
+      skill_name = chiraoluo.name,
+      prompt = "#chiraoluo-invoke",
+    })
   end,
   on_use = function(self, event, target, player, data)
-    do_chiraoluo(player.room, player, chiraoluo.name)
+    do_chiraoluo(player.room, player)
   end,
-})
+}
+
+chiraoluo:addEffect(fk.Damaged, spec)
+chiraoluo:addEffect(fk.CardRespondFinished, spec)
 
 Fk:loadTranslationTable{
-  ["chiraoluo"] = "扰洛",
-  [":chiraoluo"] = "当你受到伤害后或响应牌后，你可以弃置一名角色区域内的一张牌并令其选择一项：1.发动一次孤凫；2.获得判定区的一张牌；3.背水（依次执行前两项）：翻面。",
-
-  ["#chiraoluo-choose"] = "扰洛：请选择一名角色",
+  ["#chiraoluo-invoke"] = "扰洛：是否弃置一名角色区域内的一张牌？",
+  ["#chiraoluo-choose"] = "扰洛：请选择一名有牌的角色",
   ["#chiraoluo-discard"] = "扰洛：弃置 %dest 区域内的一张牌",
-  ["#chiraoluo-obtain"] = "扰洛：获得 %dest 判定区的一张牌",
   ["#chiraoluo-choice"] = "扰洛：请选择一项",
   ["chiraoluo_opt1"] = "发动一次孤凫",
-  ["chiraoluo_opt2"] = "获得判定区的一张牌",
+  ["chiraoluo_opt2"] = "弃置其区域内的一张牌",
   ["chiraoluo_opt3"] = "背水：依次执行前两项，然后翻面",
-
-  ["#chiraoluo-gufu"] = "扰洛：请发动一次孤凫",
+  ["#chiraoluo-gufu"] = "扰洛：请选择要重铸的牌",
+  ["#chiraoluo-gufu-place"] = "扰洛：请选择从牌堆顶或牌堆底蓄谋",
 }
 
 return chiraoluo

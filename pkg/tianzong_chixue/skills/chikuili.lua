@@ -1,69 +1,64 @@
--- chikuili.lua (暌离)
-local chikuili = fk.CreateSkill{
-  name = "chikuili",
-  tags = { Skill.Switch },
-  description = ":chikuili",
-  anim_type = "support",
-  dynamic_desc = function(self, player, lang)
-    if not player then return "" end
-    local state = player:getSwitchSkillState(self.name)
-    local stateStr = state == fk.SwitchYang and "◆阳·转换状态" or "◇阴·锁定状态"
-    return "暌离" .. stateStr
-  end,
-}
+local U = require "packages.utility.utility"
+local chikuili = fk.CreateSkill{ name = "chikuili", tags = { Skill.Switch } }
 
-Fk:loadTranslationTable{
-  ["chikuili"] = "暌离",
-  [":chikuili"] = "转换技，每回合限一次，当你使用一张基本牌或普通锦囊牌时，若有与此牌牌名字数或合法目标数相同的牌，你可以展示之并计算二者差X，此牌：①额外结算X次；②额外选择X个目标；若X等于体力值，你刷新本技能。",
-}
+local function target_num(player, card)
+  if not card or player:prohibitUse(card) or not player:canUse(card, { bypass_times = true }) then return 0 end
+  if card.skill:getMinTargetNum() == 0 and not card.multiple_targets then return 1 end
+  local n = 0
+  for _, p in ipairs(player.room.alive_players) do
+    if not player:isProhibited(p, card) and card.skill:modTargetFilter(player, p, {}, card) then n = n + 1 end
+  end
+  return n
+end
 
-chikuili:addEffect(fk.CardUsing, {
-  anim_type = "support",
+local function candidates(player, used)
+  local used_length, used_targets = used:getNameLength(true), target_num(player, used)
+  return table.filter(player:getCardIds("h"), function(id)
+    if table.contains(used.subcards, id) then return false end
+    local card = Fk:getCardById(id)
+    return (card.type == Card.TypeBasic or card:isCommonTrick()) and
+      (card:getNameLength(true) == used_length or target_num(player, card) == used_targets)
+  end)
+end
+
+chikuili:addEffect(fk.TargetSpecified, {
+  anim_type = "control",
   can_trigger = function(self, event, target, player, data)
-    return target == player and player:hasSkill(self.name) and
-      player:usedSkillTimes(self.name, Player.HistoryRound) == 0 and
-      (data.card.type == Card.TypeBasic or data.card:isCommonTrick())
+    return target == player and player:hasSkill(chikuili.name) and data.firstTarget and
+      player:usedSkillTimes(chikuili.name, Player.HistoryTurn) == 0 and
+      (data.card.type == Card.TypeBasic or data.card:isCommonTrick()) and #candidates(player, data.card) > 0
   end,
   on_cost = function(self, event, target, player, data)
-    local room = player.room
-    local skillName = self.name
-    local card = data.card
-    
-    local nameLength = card:getNameLength(true)
-    local targetCount = #data.tos
-    
-    local candidateCards = {}
-    for _, otherCard in ipairs(Fk.cards) do
-      if otherCard.name ~= card.name then
-        local otherNameLength = otherCard:getNameLength(true)
-        if otherNameLength == nameLength or otherNameLength == targetCount then
-          table.insert(candidateCards, otherCard)
-        end
-      end
-    end
-    
-    if #candidateCards > 0 then
-      local shown = candidateCards[math.random(1, #candidateCards)]
-      local X = math.abs(nameLength - #data.tos)
-      event:setCostData(self, { x = X, shown = shown })
-      return true
-    end
-    
-    return false
+    local ids = candidates(player, data.card)
+    local cards = player.room:askToCards(player, {
+      min_num = 1, max_num = 1, skill_name = chikuili.name, cancelable = true,
+      pattern = tostring(Exppattern{ id = ids }), prompt = "#chikuili-show",
+    })
+    if #cards > 0 then event:setCostData(self, { cards = cards }); return true end
   end,
   on_use = function(self, event, target, player, data)
-    local room = player.room
-    local skillName = self.name
-    local X = event:getCostData(self).x
-    
-    if X > 0 then
-      data.card:addMark("chikuili_extra", X)
+    local room, shown = player.room, Fk:getCardById(event:getCostData(self).cards[1])
+    player:showCards({ shown.id })
+    local used_length, used_targets = data.card:getNameLength(true), target_num(player, data.card)
+    local shown_length, shown_targets = shown:getNameLength(true), target_num(player, shown)
+    local x
+    if shown_length == used_length then x = math.abs(shown_targets - used_targets)
+    else x = math.abs(shown_length - used_length) end
+    local state = player:getSwitchSkillState(chikuili.name)
+    U.SetSwitchSkillState(player, chikuili.name, state)
+    if state == fk.SwitchYang then
+      data.use.additionalEffect = (data.use.additionalEffect or 0) + x
+    elseif x > 0 then
+      local extra = data:getExtraTargets()
+      if #extra > 0 then
+        local chosen = room:askToChoosePlayers(player, {
+          targets = extra, min_num = math.min(x, #extra), max_num = math.min(x, #extra),
+          cancelable = false, skill_name = chikuili.name, prompt = "#chikuili-target:::" .. x,
+        })
+        for _, p in ipairs(chosen) do data:addTarget(p) end
+      end
     end
-    
-    if X == player:getHp() then
-      player:switchSkillState(skillName)
-      player:setMark(skillName .. "_used", 0)
-    end
+    if x == player.hp then player:setSkillUseHistory(chikuili.name, 0, Player.HistoryTurn) end
   end,
 })
 

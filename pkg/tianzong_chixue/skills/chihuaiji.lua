@@ -1,62 +1,44 @@
--- chihuaiji.lua
-local chihuaiji = fk.CreateSkill{
-  name = "chihuaiji",
-  tags = { Skill.Switch },
-  description = ":chihuaiji",
-  anim_type = "support",
-}
-
-Fk:loadTranslationTable{
-  ["chihuaiji"] = "怀赍",
-  [":chihuaiji"] = "转换技，阴：当你使用一张牌后，你可以失去该牌目标数点体力上限为此牌重新指定目标。阳：当你成为一张牌的目标后，你可以增加该牌目标数点体力上限。",
-}
+local U = require "packages.utility.utility"
+local chihuaiji = fk.CreateSkill{ name = "chihuaiji", tags = { Skill.Switch } }
 
 chihuaiji:addEffect(fk.CardUsing, {
-  anim_type = "support",
+  anim_type = "control",
   can_trigger = function(self, event, target, player, data)
-    return target == player and player:hasSkill(self.name) and
-      player:getSwitchSkillState(self.name) == fk.SwitchYin and
-      #data.tos > 0
+    return target == player and player:hasSkill(chihuaiji.name) and
+      player:getSwitchSkillState(chihuaiji.name) == fk.SwitchYin and #data.tos > 0 and player.maxHp > #data.tos
   end,
   on_cost = function(self, event, target, player, data)
     local room = player.room
-    local skillName = self.name
-    local targetCount = #data.tos
-    
-    if targetCount == 0 or player:getMaxHp() <= targetCount then
-      return false
-    end
-    
-    if room:askToSkillInvoke(player, skillName) then
-      event:setCostData(self, { targetCount = targetCount })
-      return true
-    end
+    if not room:askToSkillInvoke(player, { skill_name = chihuaiji.name, prompt = "#chihuaiji-yin:::" .. #data.tos }) then return false end
+    local use = room:askToUseVirtualCard(player, {
+      name = data.card.name, skill_name = chihuaiji.name, prompt = "#chihuaiji-reassign",
+      cancelable = true, skip = true, extra_data = { bypass_times = true, bypass_distances = false },
+    })
+    if use then event:setCostData(self, { use = use, x = #data.tos }); return true end
   end,
   on_use = function(self, event, target, player, data)
-    local room = player.room
-    local targetCount = event:getCostData(self).targetCount
-    room:changeMaxHp(player, -targetCount)
+    local cost = event:getCostData(self)
+    player.room:changeMaxHp(player, -cost.x)
+    if player.dead then return end
+    data.tos, data.subTos = cost.use.tos, cost.use.subTos
+    U.SetSwitchSkillState(player, chihuaiji.name, fk.SwitchYin)
   end,
 })
 
-chihuaiji:addEffect(fk.TargetSpecified, {
+chihuaiji:addEffect(fk.TargetConfirmed, {
   anim_type = "support",
   can_trigger = function(self, event, target, player, data)
-    return target == player and player:hasSkill(self.name) and
-      player:getSwitchSkillState(self.name) == fk.SwitchYang and
-      #data.tos > 0
+    return target == player and player:hasSkill(chihuaiji.name) and
+      player:getSwitchSkillState(chihuaiji.name) == fk.SwitchYang and #data.use.tos > 0
   end,
   on_cost = function(self, event, target, player, data)
-    local room = player.room
-    if room:askToSkillInvoke(player, self.name) then
-      event:setCostData(self, { targetCount = #data.tos })
-      return true
-    end
+    return player.room:askToSkillInvoke(player, {
+      skill_name = chihuaiji.name, prompt = "#chihuaiji-yang:::" .. #data.use.tos,
+    })
   end,
   on_use = function(self, event, target, player, data)
-    local room = player.room
-    local targetCount = event:getCostData(self).targetCount
-    room:changeMaxHp(player, targetCount)
+    player.room:changeMaxHp(player, #data.use.tos)
+    U.SetSwitchSkillState(player, chihuaiji.name, fk.SwitchYang)
   end,
 })
 

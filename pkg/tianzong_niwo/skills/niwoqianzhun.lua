@@ -1,104 +1,73 @@
-local niwoqianzhun = fk.CreateSkill{
-  name = "niwoqianzhun",
+local niwoqianzhun = fk.CreateSkill{ name = "niwoqianzhun" }
+
+local function names_in_skills(target)
+  local result = {}
+  for _, skill_name in ipairs(target:getSkillNameList()) do
+    local desc = Fk:translate(":" .. skill_name)
+    for _, card_name in ipairs(Fk:getAllCardNames("bt")) do
+      if desc:find("【" .. Fk:translate(card_name) .. "】", 1, true) then table.insertIfNeed(result, card_name) end
+    end
+  end
+  return result
+end
+
+local function tagged_count(target)
+  local n = 0
+  for _, name in ipairs(target:getSkillNameList()) do
+    local skill = Fk.skills[name]
+    if skill then n = n + #(skill:getSkeleton().tags or {}) end
+  end
+  return n + 1
+end
+
+local function eligible_targets(player, card_name)
+  return table.filter(player.room.alive_players, function(p)
+    if table.contains(names_in_skills(p), card_name) then return true end
+    local card = Fk:cloneCard(card_name)
+    return (card.type == Card.TypeBasic or card:isCommonTrick()) and card:getNameLength(true) == tagged_count(p)
+  end)
+end
+
+local function available_names(player)
+  local result = {}
+  for _, p in ipairs(player.room.alive_players) do
+    table.insertTableIfNeed(result, names_in_skills(p))
+    local x = tagged_count(p)
+    for _, name in ipairs(Fk:getAllCardNames("bt")) do
+      local card = Fk:cloneCard(name)
+      if (card.type == Card.TypeBasic or card:isCommonTrick()) and card:getNameLength(true) == x then table.insertIfNeed(result, name) end
+    end
+  end
+  return player:getViewAsCardNames(niwoqianzhun.name, result)
+end
+
+niwoqianzhun:addEffect("viewas", {
+  pattern = ".|.|.|.|.|basic,trick",
+  prompt = "#niwoqianzhun",
+  max_turn_use_time = 1,
+  interaction = function(self, player)
+    local names = available_names(player)
+    if #names > 0 then return UI.CardNameBox{ choices = names, all_choices = names } end
+  end,
+  card_filter = Util.FalseFunc,
+  view_as = function(self, player, cards)
+    if not self.interaction.data then return end
+    local card = Fk:cloneCard(self.interaction.data)
+    card.skillName = niwoqianzhun.name
+    return card
+  end,
+  before_use = function(self, player, use)
+    local targets = eligible_targets(player, use.card.name)
+    if #targets == 0 then return "" end
+    if #targets > 1 then
+      local tos = player.room:askToChoosePlayers(player, { targets = targets, min_num = 1, max_num = 1, skill_name = niwoqianzhun.name, prompt = "#niwoqianzhun-choose", cancelable = false })
+      if #tos == 0 then return "" end
+    end
+  end,
+})
+
+Fk:loadTranslationTable{
+  ["#niwoqianzhun"] = "千谆：选择符合一名角色技能牌名或技能标签数字数的牌",
+  ["#niwoqianzhun-choose"] = "千谆：选择令此次声明成立的角色",
 }
-
-local ONCE_MARK = "@$niwoqianzhun"
-
-niwoqianzhun:addEffect(fk.EventPhaseStart, {
-  anim_type = "support",
-  can_trigger = function(self, event, target, player, data)
-    return target == player 
-      and player:hasSkill(niwoqianzhun.name)
-      and player:usedSkillTimes(niwoqianzhun.name, Player.HistoryRound) == 0
-      and player.phase == Player.Play
-  end,
-  on_cost = function(self, event, target, player, data)
-    return player.room:askForSkillInvoke(player, niwoqianzhun.name)
-  end,
-  on_use = function(self, event, target, player, data)
-    local room = player.room
-    local targets = {}
-    for _, p in ipairs(room:getOtherPlayers(player)) do
-      if p:isAlive() then
-        table.insert(targets, p.id)
-      end
-    end
-    
-    if #targets == 0 then return end
-    
-    local target_id = room:askToChoose(player, targets, niwoqianzhun.name, "#niwoqianzhun-choose")
-    local target_player = room:getPlayerById(tonumber(target_id))
-    
-    if not target_player then return end
-    
-    local choice = room:askToChoice(player, {"opt1", "opt2"}, niwoqianzhun.name, "#niwoqianzhun-choice")
-    
-    if choice == "opt1" then
-      local skill_cards = {}
-      for _, skill_id in ipairs(target_player:getSkills()) do
-        local skill = Fk:getSkillById(skill_id)
-        if skill and skill.description then
-          local cards = string.match(skill.description, "【(.-)】")
-          if cards then
-            table.insertIfNeed(skill_cards, cards)
-          end
-        end
-      end
-      
-      if #skill_cards > 0 then
-        local choice_card = room:askToChoose(player, skill_cards, niwoqianzhun.name, "#niwoqianzhun-card")
-        local use = room:askToUseCard(player, {
-          skill_name = niwoqianzhun.name,
-          prompt = "#niwoqianzhun-use",
-          pattern = choice_card,
-        })
-        if use then
-          room:useCard(use)
-        end
-      end
-    else
-      local skill_count = 0
-      for _, skill_id in ipairs(target_player:getSkills()) do
-        local skill = Fk:getSkillById(skill_id)
-        if skill then
-          skill_count = skill_count + 1
-        end
-      end
-      
-      local card_name_len = skill_count + 1
-      local all_names = Fk:getAllCardNames("bt")
-      local names = {}
-      for _, card_name in ipairs(all_names) do
-        local card = Fk:cloneCard(card_name)
-        if card:getNameLength(true) == card_name_len then
-          table.insert(names, card_name)
-        end
-      end
-      
-      if #names > 0 then
-        local choice_card = room:askToChoose(player, names, niwoqianzhun.name, "#niwoqianzhun-cardlen")
-        local use = room:askToUseCard(player, {
-          skill_name = niwoqianzhun.name,
-          prompt = "#niwoqianzhun-use",
-          pattern = choice_card,
-        })
-        if use then
-          room:useCard(use)
-        end
-      end
-    end
-    
-    room:addTableMark(player, ONCE_MARK, 1)
-  end,
-})
-
-niwoqianzhun:addEffect(fk.RoundStart, {
-  can_refresh = function(self, event, target, player, data)
-    return target == player and player:hasSkill(niwoqianzhun.name)
-  end,
-  on_refresh = function(self, event, target, player, data)
-    player.room:setPlayerMark(player, ONCE_MARK, 0)
-  end,
-})
-
 return niwoqianzhun

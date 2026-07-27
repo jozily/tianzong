@@ -2,15 +2,14 @@ local niwoshucai = fk.CreateSkill{
   name = "niwoshucai",
 }
 
-local ROUND_MARK = "@$niwoshucai-round"
-
-local function suit_symbol(s)
-  if s == "log_spade" then return "♠" end
-  if s == "log_heart" then return "♥" end
-  if s == "log_club" then return "♣" end
-  if s == "log_diamond" then return "♦" end
-  return s
-end
+local ROUND_MARK = "niwoshucai_suits-round"
+local SHOW_MARK = "@niwoshucai-round"
+local SUIT_SYMBOLS = {
+  log_spade = "♠",
+  log_heart = "♥",
+  log_club = "♣",
+  log_diamond = "♦",
+}
 
 local function is_lowest_or_tied(room, player)
   return table.every(room.alive_players, function(p)
@@ -23,35 +22,28 @@ local function get_available_suits(player)
   local hand = player:getCardIds("h")
   local suits = table.filter({"log_spade", "log_heart", "log_club", "log_diamond"}, function(suit)
     return not table.contains(used, suit) and table.find(hand, function(id)
-      return Fk:getCardById(id):getSuitString(true) == suit
+      return Fk:getCardById(id):getSuitString(true) == suit and not player:prohibitDiscard(id)
     end)
   end)
   return suits
 end
 
 niwoshucai:addEffect("viewas", {
-  pattern = "jink,fire__slash",
+  pattern = "jink",
   prompt = "#niwoshucai",
 
   interaction = function(self, player)
     local suits = get_available_suits(player)
     if #suits == 0 then return end
 
-    local names = player:getViewAsCardNames(niwoshucai.name, {"jink", "fire__slash"})
+    local names = player:getViewAsCardNames(niwoshucai.name, {"jink"})
     if #names > 0 then
       return UI.CardNameBox {
         choices = names,
-        all_choices = {"jink", "fire__slash"},
+        all_choices = {"jink"},
       }
     end
   end,
-
-  filter_pattern = {
-    min_num = 0,
-    max_num = 0,
-    pattern = "",
-    subcards = {}
-  },
 
   card_filter = Util.FalseFunc,
 
@@ -93,6 +85,10 @@ niwoshucai:addEffect("viewas", {
 
     room:throwCard(ids, niwoshucai.name, player, player)
     room:addTableMark(player, ROUND_MARK, choice)
+    local symbols = table.map(player:getTableMark(ROUND_MARK), function(suit)
+      return SUIT_SYMBOLS[suit] or suit
+    end)
+    room:setPlayerMark(player, SHOW_MARK, table.concat(symbols))
 
     if not player.dead and is_lowest_or_tied(room, player) then
       local ids2 = room:getNCards(2, "bottom")
@@ -101,14 +97,11 @@ niwoshucai:addEffect("viewas", {
       end
     end
   end,
-})
-
-niwoshucai:addEffect(fk.RoundStart, {
-  can_refresh = function(self, event, target, player, data)
-    return target == player and player:hasSkill(niwoshucai.name)
+  enabled_at_play = function(self, player)
+    return #get_available_suits(player) > 0
   end,
-  on_refresh = function(self, event, target, player, data)
-    player.room:setPlayerMark(player, ROUND_MARK, 0)
+  enabled_at_response = function(self, player, response)
+    return #get_available_suits(player) > 0
   end,
 })
 

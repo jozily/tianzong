@@ -11,15 +11,11 @@ niwochoulu:addEffect(fk.Damaged, {
     if player:usedSkillTimes(niwochoulu.name, Player.HistoryRound) > 0 then return false end
     if not target or not target:isAlive() then return false end
     if not data.from or not data.from:isAlive() or data.from == player then return false end
-    if player:distanceTo(target) < 1 then return false end
+    if player:distanceTo(target) > 1 then return false end
     return true
   end,
   on_cost = function(self, event, target, player, data)
-    return player.room:askForSkillInvoke(player, niwochoulu.name, data)
-  end,
-  on_use = function(self, event, target, player, data)
-    local room = player.room
-    local use = room:askToUseCard(player, {
+    local use = player.room:askToUseCard(player, {
       skill_name = niwochoulu.name,
       prompt = "#niwochoulu-use::" .. data.from.id,
       pattern = "slash",
@@ -28,18 +24,19 @@ niwochoulu:addEffect(fk.Damaged, {
         bypass_distances = true,
         bypass_times = true,
         bypass_armors = true,
-      }
+      },
     })
-    
-    if use then
-      room:useCard(use)
-      room:addTableMark(player, ONCE_MARK, 1)
-      
-      if use.damageDealt and use.damageDealt > 0 then
-        local turn_event = room.logic:getCurrentEvent():findParent(GameEvent.Turn)
-        if turn_event then
-          turn_event:shutdown()
-        end
+    if use then event:setCostData(self, { use = use }); return true end
+  end,
+  on_use = function(self, event, target, player, data)
+    local room = player.room
+    local use = event:getCostData(self).use
+    room:useCard(use)
+    room:addTableMark(player, ONCE_MARK, 1)
+    if use.damageDealt and next(use.damageDealt) then
+      local turn_event = room.logic:getCurrentEvent():findParent(GameEvent.Turn)
+      if turn_event then
+        turn_event:shutdown()
       end
     end
   end,

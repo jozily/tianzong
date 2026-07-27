@@ -1,46 +1,61 @@
--- chitiaomu.lua (迢目)
-local chitiaomu = fk.CreateSkill{
-  name = "chitiaomu",
-  description = ":chitiaomu",
-  anim_type = "support",
-}
+local chitiaomu = fk.CreateSkill{ name = "chitiaomu" }
+local BONUS_MARK = "chitiaomu_bonus-turn"
 
-Fk:loadTranslationTable{
-  ["chitiaomu"] = "迢目",
-  [":chitiaomu"] = "每回合限一次，当你需要使用或打出一张基本牌或普通锦囊牌时，你可以从弃牌堆随机获得一张牌名字数或合法目标相同的牌视为使用或打出之。若两张牌牌名相同，本技能使用次数+1。",
-}
+local function target_num(player, card)
+  if player:prohibitUse(card) or not player:canUse(card, { bypass_times = true }) then return 0 end
+  if card.skill:getMinTargetNum() == 0 and not card.multiple_targets then return 1 end
+  local n = 0
+  for _, p in ipairs(player.room.alive_players) do
+    if not player:isProhibited(p, card) and card.skill:modTargetFilter(player, p, {}, card) then n = n + 1 end
+  end
+  return n
+end
 
-chitiaomu:addEffect(fk.CardRequiredRespond, {
-  can_trigger = function(self, event, target, player, data)
-    return target == player and player:hasSkill(self.name) and
-      data and data.card_type and
-      (data.card_type == Card.TypeBasic or data.card_type == Card.TypeTrick)
+local function discard_candidates(player, wanted)
+  local length, targets = wanted:getNameLength(true), target_num(player, wanted)
+  return table.filter(player.room.discard_pile, function(id)
+    local card = Fk:getCardById(id)
+    return (card.type == Card.TypeBasic or card:isCommonTrick()) and
+      (card:getNameLength(true) == length or target_num(player, card) == targets)
+  end)
+end
+
+local function names(player)
+  return table.filter(player:getViewAsCardNames(chitiaomu.name, Fk:getAllCardNames("bt")), function(name)
+    local card = Fk:cloneCard(name)
+    return (card.type == Card.TypeBasic or card:isCommonTrick()) and #discard_candidates(player, card) > 0
+  end)
+end
+
+chitiaomu:addEffect("viewas", {
+  pattern = ".",
+  prompt = "#chitiaomu",
+  interaction = function(self, player)
+    local choices = names(player)
+    if #choices > 0 then return UI.CardNameBox{ choices = choices, all_choices = Fk:getAllCardNames("bt") } end
   end,
-  on_cost = function(self, event, target, player, data)
-    return player.room:askToSkillInvoke(player, self.name)
+  card_filter = Util.FalseFunc,
+  view_as = function(self, player, cards)
+    if #cards == 0 and self.interaction.data then
+      local card = Fk:cloneCard(self.interaction.data)
+      card.skillName = chitiaomu.name
+      return card
+    end
   end,
-  on_use = function(self, event, target, player, data)
-    local room = player.room
-    local skillName = self.name
-    local discardPile = room.discard_pile
-    
-    local candidates = {}
-    for _, card in ipairs(discardPile) do
-      if card.type == Card.TypeBasic or card:isCommonTrick() then
-        table.insert(candidates, card)
-      end
-    end
-    
-    if #candidates > 0 then
-      local selected = candidates[math.random(1, #candidates)]
-      room:askToUseVirtualCard(
-        player,
-        {
-          name = selected.name,
-          skill_name = skillName,
-        }
-      )
-    end
+  before_use = function(self, player, use)
+    local room, ids = player.room, discard_candidates(player, use.card)
+    if #ids == 0 then return chitiaomu.name end
+    local id = room:tableRandomPick(ids, 1)[1]
+    local same_name = Fk:getCardById(id).trueName == use.card.trueName
+    room:obtainCard(player, id, true, fk.ReasonPrey, player, chitiaomu.name)
+    use.card:addSubcard(id)
+    if same_name then room:addPlayerMark(player, BONUS_MARK, 1) end
+  end,
+  enabled_at_play = function(self, player)
+    return player:usedSkillTimes(chitiaomu.name, Player.HistoryTurn) < 1 + player:getMark(BONUS_MARK) and #names(player) > 0
+  end,
+  enabled_at_response = function(self, player, response)
+    return player:usedSkillTimes(chitiaomu.name, Player.HistoryTurn) < 1 + player:getMark(BONUS_MARK) and #names(player) > 0
   end,
 })
 

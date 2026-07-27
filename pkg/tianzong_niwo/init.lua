@@ -6,23 +6,23 @@ extension:loadSkillSkelsByPath("./packages/tianzong/pkg/tianzong_niwo/skills")
 
 
 
---local niwo__xushu = General:new(extension, "niwo__xushu", "qun", 4, 4, General.Male)
---niwo__xushu:addSkills { "niwozhuohun", "niwosuchen", "niwochoulu" }
+local niwo__xushu = General:new(extension, "niwo__xushu", "qun", 4, 4, General.Male)
+niwo__xushu:addSkills { "niwozhuohun", "niwosuchen", "niwochoulu" }
 
---local niwo__xushi = General:new(extension, "niwo__xushi", "wu", 3, 3, General.Female)
---niwo__xushi:addSkills { "niwoyanliu", "niwoxiangming", "niwochoulu" }
+local niwo__xushi = General:new(extension, "niwo__xushi", "wu", 3, 3, General.Female)
+niwo__xushi:addSkills { "niwoyanliu", "niwoxiangming", "niwochoulu" }
 
---local niwo__hanlong = General:new(extension, "niwo__hanlong", "wei", 4, 4, General.Male)
---niwo__hanlong:addSkills { "niwozhengtu", "niwonilin", "niwochoulu" }
+local niwo__hanlong = General:new(extension, "niwo__hanlong", "wei", 4, 4, General.Male)
+niwo__hanlong:addSkills { "niwozhengtu", "niwonilin", "niwochoulu" }
 
---local niwo__xurong = General:new(extension, "niwo__xurong", "qun", 4, 4, General.Male)
---niwo__xurong:addSkills { "niwoxuejiu", "niwoshulie", "niwochoulu" }
+local niwo__xurong = General:new(extension, "niwo__xurong", "qun", 4, 4, General.Male)
+niwo__xurong:addSkills { "niwoxuejiu", "niwoshulie", "niwochoulu" }
 
---local niwo__zhaoyun = General:new(extension, "niwo__zhaoyun", "qun", 4, 4, General.Male)
---niwo__zhaoyun:addSkills { "niwotalan", "niwoyuhe", "niwochoulu" }
+local niwo__zhaoyun = General:new(extension, "niwo__zhaoyun", "qun", 4, 4, General.Male)
+niwo__zhaoyun:addSkills { "niwotalan", "niwoyuhe", "niwochoulu" }
 
---local niwo__wenqin = General:new(extension, "niwo__wenqin", "wei", 4, 4, General.Male)
---niwo__wenqin:addSkills { "niwocunduan", "niwoqiangge", "niwochoulu" }
+local niwo__wenqin = General:new(extension, "niwo__wenqin", "wei", 4, 4, General.Male)
+niwo__wenqin:addSkills { "niwocunduan", "niwoqiangge", "niwochoulu" }
 
 
 
@@ -46,6 +46,20 @@ niwo__zhaoe:addSkills { "niwotianmeng", "niwofuxue", "niwochenghen", "niwochoulu
 
 
 Fk:loadTranslationTable{
+  ["#niwochoulu-use"] = "仇戮：请对 %dest 使用一张无距离限制的【杀】",
+  ["@$niwochoulu"] = "仇戮",
+  ["@$niwochencang"] = "沉沧",
+  ["@$niwochencangRemake"] = "沉沧",
+  ["#niwoxiangming-invoke"] = "飨名：是否亮出牌堆顶和底各 %arg 张牌？",
+  ["#niwoxiangming-equip"] = "飨名：是否将 %arg 装备？",
+  ["#niwoyanliu-ask"] = "掩锍：请打出一张【杀】，否则伤害+1",
+  ["#niwoyinbing-ice"] = "饮冰：是否对 %dest 使用一张冰【杀】？",
+  ["#niwoyinbing-acquire"] = "饮冰：选择一名角色获得【饮冰】",
+  ["#niwochencang"] = "沉沧：选择要视为使用或打出的牌",
+  ["#niwochencangRemake"] = "沉沧：选择要视为使用或打出的牌",
+  ["@niwoshucai-round"] = "殊彩·已用花色",
+  ["@@niwozhuohun_invalid-turn"] = "灼魂",
+  ["#niwochencang-choose"] = "沉藏：选择牌的目标",
   ["chi"] = "炽血丹青",
     ["chixue"] = "炽血丹青",
   ["niwo"] = "逆涡之流",
@@ -111,7 +125,7 @@ Fk:loadTranslationTable{
   ["niwoxiapo"] = "黠魄",
   [":niwoxiapo"] = "锁定技，当你使用牌时，该牌所有目标横置；当你/其他角色响应其他角色/你一张牌时，你/其他角色重置。",
   ["niwoshucai"] = "殊彩",
-  [":niwoshucai"] = "每轮每种花色各限一次，当你需要使用一张【杀】或【闪】时，你可以展示所有手牌，然后弃置一种花色的所有牌，视为使用一张【闪】或火【杀】。若你由此后手牌数为全场最低，你获得牌堆底的两张牌。",
+  [":niwoshucai"] = "每轮每种花色各限一次，当你需要使用或打出一张【闪】时，你可以展示所有手牌，然后弃置一种花色的所有牌，视为使用或打出一张【闪】。若你由此后手牌数为全场最低，你获得牌堆底的两张牌。",
   ["$niwoxiapo1"] = "玉洁松贞，雪晶霜烈。",
   ["$niwoxiapo2"] = "忠贞不移，誓守家国。",
   ["$niwoshucai1"] = "钩元摘秘，精妙计出。",
@@ -197,7 +211,7 @@ Fk:loadTranslationTable{
   ["niwocunduan"] = "忖断",
   [":niwocunduan"] = "当你需要使用或打出一张基本牌时，若当前回合角色与你有相同的空置副装备栏/空置副装备栏，你可以将一张对应空置装备牌置入之/择其中一个弃置之视为使用或打出之，此牌不计入使用次数。",
   ["niwoqiangge"] = "戗戈",
-  [":niwoqiangge"] = "当你受到或造成伤害后，你可以①弃置伤害来源与你相同的非空置副装备栏中的对应装备牌；②从专属牌库中展示三个选择获得一张装备牌。",
+  [":niwoqiangge"] = "当你受到或造成伤害后，你可以选择一项：①弃置对方装备区里与你对应副装备栏相同的一张牌；②随机获得牌堆里的一张装备牌或【折戟】【女装】【驽马】中的一张。",
   ["$niwocunduan1"] = "忖度断绝，自有主张。",
   ["$niwocunduan2"] = "断而后立，忖而后行。",
   ["$niwoqiangge1"] = "戗然交戈，势不两立。",

@@ -15,6 +15,15 @@ chi__xiahoulingnv:addSkills { "chicangsui", "chihantang" }
 local chi__xiahouqingyi = General:new(extension, "chi__xiahouqingyi", "wei", 3, 3, General.Female)
 chi__xiahouqingyi:addSkills { "chiqingya", "chiwangchen" }
 
+local chi__xuelingyun = General:new(extension, "chi__xuelingyun", "wei", 3, 3, General.Female)
+chi__xuelingyun:addSkills { "chifeimeng", "chidieren", "chixique" }
+
+local chi__pangfengyi = General:new(extension, "chi__pangfengyi", "shu", 3, 3, General.Female)
+chi__pangfengyi:addSkills { "chixingjue","chiyongtang" }
+
+local chi__guozhao = General:new(extension, "chi__guozhao", "wei", 3, 3, General.Female)
+chi__guozhao:addSkills { "chixiege", "chishangjiao" }
+
 
 local chi__zhanghuai = General:new(extension, "chi__zhanghuai", "wu", 1, 1, General.Female)
 chi__zhanghuai:addSkills { "chimiling", "chicangsheng", "chikongyao" }
@@ -29,8 +38,29 @@ chi__xiahoumao:addSkills { "chirenfu", "chiyanzu" }
 local chi__lukai = General:new(extension, "chi__lukai", "wu", 3, 3, General.Male)
 chi__lukai:addSkills { "chijiantu", "chiduye", "chizelie" }
 
+local chi__yangzhong = General:new(extension, "chi__yangzhong", "qun", 4, 4, General.Male)
+chi__yangzhong:addSkills { "chidangliao" }
+
+local chi__wangqian = General:new(extension, "chi__wangqian", "jin", 3, 3, General.Female)
+chi__wangqian:addSkills { "chizhuoxi", "chixiarong", "chizhongliu" }
+
 local chi__xunxu = General:new(extension, "chi__xunxu", "wei", 3, 3, General.Male)
 chi__xunxu:addSkills { "chiyilvRemake", "chifufengRemake", "chixunfu", "chidaojie" }
+
+local chi__luxun = General:new(extension, "chi__luxun", "wu", 3, 3, General.Male)
+chi__luxun:addSkills { "chiquege", "chishaoshan", "chimaoqi" }
+
+local chi__zhangchunhua = General:new(extension, "chi__zhangchunhua", "wei", 4, 4, General.Female)
+chi__zhangchunhua:addSkills { "chifenqing", "chisuhen", "chiyuanque" }
+
+local chi__zhugeguo = General:new(extension, "chi__zhugeguo", "shu", 3, 3, General.Female)
+chi__zhugeguo:addSkills { "chihuangli", "chisusu" }
+
+local chi__huangyueying = General:new(extension, "chi__huangyueying", "shu", 3, 3, General.Female)
+chi__huangyueying:addSkills { "chiyingshan", "chishennie" }
+
+local chi__yuji = General:new(extension, "chi__yuji", "qun", 3, 3, General.Male)
+chi__yuji:addSkills { "chiliangdao", "chifushui", "chiyidi" }
 
 
 -- 炽胡金定 013
@@ -49,6 +79,9 @@ chi__zhupeilan:addSkills { "chikuili", "chitiaomu" }
 local chi__dongguiren = General:new(extension, "chi__dongguiren", "qun", 3, 3, General.Female)
 chi__dongguiren:addSkills { "chishanquan", "chisimi" }
 
+local chi__renwan = General:new(extension, "chi__renwan", "wei", 3, 3, General.Female)
+chi__renwan:addSkills { "chilingmeng", "chilique" }
+
 
 -- 020 炽荀粲
 local chi__xuncan = General:new(extension, "chi__xuncan", "wei", 3, 3, General.Male)
@@ -62,6 +95,9 @@ chi__xuncai:addSkills { "chijulei", "chizhichen" }
 local chi__wanglun = General:new(extension, "chi__wanglun", "wei", 3, 3, General.Male)
 chi__wanglun:addSkills { "chitianshi", "chiminghuai" }
 
+local chi__wangshen = General:new(extension, "chi__wangshen", "jin", 3, 3, General.Male)
+chi__wangshen:addSkills { "chitiaofeng", "chijiwang" }
+
 local chi__xiahoujie = General:new(extension, "chi__xiahoujie", "wei", 4, 4, General.Male)
 chi__xiahoujie:addSkills { "chiyushe", "chidangdan" }
 
@@ -69,13 +105,22 @@ chi__xiahoujie:addSkills { "chiyushe", "chidangdan" }
 local chi__xunyue = General:new(extension, "chi__xunyue", "wei", 3, 3, General.Male)
 chi__xunyue:addSkills { "chijieji", "chishuji" }
 
+local chi__xiahoudun = General:new(extension, "chi__xiahoudun", "wei", 4, 4, General.Male)
+chi__xiahoudun:addSkills { "chiliaozhi", "chizhenjie" }
+
 -- 031 炽夏侯玄
 local chi__xiahouxuan = General:new(extension, "chi__xiahouxuan", "wei", 3, 3, General.Male)
 chi__xiahouxuan:addSkills { "chicixuan", "chiqihai" }
 
+local chi__xiahourong = General:new(extension, "chi__xiahourong", "wei", 3, 3, General.Female)
+chi__xiahourong:addSkills { "chidulie", "chijiaotan" }
+
 -- 034 炽夏侯涓
 local chi__xiahoushi = General:new(extension, "chi__xiahoushi", "shu", 3, 3, General.Female)
 chi__xiahoushi:addSkills { "chixinmai", "chiyusui" }
+
+local chi__xiahouhui = General:new(extension, "chi__xiahouhui", "jin", 3, 3, General.Female)
+chi__xiahouhui:addSkills { "chifeishi", "chifeichen" }
 
 
 Fk:loadTranslationTable{
@@ -97,7 +142,7 @@ Fk:loadTranslationTable{
   ["chigufu"] = "孤凫",
   [":chigufu"] = "出牌阶段限一次，你可以重铸任意张牌（至多“惊鸿”未移除牌名张），然后蓄谋牌堆顶或牌堆底的等量张牌。",
   ["chiraoluo"] = "扰洛",
-  [":chiraoluo"] = "当你受到伤害后或响应牌后，你可以弃置一名角色区域内的一张牌并令其选择一项：①发动一次“孤凫”；②获得判定区的一张牌；背水，其翻面。",
+  [":chiraoluo"] = "当你受到伤害后或响应牌后，你可以弃置一名角色区域内的一张牌并令其选择一项：①发动一次“孤凫”；②弃置其区域内的一张牌；背水：依次执行前两项，然后其翻面。",
   ["@$chijinghong"] = "惊鸿已移除",
   ["#chijinghong"] = "惊鸿：展示当前回合角色区域内的一张牌并将之置于牌堆顶或牌堆底，视为使用或打出一张基本牌",
   ["#chijinghong-choose"] = "惊鸿：选择当前回合角色区域内的一张牌",
@@ -109,7 +154,7 @@ Fk:loadTranslationTable{
   ["#chiraoluo-choose"] = "扰洛：请选择一名角色",
   ["#chiraoluo-choice"] = "扰洛：请选择一项",
   ["chiraoluo_opt1"] = "发动一次“孤凫”",
-  ["chiraoluo_opt2"] = "使用一张手牌或蓄谋牌",
+  ["chiraoluo_opt2"] = "弃置其区域内的一张牌",
   ["$chijinghong1"] = "皎若金乌之霞，灿若芙蕖之渌。",
   ["$chijinghong2"] = "秋菊容曜，春松华茂，四时之灵也。",
   ["$chijinghong3"] = "青山皆绿，远山可见一白者，向暮之梨花尔。",
@@ -146,6 +191,8 @@ Fk:loadTranslationTable{
   ["#chishuowen"] = "朔闻：你可以将牌堆顶/底的一张牌当作同字数的基本牌或普通锦囊牌使用或打出",
   ["@[chidiaoyao_top]"] = "窎窅·顶",
   ["@[chidiaoyao_bottom]"] = "窎窅·底",
+  ["@[chishuowen_yang]"] = "朔闻·阳",
+  ["@[chishuowen_yin]"] = "朔闻·阴",
   ["@chishuowen-turn"] = "朔闻次数",
   ["chijuanxiang_names-turn"] = "眷乡牌名记录",
   ["chishuowen-round"] = "朔闻轮次记录",
@@ -169,12 +216,12 @@ Fk:loadTranslationTable{
   ["#chiraoluo-discard-equip"] = "扰洛：请弃置一张装备区的牌",
   ["#chiraoluo-discard-judge"] = "扰洛：请弃置一张判定区的牌",
   ["chiraoluo_opt1"] = "弃置其区域内各一张牌，然后其立刻发动一次【孤凫】",
-  ["chiraoluo_opt2"] = "令其于当前回合结束时执行一个额外的判定阶段",
+  ["chiraoluo_opt2"] = "弃置其区域内的一张牌",
 
   ["chiraoluo_opt1"] = "弃置其区域内各一张牌，然后其立刻执行一次【孤凫】",
 
   ["@@chiraoluo_judge-turn"] = "扰洛判定",
-  ["chiraoluo_opt2"] = "其于当前回合结束时执行一个额外的判定阶段",
+  ["chiraoluo_opt2"] = "弃置其区域内的一张牌",
 
   ["#chishuowen-yang"] = "朔闻（阳）：当前观看牌堆顶的%arg，你可以将之当作同字数的基本牌或普通锦囊牌使用或打出",
   ["#chishuowen-yin"] = "朔闻（阴）：当前观看牌堆底的%arg，你可以将之当作同字数的基本牌或普通锦囊牌使用或打出",
@@ -190,11 +237,14 @@ Fk:loadTranslationTable{
   ["illustrator:chi__xiahoulingnv"] = "佚名",
   ["cv:chi__xiahoulingnv"] = "暂无",
   ["chicangsui"] = "沧遂",
-  [":chicangsui"] = "每回合限一次，你可以废除一个装备栏，视为使用或打出一张牌名字数为X的牌。若无符合条件的牌，你摸X张牌。（X为你已废除装备栏数量且至少为1，下同）",
+  [":chicangsui"] = "每回合限一次，你可以废除一个装备栏，视为使用或打出一张牌名字数为X的牌。若无符合条件的牌，你摸X张牌（X为你已废除装备栏数量且至少为1，下同）。",
   ["chihantang"] = "寒塘",
   [":chihantang"] = "出牌阶段限一次，或当你于回合内首次造成或受到伤害后，你可以选择一项：①弃置牌名字数之和为X的任意张牌，对一名角色造成1点伤害；若该角色本轮受到你造成的伤害/为你，你恢复一个装备栏/摸X张牌。②摸X张牌并重置【沧遂】。",
   ["#chicangsui"] = "沧遂：废除一个装备栏，视为使用或打出一张牌名字数为X的牌",
   ["#chicangsui-draw"] = "沧遂：无符合条件的牌，你摸%arg张牌",
+  ["#chicangsui-status"] = "沧遂：废除装备栏后X为%arg，%arg2",
+  ["chicangsui_available"] = "有可以使用或打出的牌",
+  ["chicangsui_unavailable"] = "无可以使用或打出的牌，将摸X张牌",
   ["#$chicangsui-choice"] = "沧遂：选择要废除的装备栏",
   ["#chihantang"] = "寒塘：你可以发动【寒塘】",
   ["chihantang_opt1"] = "弃置牌名字数之和为X的牌，对一名角色造成1点伤害",
@@ -207,7 +257,7 @@ Fk:loadTranslationTable{
   ["$chihantang2"] = "去后故人双别泪，春深逐客一浮萍。",
 
   ["chicangsui"] = "沧遂",
-  [":chicangsui"] = "每回合限一次，你可以废除一个装备栏，视为使用或打出一张牌名字数为X的牌。若无符合条件的牌，你摸X张牌。（X为你已废除装备栏数量且至少为1，下同）",
+  [":chicangsui"] = "每回合限一次，你可以废除一个装备栏，视为使用或打出一张牌名字数为X的牌。若无符合条件的牌，你摸X张牌（X为你已废除装备栏数量且至少为1，下同）。",
   ["chihantang"] = "寒塘",
   [":chihantang"] = "出牌阶段限一次，或当你于回合内首次造成或受到伤害后，你可以选择一项：①弃置牌名字数之和为X的任意张牌，对一名角色造成1点伤害；若该角色本轮受到过此技能伤害/为你，你恢复一个装备栏/摸X张牌。②摸X张牌并重置【沧遂】。",
    ["#chicangsui-draw"] = "沧遂：无符合条件的牌，你可以废除一个装备栏并摸%arg张牌",
@@ -275,7 +325,7 @@ Fk:loadTranslationTable{
   
   ["chi__guozhao"] = "郭照",
   ["#chi__guozhao"] = "众星拥后",
-  ["~chi__guozhao"] = "椒兰零落，空阁余寒……",
+  ["~chi__guozhao"] = "红袖揾烟雨，泪尽垂青花。",
   ["designer:chi__guozhao"] = "公冶天纵",
   ["illustrator:chi__guozhao"] = "佚名",
   ["cv:chi__guozhao"] = "暂无",
@@ -291,10 +341,15 @@ Fk:loadTranslationTable{
   ["@chixiege_slash-round"] = "携阁杀数",
   ["@chixiege_draw-round"] = "携阁摸牌",
   ["@chixiege_damage-round"] = "携阁伤摸",
-  ["$chixiege1"] = "携香入阁，静待风回。",
-  ["$chixiege2"] = "高阁有序，万事皆可筹。",
-  ["$chishangjiao1"] = "椒香尚烈，亦可乱心。",
-  ["$chishangjiao2"] = "尚椒一缕，寒意自生。",
+  ["$chixiege1"] = "细雨春风缀石桥，素胚青瓷嫁桃花。",
+  ["$chixiege2"] = "桂子三秋叠清嘉，惠风十里尽烟霞。",
+    ["$chixiege3"] = "承君恩露于椒房，得君恩宠于万世。",
+  ["$chixiege4"] = "妾蒲柳之姿，幸蒙君恩方化从龙之凤。",
+  ["$chishangjiao1"] = "小楫行舟慕胧色，烟雨独钟我一人。",
+  ["$chishangjiao2"] = "挽指玉瓶绘淡彩，一眸春水映江南。",
+
+  ["$chishangjiao3"] = "后宫有佳丽三千，然陛下独宠我一人。",
+  ["$chishangjiao4"] = "尊位椒房、垂立九五，君之恩也、妾之幸也。",
 
   ["chi__zhanghuai"] = "张怀",
   ["#chi__zhanghuai"] = "空谷之麋",
@@ -357,7 +412,7 @@ Fk:loadTranslationTable{
   ["@@chiraoluo_judge_used-turn"] = "扰洛判定限制",
 
   ["@@chiraoluo_judge"] = "扰洛",
-  ["chiraoluo_opt2"] = "其于当前回合结束后执行一个仅含判定阶段的额外回合",
+  ["chiraoluo_opt2"] = "弃置其区域内的一张牌",
 
   ["@@chikonglan_round"] = "空阑",
   ["chikonglan_shadow-round"] = "空阑影记录",
@@ -412,8 +467,28 @@ Fk:loadTranslationTable{
             
   ["chifusheng"] = "浮生",
   [":chifusheng"] = "准备阶段或当你受到伤害后，你可以交换下面两项数值并于本轮移除之：①已废除装备栏；②未废除装备栏；③体力上限；④出牌阶段使用杀次数；⑤手牌数；⑥体力值。",
+  ["#chifusheng-invoke"] = "浮生：你可以交换两项尚未移除的数值，并将其于本轮移除",
+  ["#chifusheng-pair"] = "浮生：选择要交换的两项数值",
+  ["#chifusheng-discard"] = "浮生：请弃置%arg张手牌，将手牌数调整为交换后的数值",
+  ["chifusheng_pair12"] = "已废除装备栏 ↔ 未废除装备栏",
+  ["chifusheng_pair13"] = "已废除装备栏 ↔ 体力上限",
+  ["chifusheng_pair14"] = "已废除装备栏 ↔ 出牌阶段使用【杀】次数",
+  ["chifusheng_pair15"] = "已废除装备栏 ↔ 手牌数",
+  ["chifusheng_pair16"] = "已废除装备栏 ↔ 体力值",
+  ["chifusheng_pair23"] = "未废除装备栏 ↔ 体力上限",
+  ["chifusheng_pair24"] = "未废除装备栏 ↔ 出牌阶段使用【杀】次数",
+  ["chifusheng_pair25"] = "未废除装备栏 ↔ 手牌数",
+  ["chifusheng_pair26"] = "未废除装备栏 ↔ 体力值",
+  ["chifusheng_pair34"] = "体力上限 ↔ 出牌阶段使用【杀】次数",
+  ["chifusheng_pair35"] = "体力上限 ↔ 手牌数",
+  ["chifusheng_pair36"] = "体力上限 ↔ 体力值",
+  ["chifusheng_pair45"] = "出牌阶段使用【杀】次数 ↔ 手牌数",
+  ["chifusheng_pair46"] = "出牌阶段使用【杀】次数 ↔ 体力值",
+  ["chifusheng_pair56"] = "手牌数 ↔ 体力值",
+  ["chifusheng_removed-round"] = "浮生·本轮已移除",
   ["chijianian"] = "佳年",
   [":chijianian"] = "当你需要使用或打出一张基本牌或普通锦囊牌时，你可以发动一次“浮生”视为使用之。若“浮生”已被移除的项中有相等项，你恢复之。",
+  ["#chijianian"] = "佳年：选择要视为使用或打出的牌，然后发动一次“浮生”",
 
 
   ["chi__mifuren2"] = "糜贞",
@@ -513,8 +588,12 @@ Fk:loadTranslationTable{
   ["cv:chi__hujinding"] = "暂无",
   ["chiqianmeng"] = "遣梦",
   [":chiqianmeng"] = "你可以失去任意点体力上限当作一张牌名字数相等的基本牌或普通锦囊牌使用或打出。若此牌为基本牌或你此时体力上限等于该牌牌名字数，你增加一点体力上限。",
+  ["#chiqianmeng"] = "遣梦：选择一张牌，失去等同于其牌名字数的体力上限并视为使用或打出",
   ["chihuaiji"] = "怀赍",
   [":chihuaiji"] = "转换技，阴：当你使用一张牌后，你可以失去该牌目标数点体力上限为此牌重新指定目标。阳：当你成为一张牌的目标后，你可以增加该牌目标数点体力上限。",
+  ["#chihuaiji-yin"] = "怀赍：你可以失去%arg点体力上限，为此牌重新指定目标",
+  ["#chihuaiji-reassign"] = "怀赍：请为此牌重新指定合法目标",
+  ["#chihuaiji-yang"] = "怀赍：你可以增加%arg点体力上限",
   ["$chiqianmeng1"] = "已忘君去几春秋，门前枣树青转红。",
   ["$chiqianmeng2"] = "有情何须长厮守，愿化明灯照君行。",
   ["$chihuaiji1"] = "蝼蚁尚存偷生之念，况我即为人母？",
@@ -529,8 +608,11 @@ Fk:loadTranslationTable{
   ["cv:chi__zhupeilan"] = "暂无",
   ["chikuili"] = "暌离",
   [":chikuili"] = "转换技，每回合限一次，当你使用一张基本牌或普通锦囊牌时，若有与此牌牌名字数或合法目标数相同的牌，你可以展示之并计算二者差X，此牌：①额外结算X次；②额外选择X个目标；若X等于体力值，你转换状态并刷新本技能。",
+  ["#chikuili-show"] = "暌离：你可以展示一张牌名字数或合法目标数与使用牌相同的手牌",
+  ["#chikuili-target"] = "暌离：为此牌增加至多%arg个合法目标",
   ["chitiaomu"] = "迢目",
   [":chitiaomu"] = "每回合限一次，当你需要使用或打出一张基本牌或普通锦囊牌时，你可以从弃牌堆随机获得一张牌名字数或合法目标相同的牌视为使用或打出之。若两张牌牌名相同，本技能使用次数+1。",
+  ["#chitiaomu"] = "迢目：选择要视为使用或打出的牌，随机获得弃牌堆中符合条件的一张牌",
  ["$chikuili1"] = "妾提不得刀兵、聚不起人马，于汝何害之有？",
   ["$chikuili2"] = "诸公明鉴，我何罪之有？",
   ["$chikuili3"] = "汝做了皇帝，便忘了昔日之恩吗？",
@@ -549,8 +631,11 @@ Fk:loadTranslationTable{
   ["cv:chi__zoushi"] = "暂无",
   ["chiyinghun"] = "萦魂",
   [":chiyinghun"] = "锁定技，当你使用一张牌后/当你受到伤害后，此牌所有目标翻面/你与伤害来源翻面，且本回合所有武将牌正面朝上角色的非锁定技失效。你与武将牌状态一致角色的距离始终为1。",
+  ["@@chiyinghun-turn"] = "萦魂生效中",
   ["chiyugu"] = "毓骨",
   [":chiyugu"] = "转换技，你可以翻面视为使用或打出一张不计入次数的：①牌名字数为X的基本牌或普通锦囊牌；②目标数不大于所有已翻面角色数的基本牌或普通锦囊牌（X为场上翻面的角色数）",
+  ["#chiyugu-yang"] = "毓骨（阳）：翻面，视为使用或打出一张牌名字数为X的牌",
+  ["#chiyugu-yin"] = "毓骨（阴）：翻面，视为使用或打出一张合法目标数不大于X的牌",
  ["$chiyinghun1"] = "温柔乡里忘归路，香唇软语最噬人。",
   ["$chiyinghun2"] = "将军，还是把脸蒙起来吧。",
   ["$chiyugu1"] = "武夫以力破阵，佳人凭貌倾城。",
@@ -585,6 +670,8 @@ Fk:loadTranslationTable{
   ["cv:chi__dongguiren"] = "暂无",
   ["chishanquan"] = "潸泉",
   [":chishanquan"] = "每回合限一次，你可以交换你的手牌数和体力上限，视为使用或打出一张牌名字数为二者差的基本牌或普通锦囊牌。",
+  ["#chishanquan"] = "潸泉：交换手牌数与体力上限，选择要视为使用或打出的牌",
+  ["#chishanquan-discard"] = "潸泉：请弃置手牌，将手牌数调整为交换后的数值",
   ["chisimi"] = "澌弭",
   [":chisimi"] = "转换技，锁定技，当你的体力上限、手牌数或二者差值任意两个每轮首次相等后，你随机执行：①摸一张牌或增加一点体力上限；②随机弃置一张牌或失去一点体力上限。",
   ["$chishanquan1"] = "泪落成泉，心事难言。",
@@ -594,7 +681,7 @@ Fk:loadTranslationTable{
 
   -- 炽陆逊 001
   ["chi__luxun"] = "陆逊",
-  ["#chi__luxun"] = "暂无",
+  ["#chi__luxun"] = "谋定白里",
   ["~chi__luxun"] = "风冷，无归……",
   ["designer:chi__luxun"] = "公冶天纵",
   ["illustrator:chi__luxun"] = "佚名",
@@ -608,7 +695,7 @@ Fk:loadTranslationTable{
 
   -- 炽张春华 002
   ["chi__zhangchunhua"] = "张春华",
-  ["#chi__zhangchunhua"] = "炽张春华",
+  ["#chi__zhangchunhua"] = "残烛归殁",
   ["~chi__zhangchunhua"] = "焚尽旧梦，方知此心……",
   ["designer:chi__zhangchunhua"] = "公冶天纵",
   ["illustrator:chi__zhangchunhua"] = "佚名",
@@ -618,14 +705,14 @@ Fk:loadTranslationTable{
   ["chisuhen"] = "夙痕",
   [":chisuhen"] = "锁定技，每回合限一次，当你受到或造成属性伤害后，伤害来源重置其武将牌，然后你视为对伤害来源或目标发动一次“焚情”。每个回合结束时，若当前回合角色于本回合内受到或造成过属性伤害，你可以观看牌堆顶两张牌并使用其中可以使用的牌。",
   ["chiyuanque"] = "缘阙",
-  [":chiyuanque"] = "使命技，当你累计造成或受到不小于X点属性伤害时，<br>成功：你将体力值恢复至体力上限，失去“焚情”和“夙疾”，然后随机获得两个技能。若此时为你的回合外，你额外获得一个技能。<br>失败：若你进入濒死状态，你将体力值恢复至1，失去一点体力上限和“焚情”和“夙疾”，并追忆一名角色。",
+  [":chiyuanque"] = "使命技，当你累计造成或受到不小于3点属性伤害时，<br>成功：你将体力值恢复至体力上限，失去“焚情”和“夙痕”，然后随机获得两个技能。若此时为你的回合外，你额外获得一个技能。<br>失败：若你进入濒死状态，你将体力值恢复至1，失去一点体力上限和“焚情”和“夙痕”，并追忆一名角色。",
   ["chiejue"] = "扼绝",
   [":chiejue"] = "锁定技，当你/攻击范围不包含你的角色使用【杀】或【决斗】即将对攻击范围不包含你的角色/你造成伤害时，此伤害+1。",
 
 
   -- 炽庞凤衣 007
   ["chi__pangfengyi"] = "庞凤衣",
-  ["#chi__pangfengyi"] = "炽庞凤衣",
+  ["#chi__pangfengyi"] = "有酿一斛",
   ["~chi__pangfengyi"] = "有酿醇醇，醒魂犹寒……",
   ["designer:chi__pangfengyi"] = "公冶天纵",
   ["illustrator:chi__pangfengyi"] = "佚名",
@@ -637,7 +724,7 @@ Fk:loadTranslationTable{
 
   -- 炽诸葛果 008
   ["chi__zhugeguo"] = "诸葛果",
-  ["#chi__zhugeguo"] = "炽诸葛果",
+  ["#chi__zhugeguo"] = "煌煌明寂",
   ["~chi__zhugeguo"] = "篁竹摇落，簌肃成音……",
   ["designer:chi__zhugeguo"] = "公冶天纵",
   ["illustrator:chi__zhugeguo"] = "佚名",
@@ -649,7 +736,7 @@ Fk:loadTranslationTable{
 
   -- 炽黄月英 009
   ["chi__huangyueying"] = "黄月英",
-  ["#chi__huangyueying"] = "炽黄月英",
+  ["#chi__huangyueying"] = "点睛人",
   ["~chi__huangyueying"] = "映山如画，神臬成谋……",
   ["designer:chi__huangyueying"] = "公冶天纵",
   ["illustrator:chi__huangyueying"] = "佚名",
@@ -662,7 +749,7 @@ Fk:loadTranslationTable{
 
   -- 炽于吉 011
   ["chi__yuji"] = "于吉",
-  ["#chi__yuji"] = "炽于吉",
+  ["#chi__yuji"] = "索求者",
   ["~chi__yuji"] = "倞道既成，诣谛何求……",
   ["designer:chi__yuji"] = "公冶天纵",
   ["illustrator:chi__yuji"] = "佚名",
@@ -677,7 +764,7 @@ Fk:loadTranslationTable{
 
   -- 炽任婉 017
   ["chi__renwan"] = "任婉",
-  ["#chi__renwan"] = "炽任婉",
+  ["#chi__renwan"] = "破离之凫",
   ["~chi__renwan"] = "此身若梦，终将离阙……",
   ["designer:chi__renwan"] = "公冶天纵",
   ["illustrator:chi__renwan"] = "佚名",
@@ -689,7 +776,7 @@ Fk:loadTranslationTable{
 
   -- 炽杨众 019
   ["chi__yangzhong"] = "杨众",
-  ["#chi__yangzhong"] = "炽杨众",
+  ["#chi__yangzhong"] = "歧路也汤汤",
   ["~chi__yangzhong"] = "荡燎既熄，余烬难续……",
   ["designer:chi__yangzhong"] = "公冶天纵",
   ["illustrator:chi__yangzhong"] = "佚名",
@@ -718,6 +805,11 @@ Fk:loadTranslationTable{
   ["cv:chi__xuncai"] = "暂无",
   ["chijulei"] = "炬泪",
   [":chijulei"] = "你可以横置视为使用或打出一张火【杀】/【火攻】或翻面使用或打出一张【酒】/【逐近弃远】，若当前回合角色或此牌目标角色拥有“尘”标记，你弃置其“尘”标记然后选择一项：①此牌不计入使用次数；②重置你的武将牌。",
+  ["#chijulei"] = "炬泪：横置使用火【杀】或【火攻】，或翻面使用【酒】或【逐近弃远】",
+  ["#chijulei-dust"] = "炬泪：选择当前回合角色或此牌目标中的一名角色移去其“尘”",
+  ["#chijulei-choice"] = "炬泪：选择移去“尘”后的效果",
+  ["chijulei_extra"] = "此牌不计入使用次数",
+  ["chijulei_reset"] = "重置武将牌",
   ["chizhichen"] = "炙尘",
   [":chizhichen"] = "锁定技，每轮开始时，你的上家和下家获得“尘”标记。当你受到/造成伤害后，你令伤害来源/目标横置并获得“尘”标记，若当前回合角色横置或翻面，你重铸手牌中花色最多的所有牌。",
 
@@ -776,6 +868,10 @@ Fk:loadTranslationTable{
   ["cv:chi__xunyue"] = "暂无",
   ["chijieji"] = "借笈",
   [":chijieji"] = "出牌阶段限一次，你可以观看一名手牌数或技能数不小于你的角色的手牌，并将其中一张牌当做一张合法目标数相同的基本牌或普通锦囊牌使用，然后其摸X张牌。你于本回合内使用到此牌结算后的第X张牌后，此技能视为未发动过（X为此牌合法目标数）。",
+  ["#chijieji"] = "借笈：观看一名符合条件角色的手牌，并转化使用其中一张牌",
+  ["#chijieji-card"] = "借笈：选择 %dest 的一张手牌进行转化",
+  ["#chijieji-use"] = "借笈：将此牌当合法目标数相同的基本牌或普通锦囊牌使用",
+  ["@chijieji_count-turn"] = "借笈剩余牌数",
   ["chishuji"] = "疏纪",
   [":chishuji"] = "<a href='sxrm__contract'>契定技</a>，当你每回合首次成为一张多目标锦囊牌的目标后，若此牌的合法目标数不小于你的手牌数，你弃置半数手牌（向下取整），并将此锦囊牌的目标数调整至与你手牌数相同（至少为1）。",
 
@@ -807,6 +903,10 @@ Fk:loadTranslationTable{
   ["cv:chi__xiahoujie"] = "暂无",
   ["chiyushe"] = "逾慑",
   [":chiyushe"] = "<a href='sxrm__contract'>契定技</a>，当你使用一张牌后，若不为你本回合使用的第一张牌，你可以摸X张牌并使用一张本局未以此法使用过的、与原牌合法目标相同的基本牌或普通锦囊牌，若无合法牌名，你失去一点体力并弃置X张牌（X为你使用的上一张牌的合法目标数）。",
+  ["#chiyushe-invoke"] = "逾慑：是否摸 %arg 张牌并使用一张合法目标数相同的新牌？",
+  ["#chiyushe-use"] = "逾慑：选择一张本局未以此法使用过的牌使用",
+  ["#chiyushe-discard"] = "逾慑：无合法牌名，请弃置 %arg 张牌",
+  ["@$chiyushe"] = "逾慑已用牌名",
   ["chidangdan"] = "荡胆",
   [":chidangdan"] = "<a href='sxrm__contract'>契定技</a>，当你使用牌指定目标后，若其体力值与此牌合法目标数相等，你可以随机执行一项：1.增加一点体力上限并恢复一点体力；2.“逾慑”本回合失效；3.失去一点体力上限。",
   ["$chiyushe1"] = "驾长车、横长枪，曾饮马长江，今日平长坂。",
@@ -825,6 +925,337 @@ Fk:loadTranslationTable{
   [":chixinmai"] = "每轮限一次，出牌阶段或当你受到伤害后，你可以令一名角色获得本回合进入弃牌堆的所有【杀】，然后令其选择一项：①你对其造成一点雷属性伤害；②其所有非属性【杀】视为【无懈可击】直至其下回合结束或受到属性伤害，然后你重置“薪脉”。",
   ["chiyusui"] = "毓髓",
   [":chiyusui"] = "当有角色受到属性伤害后，你可以与其各摸一张牌；当有角色跳过任意阶段后，你可以弃置所有手牌令其于本回合结束后执行一个额外的被跳过的此阶段。",
+
+    -- 炽夏侯惇 030
+  ["chi__xiahoudun"] = "夏侯惇",
+  ["#chi__xiahoudun"] = "炽胆懑梦",
+  ["~chi__xiahoudun"] = "燎志如火，赈节如海……",
+  ["designer:chi__xiahoudun"] = "公冶天纵",
+  ["illustrator:chi__xiahoudun"] = "佚名",
+  ["cv:chi__xiahoudun"] = "暂无",
+  ["chiliaozhi"] = "燎志",
+  [":chiliaozhi"] = "出牌阶段开始时或每轮结束时，你可以与至多X名角色同时拼点，拼点赢的角色视为对所有没赢的角色使用一张火【杀】，然后你摸此流程中受到伤害的角色数张牌（X为你已损失体力值+1）。",
+  ["chizhenjie"] = "赈节",
+  [":chizhenjie"] = "其与你距离不大于1的角色造成或受到属性伤害后，你可以观看牌堆顶两张牌并令你或其使用其中可以使用的牌；你与其他角色的距离-X（X为你已损失体力值+1）。",
+
+    -- 炽夏侯荣 033
+  ["chi__xiahourong"] = "夏侯荣",
+  ["#chi__xiahourong"] = "初生虎犊",
+  ["~chi__xiahourong"] = "犊烈初心，皦谈成诺……",
+  ["designer:chi__xiahourong"] = "公冶天纵",
+  ["illustrator:chi__xiahourong"] = "佚名",
+  ["cv:chi__xiahourong"] = "暂无",
+  ["chidulie"] = "犊烈",
+  [":chidulie"] = "锁定技，你于本局游戏首次受到和造成的伤害均翻倍，均触发后你失去本技能。",
+  ["chijiaotan"] = "皦谈",
+  [":chijiaotan"] = "出牌阶段限一次，你可以令任意技能数大于你的角色议事，你可为本次议事增加一张上次“皦谈”结果的牌。议事结束后你可以观看一名异议角色的手牌并使用其议事牌，若其手牌中有与本次议事结果颜色不同的牌，你摸两张牌。",
+
+    -- 炽夏侯徽 035
+  ["chi__xiahouhui"] = "夏侯徽",
+  ["#chi__xiahouhui"] = "吾之所向",
+  ["~chi__xiahouhui"] = "匪氏之心，斐谌成诗……",
+  ["designer:chi__xiahouhui"] = "公冶天纵",
+  ["illustrator:chi__xiahouhui"] = "佚名",
+  ["cv:chi__xiahouhui"] = "暂无",
+  ["chifeishi"] = "匪氏",
+  [":chifeishi"] = "当你即将造成或受到伤害时，你可以令两名其他角色各展示两张红色牌，然后你选择其中一张获得之。",
+  ["chifeichen"] = "斐谌",
+  [":chifeichen"] = "每回合限一次，当你成为红色牌的目标后，你可以展示来源的所有手牌，若其手牌中没有与此牌类别相同的红色牌，你令此牌额外结算一次。",
+  ["#chifeichen-invoke"] = "斐谌：是否展示 %dest 的所有手牌？若其中没有同类别红色牌，此牌额外结算一次",
+  ["#chifeishi-choose"] = "匪氏：选择两名各有至少两张红色手牌的其他角色",
+  ["#chifeishi-show"] = "匪氏：请展示两张红色手牌",
+  ["#chifeishi-gain"] = "匪氏：选择获得其中一张展示牌",
+  ["#chimaoqi-put"] = "榫棋：你可以将本次获得的任意张牌置于武将牌上，称为“棋”",
+  ["#chimaoqi-gain"] = "榫棋：选择任意张“棋”获得",
+  ["@@chisusu_extra_effect-turn"] = "肃肃·额外结算",
+  ["@@chisusu_extra_target-turn"] = "肃肃·额外目标",
+  ["#chisusu-target"] = "肃肃：为此牌增加一个目标",
+  ["#chiyingshan-card"] = "映山：你可以连接一张手牌",
+  ["#chiyingshan-choice"] = "映山：此牌牌名字数等于你的体力值，选择一项",
+  ["chiyingshan_recover"] = "恢复1点体力",
+  ["chiyingshan_more"] = "本回合可以再发动一次映山",
+  ["chiyingshan_disable"] = "令神臬③本回合失效",
+  ["#chishennie-connect"] = "神臬：连接 %dest 的一张手牌",
+  ["chishennie_lengths-turn"] = "神臬禁用字数",
+  ["@@chixieque_no_cancel-turn"] = "翕阙·不能抵消",
+  ["@@chixieque_no_target-turn"] = "翕阙·不能成为目标",
+  ["#chitiaofeng"] = "调锋：将一张牌名字数不小于X且本阶段未使用过该花色的牌当【调剂盐梅】使用",
+  ["chitiaofeng_suits-phase"] = "调锋已用花色",
+  ["#chifenqing-choice"] = "焚情：选择对 %dest 执行的效果",
+  ["chifenqing_damage"] = "令对方受到你造成的1点火焰伤害",
+  ["chifenqing_turnover"] = "令对方翻面",
+  ["chifenqing_backwater"] = "背水：若仅一人选择，交换双方效果",
+  ["#chizhenjie-invoke"] = "赈节：是否观看牌堆顶两张牌，令你或 %dest 使用其中一张？",
+  ["#chizhenjie-user"] = "赈节：选择使用牌的角色",
+  ["#chizhenjie-use"] = "赈节：你可以使用其中一张牌",
+  ["#chiliaozhi-choose"] = "燎志：选择至多X名角色同时拼点",
+  ["chifushui_stage"] = "覆水进度",
+  ["chifushui_name_round"] = "覆水·牌名强化",
+  ["chifushui_color_round"] = "覆水·颜色强化",
+  ["#chihuangli-place"] = "荒离：选择展示牌堆顶或牌堆底的牌",
+  ["#chihuangli-number"] = "荒离：选择展示牌的数量",
+  ["#chihuangli-recover"] = "荒离：令一名角色恢复1点体力",
+  ["@@chihuangli_unlimited-turn"] = "荒离·下一张牌无限制",
+  ["#chisuhen-choice"] = "夙痕：视为发动焚情，请选择对 %dest 执行的效果",
+  ["#chisuhen-use"] = "夙痕：是否观看牌堆顶两张牌并使用其中一张？",
+  ["#chisuhen-card"] = "夙痕：你可以使用其中一张牌",
+  ["chisuhen_elemental-turn"] = "夙痕·属性伤害",
+  ["chijiwang_suits-turn"] = "寄望花色",
+  ["chijiwang_extra_target-turn"] = "寄望·额外结算",
+  ["#chidangliao-invoke"] = "荡燎：是否按此红色牌的牌名字数与X的大小执行效果？",
+  ["#chidangliao-use"] = "荡燎：选择视为使用的牌",
+  ["#chidangliao-target"] = "荡燎：请选择此牌的目标",
+  ["@chijiaotan_result"] = "皦谈上次结果",
+  ["#chijiaotan-dissenter"] = "皦谈：选择一名异议角色观看其手牌",
+  ["#chijiaotan-use"] = "皦谈：你可以使用该角色的议事牌",
+  ["#chijiaotan-previous"] = "%from 为本次议事增加了一张上次结果为 %arg 的牌",
+  ["#chiquege-slash"] = "阒阁：请选择一张不计入次数的火【杀】的目标",
+  ["#chiquege-swap"] = "阒阁：选择一名其他角色与其易位",
+  ["#chiquege-equal"] = "阒阁：你可以摸一张牌并恢复“睄睒”的一个选项",
+  ["#chiquege-restore"] = "阒阁：恢复“睄睒”的一个选项",
+  ["chiquege_hp-turn"] = "阒阁·满体力",
+  ["chiquege_hand-turn"] = "阒阁·满手牌",
+  ["#chishaoshan-first"] = "睄睒：选择要交换的第一个属性",
+  ["#chishaoshan-second"] = "睄睒：选择要交换的第二个属性",
+  ["chishaoshan_opt1"] = "体力值",
+  ["chishaoshan_opt2"] = "手牌上限",
+  ["chishaoshan_opt3"] = "出杀次数",
+  ["chishaoshan_opt4"] = "与一号位的距离",
+  ["chishaoshan_opt5"] = "手牌数",
+  ["chishaoshan_opt6"] = "体力上限",
+  ["#chiliangdao-choice"] = "倞道：你可以替换对 %dest 生效的牌面效果",
+  ["chiliangdao_names"] = "倞道已用牌名",
+  ["chiliangdao_used-round"] = "倞道本轮已发动",
+  ["#chilique-path"] = "离阙：选择本回合的牌名字数路径",
+  ["chilique_increase"] = "递增路径",
+  ["chilique_decrease"] = "递减路径",
+  ["#chilique-target"] = "离阙：为此牌增加至多 %arg 名目标",
+  ["@chilique_path-turn"] = "离阙路径",
+  ["chilique_invalid-turn"] = "离阙本回合失效",
+  ["#chixiarong"] = "霞容：将牌名字数之和等于X的手牌当目标牌使用或打出",
+  ["#chixiarong-target"] = "霞容：选择一名与你距离不小于X的角色观看其手牌",
+  ["chixiarong_names-round"] = "霞容已用牌名",
+  ["#chiyidi-target"] = "诣谛：为 %dest 发动的技能指定其中一个作用目标",
+  ["#chiyidi-modify"] = "诣谛：选择一名角色修改其牌名或颜色规则",
+  ["#chiyidi-invoke"] = "诣谛：是否修改一名角色的牌名或颜色规则？",
+  ["chiyidi_cardname"] = "修改牌名",
+  ["chiyidi_color"] = "修改颜色",
+  ["#chiyidi-name"] = "诣谛：选择牌名",
+  ["@chiyidi_name"] = "诣谛牌名",
+  ["@chiyidi_color"] = "诣谛颜色",
+  ["@chiyuanque_damage"] = "缘阙·属性伤害",
+  ["#chiyuanque-memory"] = "缘阙：选择一名其他角色追忆",
+
+  -- 王倩（王夫人，卫玠之母）
+  ["$chizhuoxi1"] = "叔宝既有清标，岂容尘俗相侵。",
+  ["$chizhuoxi2"] = "取舍之间，最须护得此心周全。",
+  ["$chizhuoxi3"] = "近身之物，且由妾身代为收存。",
+  ["$chizhuoxi4"] = "一息一擢，皆为卫氏门楣计。",
+  ["$chixiarong1"] = "遥见玉人照壁，便知吾儿归来。",
+  ["$chixiarong2"] = "叔宝体羸，不可再劳其远行。",
+  ["$chixiarong3"] = "容止出尘，亦招世人争相看杀。",
+  ["$chixiarong4"] = "隔帘遥望，唯愿吾儿长安。",
+  ["$chizhongliu1"] = "乱流虽急，慈母自当为子作舟。",
+  ["$chizhongliu2"] = "卫氏一门，岂可随波而没。",
+  ["$chizhongliu3"] = "纵是举世倾慕，也莫损叔宝分毫。",
+  ["$chizhongliu4"] = "立于中流，方护得身后清辉。",
+  ["~chi__wangqian"] = "叔宝，往后的路……为娘不能再护你了……",
+
+  -- 夏侯轻衣（《武神赵子龙》）
+  ["$chiqingya1"] = "长坂一别，此心仍系常山。",
+  ["$chiqingya2"] = "危崖试胆，且看谁先失了锋芒。",
+  ["$chiqingya3"] = "这一局，我以性命同你赌过。",
+  ["$chiqingya4"] = "银枪映雪，也照得见我的心意。",
+  ["$chiwangchen1"] = "纵隔千军，我也认得你的背影。",
+  ["$chiwangchen2"] = "尘烟遮不断，轻衣赴约之路。",
+  ["$chiwangchen3"] = "旧物尚在，故人便不算远。",
+  ["$chiwangchen4"] = "子龙，你只管向前，我自会追上。",
+  ["~chi__xiahouqingyi"] = "子龙……这一程，轻衣只能陪你到此了……",
+
+  -- 张春华
+  ["$chifenqing1"] = "仲达装病欺曹氏，却瞒不过枕边之人。",
+  ["$chifenqing2"] = "既见机密，便休想活着走出司马府。",
+  ["$chifenqing3"] = "无情未必真豪杰，焚心方知决绝。",
+  ["$chifenqing4"] = "夫妻数十载，今日便把旧情烧尽。",
+  ["$chisuhen1"] = "昔年药汤尚温，杀意却早已入骨。",
+  ["$chisuhen2"] = "旧痕不灭，来日必循迹而报。",
+  ["$chisuhen3"] = "仲达，你欠我的何止一声薄情。",
+  ["$chisuhen4"] = "忍得一时冷眼，方能等到烈火燎原。",
+  ["$chiyuanque1"] = "师儿昭儿不食，才换得你一句探问么？",
+  ["$chiyuanque2"] = "我自断食求死，不受你虚情相怜。",
+  ["$chiyuanque3"] = "司马氏的前程，从不是靠温情换来。",
+  ["$chiyuanque4"] = "此生缘尽，余下的路各自走罢。",
+  ["~chi__zhangchunhua"] = "冷眼看尽一生，到头来……仍是司马家的鬼……",
+
+  -- 杨众
+  ["$chidangliao1"] = "世传杨氏之学，此心亦承四世清烈。",
+  ["$chidangliao2"] = "随天子西入函谷，前路再险亦当奉驾。",
+  ["$chidangliao3"] = "渡过大河，众亦当率群吏步从圣驾。",
+  ["$chidangliao4"] = "一片丹心未烬，何须蓩亭侯爵来彰。",
+  ["~chi__yangzhong"] = "陛下既已还都……臣纵倒在途中，亦无憾了……",
+
+  -- 荀勖
+  ["$chiyilvRemake1"] = "考钟律于古制，正雅乐于今朝。",
+  ["$chiyilvRemake2"] = "十二律吕相生，自有天地之序。",
+  ["$chiyilvRemake3"] = "此笛合度，可为万音之准。",
+  ["$chiyilvRemake4"] = "宫商既定，朝野之声皆归其位。",
+  ["$chifufengRemake1"] = "扶风藏旧律，一管可校群音。",
+  ["$chifufengRemake2"] = "重铸清浊，方得声无差谬。",
+  ["$chifufengRemake3"] = "以笛定尺，古法未必不可复。",
+  ["$chifufengRemake4"] = "风过管弦，余音自归正声。",
+  ["$chixunfu1"] = "钟士季翻云覆雨，不可不防。",
+  ["$chixunfu2"] = "徇名者众，能察其覆者寡。",
+  ["$chixunfu3"] = "一言一色，皆须验明真伪。",
+  ["$chixunfu4"] = "朝局如谱，错一音便乱全章。",
+  ["$chidaojie1"] = "贾公所托，勖自当尽力而为。",
+  ["$chidaojie2"] = "礼法为表，权衡方是仕途之实。",
+  ["$chidaojie3"] = "此物归其所用，也算全了旧谊。",
+  ["$chidaojie4"] = "身居中书，进退岂能不计代价。",
+  ["~chi__xunxu"] = "律可校正，人心与身后之名……终难定准……",
+
+  -- 陆凯
+  ["$chijiantu1"] = "陛下所行，正使东吴步入蹇途。",
+  ["$chijiantu2"] = "前路纵险，老臣此谏亦不可止。",
+  ["$chijiantu3"] = "雷霆加身，也好过坐看社稷倾覆。",
+  ["$chijiantu4"] = "拆去蔽君之墙，方见天下实情。",
+  ["$chiduye1"] = "臣陈二十事，请陛下逐条省览。",
+  ["$chiduye2"] = "谒见非为私门，只为江东百姓。",
+  ["$chiduye3"] = "一事一议，皆关吴国存亡。",
+  ["$chiduye4"] = "忠言已尽，听与不听皆在君心。",
+  ["$chizelie1"] = "取民有度，施泽方可弥补国耗。",
+  ["$chizelie2"] = "宫室愈盛，吴民愈困，岂可不止！",
+  ["$chizelie3"] = "失其所有，更当济其不足。",
+  ["$chizelie4"] = "刚言犯颜，只求留一分生机。",
+  ["~chi__lukai"] = "二十条谏书俱在……陛下，莫再负江东了……",
+
+  -- 荀悦
+  ["$chijieji1"] = "采左氏之体，以编汉家旧事。",
+  ["$chijieji2"] = "群籍浩繁，借其要者便可成篇。",
+  ["$chijieji3"] = "史笔有所本，褒贬自有据。",
+  ["$chijieji4"] = "取一卷而观兴亡，亦足鉴今日。",
+  ["$chishuji1"] = "《汉纪》三十篇，务求约而有要。",
+  ["$chishuji2"] = "删繁成纪，使后来者得见治乱。",
+  ["$chishuji3"] = "献帝命臣纂史，臣不敢以乱世辞。",
+  ["$chishuji4"] = "一朝得失，当由直笔存于后世。",
+  ["~chi__xunyue"] = "《汉纪》已成……愿后来者能鉴汉室之衰……",
+
+  -- 王沈
+  ["$chitiaofeng1"] = "顺势调风，方可安立高阁之上。",
+  ["$chitiaofeng2"] = "一纸文章，也能调和朝中百味。",
+  ["$chitiaofeng3"] = "魏晋递嬗，执笔者须先辨风向。",
+  ["$chitiaofeng4"] = "盐梅调鼎，各依其主而用。",
+  ["$chijiwang1"] = "高贵乡公欲举兵，须速报大将军。",
+  ["$chijiwang2"] = "屋脊虽高，也最先知风从何来。",
+  ["$chijiwang3"] = "史书如何落笔，自有成王定论。",
+  ["$chijiwang4"] = "此举关乎身家，王某不能随君赴死。",
+  ["~chi__wangshen"] = "著魏书以饰一时，却不知后世……如何书我……",
+
+  -- 荀粲
+  ["$chicigu1"] = "圣人之言如锥，越思越觉刺骨。",
+  ["$chicigu2"] = "名教之外，自有不可言说之理。",
+  ["$chicigu3"] = "以身受寒，或可替卿分去热苦。",
+  ["$chicigu4"] = "此痛留在我身，总好过见卿独受。",
+  ["$chiyouming1"] = "才性幽明，岂是礼法一语可尽。",
+  ["$chiyouming2"] = "妇人之德不足论，颜色才是难得。",
+  ["$chiyouming3"] = "卿既归于幽冥，我独生又有何欢。",
+  ["$chiyouming4"] = "玄理可忘生死，却忘不得故人。",
+  ["~chi__xuncan"] = "卿去未久……粲今亦来相从……",
+
+  -- 荀采
+  ["$chijulei1"] = "此泪不肯示人，落地便化作烈火。",
+  ["$chijulei2"] = "既逼我再嫁，便休怪我以死明志。",
+  ["$chijulei3"] = "一杯薄酒，压不下心中决绝。",
+  ["$chijulei4"] = "炬火照堂，且看荀氏女儿的选择。",
+  ["$chizhichen1"] = "尘可染衣，不可污我守节之心。",
+  ["$chizhichen2"] = "父命与旧誓相逼，唯有一死相答。",
+  ["$chizhichen3"] = "门内喜乐喧天，我心早已化灰。",
+  ["$chizhichen4"] = "纵身归尘，也胜作负义之人。",
+  ["~chi__xuncai"] = "此身可改嫁……此心绝不改嫁……",
+
+  -- 老年陆逊
+  ["$chiquege1"] = "阒阁无声，唯余君书字字相逼。",
+  ["$chiquege2"] = "夷陵火尽，老臣之心亦渐冷矣。",
+  ["$chiquege3"] = "国事满堂，何故尽困于宫闱之争。",
+  ["$chiquege4"] = "封门谢客，只因再无话可进于至尊。",
+  ["$chishaoshan1"] = "察势移衡，昔破刘备亦是此理。",
+  ["$chishaoshan2"] = "强弱互易，只在主将一念之间。",
+  ["$chishaoshan3"] = "石亭设谋，以虚名换得魏军深入。",
+  ["$chishaoshan4"] = "盛衰相倚，岂有终日不移之势。",
+  ["$chimaoqi1"] = "以江为枰，以兵作子，须谋定而后动。",
+  ["$chimaoqi2"] = "旧棋尚存，新局却已非我可掌。",
+  ["$chimaoqi3"] = "一子落处，当看十步之后。",
+  ["$chimaoqi4"] = "收拢残局，或可再保东宫一线。",
+  ["~chi__luxun"] = "数番遣使责问……臣心已乱，吴国将何所托……",
+
+  -- 王沦
+  ["$chitianshi1"] = "弱冠举孝廉，吾意恬淡，未肯应命。",
+  ["$chitianshi2"] = "名门之势虽盛，不如守心自适。",
+  ["$chitianshi3"] = "来书且置案头，进退容我再思。",
+  ["$chitianshi4"] = "不争一时显达，自可免受尘扰。",
+  ["$chiminghuai1"] = "既入大将军府，所谋皆系朝局。",
+  ["$chiminghuai2"] = "父为魏司空，兄弟俱仕，吾岂忘家门所托。",
+  ["$chiminghuai3"] = "太原王氏经年积望，更须谨慎持守。",
+  ["$chiminghuai4"] = "胸中所怀，待时而应便是。",
+  ["~chi__wanglun"] = "年方二十余……尚未来得及报答家国……",
+
+  -- 年轻于吉
+  ["$chiliangdao1"] = "道法无定名，随念便可化生。",
+  ["$chiliangdao2"] = "一字偷天换日，凡眼岂识其中真意。",
+  ["$chiliangdao3"] = "《太平青领书》在此，诸法皆可参同。",
+  ["$chiliangdao4"] = "名相本虚，改之又有何难。",
+  ["$chifushui1"] = "符水既饮，沉疴自当立解。",
+  ["$chifushui2"] = "吴会百姓信我，非信你孙伯符。",
+  ["$chifushui3"] = "一碗清水，也可渡得有缘之人。",
+  ["$chifushui4"] = "诚心求道者，符水方能显灵。",
+  ["$chiyidi1"] = "众生各有所求，贫道为你指出一途。",
+  ["$chiyidi2"] = "点化一念，便教因果另归其主。",
+  ["$chiyidi3"] = "你眼中的定数，不过是贫道掌中变数。",
+  ["$chiyidi4"] = "欲诣大道，先须看破名色。",
+  ["~chi__yuji"] = "孙策纵能杀我……却杀不得吴人心中的于吉……",
+
+  -- 黄月英
+  ["$chiyingshan1"] = "山川入图，机括之势便已了然。",
+  ["$chiyingshan2"] = "木石相连，也能运转如生。",
+  ["$chiyingshan3"] = "孔明且看，此处再添一枚榫卯如何？",
+  ["$chiyingshan4"] = "不求颜色悦人，但以才智济世。",
+  ["$chishennie1"] = "矩臬既定，百般机巧皆有所循。",
+  ["$chishennie2"] = "木牛流马，贵在彼此机关相应。",
+  ["$chishennie3"] = "一线牵机，便可令全局同动。",
+  ["$chishennie4"] = "奇术非神授，不过格物穷理而已。",
+  ["~chi__huangyueying"] = "孔明，案上的图样……还差最后一笔……",
+
+  -- 诸葛果
+  ["$chihuangli1"] = "篁竹有节，天地亦自有礼数。",
+  ["$chihuangli2"] = "观叶知风，览三才而定吉凶。",
+  ["$chihuangli3"] = "青篁深处，正宜清修问道。",
+  ["$chihuangli4"] = "礼敬自然，方可窥见天机一线。",
+  ["$chisusu1"] = "簌簌竹音，已为下一步作答。",
+  ["$chisusu2"] = "前因落定，后果便循势而来。",
+  ["$chisusu3"] = "一叶动而百枝应，此即自然之理。",
+  ["$chisusu4"] = "心神澄明，便可听见万物相和。",
+  ["~chi__zhugeguo"] = "尘缘已了……果儿当归于仙山……",
+
+  -- 夏侯荣
+  ["$chidulie1"] = "父亲战死，我岂能独渡汉水偷生！",
+  ["$chidulie2"] = "虎父无犬子，夏侯荣愿死于此地！",
+  ["$chidulie3"] = "十三之身，亦知临阵守义。",
+  ["$chidulie4"] = "此击既出，便不问生还。",
+  ["$chijiaotan1"] = "经书过目成诵，诸君尽可相问。",
+  ["$chijiaotan2"] = "众说纷纭，不妨各陈其理。",
+  ["$chijiaotan3"] = "昔日幼坐宾席，所论亦不让成人。",
+  ["$chijiaotan4"] = "以言辨志，以色观心。",
+  ["~chi__xiahourong"] = "父亲既没于此……孩儿绝不过河……",
+
+  -- 夏侯徽
+  ["$chifeishi1"] = "司马子元，你的野心瞒不过枕边人。",
+  ["$chifeishi2"] = "两家姻亲，未必便是同心同德。",
+  ["$chifeishi3"] = "红妆之下，也有洞察朝局的眼睛。",
+  ["$chifeishi4"] = "取其所示，便知谁在暗怀异志。",
+  ["$chifeichen1"] = "既无同类相佐，此谋便要加倍奉还。",
+  ["$chifeichen2"] = "摊开手牌，也摊开你未说出口的心思。",
+  ["$chifeichen3"] = "斐然成章，只为劝君莫行险途。",
+  ["$chifeichen4"] = "红色既明，藏在暗处的算计便无所遁形。",
+  ["~chi__xiahouhui"] = "这杯毒酒……终究还是出自夫君之手么……",
 
 }
 
