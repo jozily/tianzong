@@ -6,16 +6,6 @@ local chishuowen = fk.CreateSkill{
 local COUNT_MARK = "chishuowen_count-turn"
 local USED_MARK = "chishuowen_used-turn"
 
-local function update_visible_marks(player, count)
-  local room = player.room
-  local x = (count or 0) + 1
-  room:setPlayerMark(player, "@[chidiaoyao_top]", x)
-  room:setPlayerMark(player, "@[chidiaoyao_bottom]", x)
-  local yang = player:getSwitchSkillState(chishuowen.name) == fk.SwitchYang
-  room:setPlayerMark(player, "@[chishuowen_yang]", yang and 1 or 0)
-  room:setPlayerMark(player, "@[chishuowen_yin]", yang and 0 or 1)
-end
-
 local function get_view_id(player)
   local room = Fk:currentRoom()
   if not room then return nil end
@@ -111,7 +101,8 @@ chishuowen:addEffect("viewas", {
     room:setPlayerMark(player, USED_MARK, 1)
 
     if player:hasSkill("chidiaoyao", true) then
-      update_visible_marks(player, x)
+      room:setPlayerMark(player, "@[chidiaoyao_top]", x)
+      room:setPlayerMark(player, "@[chidiaoyao_bottom]", x)
     end
   end,
 
@@ -125,18 +116,6 @@ chishuowen:addEffect("viewas", {
       and #get_choices(player) > 0
   end,
 })
-
-local refresh_switch_mark = {
-  can_refresh = function(self, event, target, player, data)
-    return target == player and player:hasSkill(chishuowen.name, true)
-      and data.card and data.card:hasSkill(chishuowen.name)
-  end,
-  on_refresh = function(self, event, target, player, data)
-    update_visible_marks(player, player:getMark(COUNT_MARK))
-  end,
-}
-chishuowen:addEffect(fk.CardUseFinished, refresh_switch_mark)
-chishuowen:addEffect(fk.CardRespondFinished, refresh_switch_mark)
 
 chishuowen:addEffect(fk.RoundStart, {
   can_refresh = function(self, event, target, player, data)

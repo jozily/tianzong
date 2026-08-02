@@ -31,8 +31,9 @@ chiyilvRemake:addEffect(fk.HpChanged, {
     local skillName = self.name
     
     local colors = { "red", "black" }
-    local choice = room:askToChoose(player, colors, skillName, "#chiyilvRemake-color")
-    local selectedColor = colors[tonumber(choice)]
+    local selectedColor = room:askToChoice(player, {
+      choices = colors, skill_name = skillName, prompt = "#chiyilvRemake-color",
+    })
     
     local deckCount = getChixunfuRecordCount(player)
     local revealed = {}
@@ -78,8 +79,9 @@ chiyilvRemake:addEffect(fk.EventPhaseStart, {
     local skillName = self.name
     
     local colors = { "red", "black" }
-    local choice = room:askToChoose(player, colors, skillName, "#chiyilvRemake-color")
-    local selectedColor = colors[tonumber(choice)]
+    local selectedColor = room:askToChoice(player, {
+      choices = colors, skill_name = skillName, prompt = "#chiyilvRemake-color",
+    })
     
     local deckCount = getChixunfuRecordCount(player)
     local revealed = {}

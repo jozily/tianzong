@@ -3,12 +3,12 @@ local niwoxiapo = fk.CreateSkill{
   tags = { Skill.Compulsory },
 }
 
-niwoxiapo:addEffect(fk.TargetSpecified, {
+niwoxiapo:addEffect(fk.PreCardUse, {
   can_refresh = function(self, event, target, player, data)
-    return target == player and player:hasSkill(niwoxiapo.name) and data.firstTarget
+    return target == player and player:hasSkill(niwoxiapo.name)
   end,
   on_refresh = function(self, event, target, player, data)
-    for _, p in ipairs(data.use.tos or {}) do
+    for _, p in ipairs(data.tos or {}) do
       if p and p:isAlive() and not p.chained then
         p:setChainState(true)
       end
@@ -41,6 +41,7 @@ local spec = {
   end,
 }
 
+niwoxiapo:addEffect(fk.CardUseFinished, spec)
 niwoxiapo:addEffect(fk.CardRespondFinished, spec)
 
 return niwoxiapo

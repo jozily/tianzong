@@ -72,7 +72,9 @@ chiduye:addEffect("active", {
         "chiduye4",
       }
       
-      local choice = room:askToChoose(owner, choices, skillName, "笃谒：选择一项", nil, true)
+      local choice = room:askToChoice(owner, {
+        choices = choices, skill_name = skillName, prompt = "#chiduye-choice",
+      })
       
       if choice == "chiduye1" then
         owner:drawCards(X, skillName)

@@ -25,7 +25,7 @@ local function resolve(player, card)
   else
     execute_greater(room, current, card)
     execute_lesser(current, x)
-    if player:isAlive() then room:turnOver(player) end
+    if player:isAlive() then player:turnOver() end
   end
 end
 

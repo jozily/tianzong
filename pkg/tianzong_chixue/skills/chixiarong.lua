@@ -39,7 +39,7 @@ chixiarong:addEffect("viewas", {
   before_use = function(self, player, use)
     local room = player.room
     local x = use.card:getNameLength(true)
-    room:turnOver(player)
+    player:turnOver()
     room:addTableMarkIfNeed(player, USED_NAMES, use.card.name)
     local targets = table.filter(room:getOtherPlayers(player), function(p) return player:distanceTo(p) >= x end)
     if #targets > 0 then

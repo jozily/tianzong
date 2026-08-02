@@ -8,7 +8,7 @@ local function execute(room, from, to, choice)
   if choice == "chifenqing_damage" and to:isAlive() then
     room:damage{ from = from, to = to, damage = 1, damageType = fk.FireDamage, skillName = chisuhen.name }
   elseif choice == "chifenqing_turnover" and to:isAlive() then
-    room:turnOver(to)
+    to:turnOver()
   end
 end
 

@@ -1,52 +1,77 @@
--- chishuji.lua (疏纪)
 local chishuji = fk.CreateSkill{
   name = "chishuji",
   tags = { Skill.Contract },
-  description = ":chishuji",
-  anim_type = "support",
 }
 
-Fk:loadTranslationTable{
-  ["chishuji"] = "疏纪",
-  [":chishuji"] = "契定技，当你每回合首次成为一张多目标锦囊牌的目标后，若此牌的合法目标数不小于你的手牌数，你弃置半数手牌（向下取整），并将此锦囊牌的目标数调整至与你手牌数相同（至少为1）。",
-}
+local USED_MARK = "chishuji_seen-turn"
 
-chishuji:addEffect(fk.TargetSpecified, {
-  anim_type = "support",
+local function is_contracted(player)
+  return table.contains(player:getTableMark("contracted_skills"), chishuji.name)
+end
+
+local function legal_targets(from, card)
+  if not from or not card then return {} end
+  return card:getAvailableTargets(from, { bypass_times = true })
+end
+
+chishuji:addEffect(fk.TargetConfirmed, {
+  anim_type = "control",
   can_trigger = function(self, event, target, player, data)
-    return target == player and player:hasSkill(self.name) and
-      player:usedSkillTimes(self.name, Player.HistoryRound) == 0 and
-      data.card and data.card:isCommonTrick() and
-      #data.tos > 1
+    return target == player and player:hasSkill(chishuji.name) and player:getMark(USED_MARK) == 0 and
+      data.card and data.card:isCommonTrick() and #data:getAllTargets() > 1
+  end,
+  on_cost = function(self, event, target, player, data)
+    local room = player.room
+    room:setPlayerMark(player, USED_MARK, 1)
+    local x = player:getHandcardNum()
+    if #legal_targets(data.from, data.card) < x then return false end
+    if is_contracted(player) then return true end
+    return room:askToSkillInvoke(player, {
+      skill_name = chishuji.name,
+      prompt = "#chishuji-invoke:::" .. x,
+    })
   end,
   on_use = function(self, event, target, player, data)
     local room = player.room
-    local skillName = self.name
-    local handCount = #player:getCardIds("h")
-    local targetCount = #data.tos
-    
-    if targetCount >= handCount then
-      local discard = math.floor(handCount / 2)
-      if discard > 0 then
-        local cards = player:getCardIds("h")
-        local toDiscard = {}
-        for i = 1, discard do
-          table.insert(toDiscard, cards[i])
-        end
-        room:throwCard(toDiscard, skillName, player, player)
-      end
-      
-      local newHandCount = #player:getCardIds("h")
-      local newTargets = {}
-      for i = 1, math.max(1, newHandCount) do
-        if i <= #data.tos then
-          table.insert(newTargets, data.tos[i])
-        end
-      end
-      
-      if #newTargets > 0 then
-        data.tos = newTargets
-      end
+    room:addTableMarkIfNeed(player, "contracted_skills", chishuji.name)
+
+    local discard_num = math.floor(player:getHandcardNum() / 2)
+    if discard_num > 0 then
+      room:askToDiscard(player, {
+        min_num = discard_num,
+        max_num = discard_num,
+        include_equip = false,
+        skill_name = chishuji.name,
+        cancelable = false,
+        prompt = "#chishuji-discard:::" .. discard_num,
+      })
+    end
+    if player.dead then return end
+
+    local wanted = math.max(1, player:getHandcardNum())
+    local current = data:getAllTargets()
+    local pool = table.simpleClone(current)
+    for _, p in ipairs(legal_targets(data.from, data.card)) do
+      table.insertIfNeed(pool, p)
+    end
+    wanted = math.min(wanted, #pool)
+
+    local chosen = pool
+    if #pool > wanted then
+      chosen = room:askToChoosePlayers(player, {
+        targets = pool,
+        min_num = wanted,
+        max_num = wanted,
+        cancelable = false,
+        skill_name = chishuji.name,
+        prompt = "#chishuji-target:::" .. wanted,
+      })
+    end
+    for _, p in ipairs(table.simpleClone(current)) do
+      if not table.contains(chosen, p) then data:cancelTarget(p) end
+    end
+    for _, p in ipairs(chosen) do
+      if not table.contains(current, p) then data:addTarget(p) end
     end
   end,
 })

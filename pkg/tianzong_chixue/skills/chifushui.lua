@@ -1,4 +1,7 @@
-local chifushui = fk.CreateSkill{ name = "chifushui" }
+local chifushui = fk.CreateSkill{
+   name = "chifushui" ,
+   related_skills = "chiyidi",
+  }
 local STAGE = "chifushui_stage"
 
 chifushui:addEffect(fk.CardRespondFinished, {

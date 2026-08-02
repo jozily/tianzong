@@ -9,13 +9,13 @@ niwochencang:addEffect("viewas", {
   prompt = "#niwochencang",
   
   interaction = function(self, player)
-    if player:usedSkillTimes(niwochencang.name, Player.HistoryTurn) > 0 then return end
+    if player:usedSkillTimes(niwochencang.name, Player.HistoryRound) > 0 then return end
     
     local room = player.room
     local targets = {}
     for _, p in ipairs(room:getOtherPlayers(player)) do
       if p:isAlive() then
-        table.insert(targets, p.id)
+        table.insert(targets, p)
       end
     end
     
@@ -46,13 +46,26 @@ niwochencang:addEffect("viewas", {
 
   before_use = function(self, player, use)
     local room = player.room
-    for _, target_player in ipairs(use.tos or {}) do
-      room:addTableMark(target_player, "niwoshudu_minus", player.id)
+    local targets = {}
+    for _, p in ipairs(room:getOtherPlayers(player)) do
+      if p:isAlive() then
+        table.insert(targets, p.id)
+      end
     end
-    if use.responseToEvent and use.responseToEvent.from then
-      room:addTableMark(player, "niwoshudu_minus", use.responseToEvent.from.id)
+    
+    if #targets == 0 then return "" end
+    
+    local chosen = room:askToChoosePlayers(player, {
+      targets = targets, min_num = 1, max_num = 1,
+      skill_name = niwochencang.name, prompt = "#niwochencang-choose",
+      cancelable = false,
+    })
+    local target_player = chosen[1]
+    
+    if target_player then
+      target_player:addSkillDistance(player, -1)
+      room:addTableMark(player, ONCE_MARK, 1)
     end
-    room:addTableMark(player, ONCE_MARK, 1)
   end,
 })
 

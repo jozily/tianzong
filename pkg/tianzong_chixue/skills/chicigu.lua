@@ -163,7 +163,9 @@ chicigu:addEffect(fk.EventPhaseEnd, {
     if #ciCards == 0 then return end
     
     local choices = { "chicigu1", "chicigu2" }
-    local choice = room:askToChoose(player, choices, skillName, "#chicigu-end")
+    local choice = room:askToChoice(player, {
+      choices = choices, skill_name = skillName, prompt = "#chicigu-end",
+    })
     
     if choice == "chicigu1" then
       room:throwCard(ciCards, skillName, player, player)
@@ -172,13 +174,17 @@ chicigu:addEffect(fk.EventPhaseEnd, {
       local targetList = {}
       for _, p in ipairs(targets) do
         if p ~= player then
-          table.insert(targetList, p.id)
+          table.insert(targetList, p)
         end
       end
       
       if #targetList > 0 then
-        local targetId = room:askToChoose(player, targetList, skillName, "#chicigu-choose-player")
-        local targetPlayer = room:getPlayerById(tonumber(targetId))
+        local chosen = room:askToChoosePlayers(player, {
+          targets = targetList, min_num = 1, max_num = 1,
+          skill_name = skillName, prompt = "#chicigu-choose-player",
+          cancelable = false,
+        })
+        local targetPlayer = chosen[1]
         
         local card = Fk:cloneCard("slash")
         card.skillName = skillName

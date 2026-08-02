@@ -26,7 +26,9 @@ chiqihai:addEffect(fk.Damaged, {
     local skillName = self.name
     
     local choices = { "chiqihai1", "chiqihai2" }
-    local choice = room:askToChoose(from, choices, skillName, "#chiqihai-choose")
+    local choice = room:askToChoice(from, {
+      choices = choices, skill_name = skillName, prompt = "#chiqihai-choose",
+    })
     
     if choice == "chiqihai1" then
       local cards = from:getCardIds("he")

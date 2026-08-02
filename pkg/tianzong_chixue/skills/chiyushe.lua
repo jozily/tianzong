@@ -5,16 +5,13 @@ local chiyushe = fk.CreateSkill{
 local LAST_MARK = "chiyushe_last-turn"
 local USED_MARK = "@$chiyushe"
 
+local function is_contracted(player)
+  return table.contains(player:getTableMark("contracted_skills"), chiyushe.name)
+end
+
 local function target_num(player, card)
-  if not card or player:prohibitUse(card) or not player:canUse(card) then return 0 end
-  if card.skill:getMinTargetNum() == 0 and not card.multiple_targets then return 1 end
-  local n = 0
-  for _, p in ipairs(player.room.alive_players) do
-    if not player:isProhibited(p, card) and card.skill:modTargetFilter(player, p, {}, card) then
-      n = n + 1
-    end
-  end
-  return n
+  if not card then return 0 end
+  return #card:getAvailableTargets(player, { bypass_times = true })
 end
 
 local function candidates(player, wanted)
@@ -48,6 +45,7 @@ chiyushe:addEffect(fk.CardUseFinished, {
       data.extra_data.chiyushe_previous ~= nil
   end,
   on_cost = function(self, event, target, player, data)
+    if is_contracted(player) then return true end
     return player.room:askToSkillInvoke(player, {
       skill_name = chiyushe.name,
       prompt = "#chiyushe-invoke:::" .. data.extra_data.chiyushe_previous,
@@ -56,6 +54,7 @@ chiyushe:addEffect(fk.CardUseFinished, {
   on_use = function(self, event, target, player, data)
     local room = player.room
     local x = data.extra_data.chiyushe_previous
+    room:addTableMarkIfNeed(player, "contracted_skills", chiyushe.name)
     player:drawCards(x, chiyushe.name)
     if player.dead then return end
 

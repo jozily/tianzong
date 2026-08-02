@@ -30,7 +30,7 @@ chijulei:addEffect("viewas", {
     if table.contains(FIRE_NAMES, use.card.name) then
       room:setPlayerChained(player, true)
     else
-      room:turnOver(player)
+      player:turnOver()
     end
 
     local dust_players = {}

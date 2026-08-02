@@ -40,7 +40,7 @@ chicangsui_draw:addEffect("active", {
   anim_type = "drawcard",
   prompt = function(self, player)
     local x = get_after_abort_len(player)
-    return "#chicangsui-status:::" .. x .. ":chicangsui_unavailable"
+    return "#chicangsui-draw:::" .. x
   end,
   card_num = 0,
   target_num = 0,

@@ -2,14 +2,16 @@ local niwoshucai = fk.CreateSkill{
   name = "niwoshucai",
 }
 
-local ROUND_MARK = "niwoshucai_suits-round"
-local SHOW_MARK = "@niwoshucai-round"
-local SUIT_SYMBOLS = {
-  log_spade = "♠",
-  log_heart = "♥",
-  log_club = "♣",
-  log_diamond = "♦",
-}
+local ROUND_MARK = "@$niwoshucai-round"
+local SHOW_MARK = "@[niwoshucai]"
+
+local function suit_symbol(s)
+  if s == "log_spade" then return "♠" end
+  if s == "log_heart" then return "♥" end
+  if s == "log_club" then return "♣" end
+  if s == "log_diamond" then return "♦" end
+  return s
+end
 
 local function is_lowest_or_tied(room, player)
   return table.every(room.alive_players, function(p)
@@ -22,41 +24,57 @@ local function get_available_suits(player)
   local hand = player:getCardIds("h")
   local suits = table.filter({"log_spade", "log_heart", "log_club", "log_diamond"}, function(suit)
     return not table.contains(used, suit) and table.find(hand, function(id)
-      return Fk:getCardById(id):getSuitString(true) == suit and not player:prohibitDiscard(id)
+      return Fk:getCardById(id):getSuitString(true) == suit
     end)
   end)
   return suits
 end
 
+Fk:addQmlMark{
+  name = "niwoshucai",
+  how_to_show = function(name, value, p)
+    if not p then return "" end
+    local suits = p:getTableMark(ROUND_MARK)
+    if type(suits) ~= "table" or #suits == 0 then return "" end
+    return table.concat(table.map(suits, suit_symbol), "/")
+  end,
+  qml_data = function(name, value, p)
+    return {}
+  end,
+  qml_path = function(name, value, p)
+    return ""
+  end,
+}
+
 niwoshucai:addEffect("viewas", {
-  pattern = "jink",
+  pattern = "jink,fire__slash",
   prompt = "#niwoshucai",
 
   interaction = function(self, player)
     local suits = get_available_suits(player)
     if #suits == 0 then return end
 
-    local names = player:getViewAsCardNames(niwoshucai.name, {"jink"})
+    local names = player:getViewAsCardNames(niwoshucai.name, {"jink", "fire__slash"})
     if #names > 0 then
       return UI.CardNameBox {
         choices = names,
-        all_choices = {"jink"},
+        all_choices = {"jink", "fire__slash"},
       }
     end
   end,
 
+  filter_pattern = {
+    min_num = 0,
+    max_num = 0,
+    pattern = "",
+    subcards = {}
+  },
+
   card_filter = Util.FalseFunc,
 
   view_as = function(self, player, cards)
-    if not self.interaction or not self.interaction.data then 
-      return nil 
-    end
-    local card_name = self.interaction.data
-    if type(card_name) ~= "string" then
-      return nil
-    end
-    local c = Fk:cloneCard(card_name)
-    if not c then return nil end
+    if not self.interaction.data then return nil end
+    local c = Fk:cloneCard(self.interaction.data)
     c.skillName = niwoshucai.name
     return c
   end,
@@ -85,10 +103,7 @@ niwoshucai:addEffect("viewas", {
 
     room:throwCard(ids, niwoshucai.name, player, player)
     room:addTableMark(player, ROUND_MARK, choice)
-    local symbols = table.map(player:getTableMark(ROUND_MARK), function(suit)
-      return SUIT_SYMBOLS[suit] or suit
-    end)
-    room:setPlayerMark(player, SHOW_MARK, table.concat(symbols))
+    room:setPlayerMark(player, SHOW_MARK, 1)
 
     if not player.dead and is_lowest_or_tied(room, player) then
       local ids2 = room:getNCards(2, "bottom")
@@ -97,17 +112,17 @@ niwoshucai:addEffect("viewas", {
       end
     end
   end,
-  enabled_at_play = function(self, player)
-    return #get_available_suits(player) > 0
-  end,
-  enabled_at_response = function(self, player, response)
-    return #get_available_suits(player) > 0
-  end,
 })
 
-Fk:loadTranslationTable{
-  ["#niwoshucai"] = "殊彩：选择要视为使用的牌",
-  ["#niwoshucai-suit"] = "殊彩：选择一种花色弃置你的所有该花色的手牌",
-}
+niwoshucai:addEffect(fk.RoundStart, {
+  can_refresh = function(self, event, target, player, data)
+    return target == player and player:hasSkill(niwoshucai.name)
+  end,
+  on_refresh = function(self, event, target, player, data)
+    local room = player.room
+    room:setPlayerMark(player, ROUND_MARK, 0)
+    room:setPlayerMark(player, SHOW_MARK, 0)
+  end,
+})
 
 return niwoshucai

@@ -4,7 +4,8 @@ local chijuanxiang = fk.CreateSkill{
 
 local NAME_MARK = "@$chijuanxiang_names-turn"
 local BLOCK_MARK = "chijuanxiang_block-turn"
-local USED_MARK = "chijuanxiang_used-turn"
+local COUNT_MARK = "chishuowen_count-turn"
+local USED_MARK = "chishuowen_used-turn"
 
 local function get_used_name_count(player)
   return #player:getTableMark(NAME_MARK)
@@ -15,11 +16,7 @@ local function reset_shuowen(player)
   room:setPlayerMark(player, USED_MARK, 0)
 end
 
-local function get_shuowen_count(player)
-  return player:usedSkillTimes("chishuowen", Player.HistoryRound) + 1
-end
-
--- 每个回合结束都清除"本回合"记录
+-- 每个回合结束都清除“本回合”记录
 chijuanxiang:addEffect(fk.TurnEnd, {
   can_refresh = function(self, event, target, player, data)
     return player:hasSkill(chijuanxiang.name, true)
@@ -27,12 +24,13 @@ chijuanxiang:addEffect(fk.TurnEnd, {
   on_refresh = function(self, event, target, player, data)
     local room = player.room
     room:setPlayerMark(player, NAME_MARK, 0)
+    room:setPlayerMark(player, COUNT_MARK, 0)
     room:setPlayerMark(player, BLOCK_MARK, 0)
     room:setPlayerMark(player, USED_MARK, 0)
   end,
 })
 
--- 记录"本回合使用过的牌名"
+-- 记录“本回合使用过的牌名”
 chijuanxiang:addEffect(fk.AfterCardUseDeclared, {
   can_refresh = function(self, event, target, player, data)
     return target == player and player:hasSkill(chijuanxiang.name)
@@ -51,6 +49,7 @@ chijuanxiang:addEffect(fk.AfterCardsMove, {
     local hand_changed = false
     local before = player:getHandcardNum()
 
+    -- 估算变化前的手牌数：AfterCardsMove 时 player:getHandcardNum() 已经是变化后
     local delta = 0
     for _, move in ipairs(data) do
       if move.to == player and move.toArea == Card.PlayerHand then
@@ -73,13 +72,15 @@ chijuanxiang:addEffect(fk.AfterCardsMove, {
     local after = before
     local real_before = after - delta
 
+    -- 确实发生了手牌数变化
     if real_before == after then
       return false
     end
 
-    local x = get_shuowen_count(player)
+    local x = player:getMark(COUNT_MARK)
     if type(x) ~= "number" or x <= 0 then return false end
 
+    -- 关键判定：变化后手牌数 == 本回合使用过的牌名数
     return after == get_used_name_count(player)
   end,
 
@@ -92,11 +93,12 @@ chijuanxiang:addEffect(fk.AfterCardsMove, {
 
   on_use = function(self, event, target, player, data)
     local room = player.room
-    local x = get_shuowen_count(player)
+    local x = player:getMark(COUNT_MARK)
     if type(x) ~= "number" or x <= 0 then return end
 
     room:setPlayerMark(player, BLOCK_MARK, 1)
 
+    -- 重置朔闻“每回合限一次”
     reset_shuowen(player)
 
     local choice = room:askToChoice(player, {

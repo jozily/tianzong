@@ -46,6 +46,10 @@ niwo__zhaoe:addSkills { "niwotianmeng", "niwofuxue", "niwochenghen", "niwochoulu
 
 
 Fk:loadTranslationTable{
+  ["#niwobailan-invoke"] = "摆烂：你可以发动此限定技",
+  ["#niwocangji-invoke"] = "藏机：你可以发动此限定技",
+  ["#niwochoulu-invoke"] = "仇戮：你可以对伤害来源使用一张无距离限制的【杀】",
+  ["#niwoqianzhun-invoke"] = "谦准：你可以发动此技能",
   ["#niwochoulu-use"] = "仇戮：请对 %dest 使用一张无距离限制的【杀】",
   ["@$niwochoulu"] = "仇戮",
   ["@$niwochencang"] = "沉沧",

@@ -56,7 +56,9 @@ chixinmai:addEffect("active", {
     end
     
     local choices = { "chixinmai1", "chixinmai2" }
-    local choice = room:askToChoose(target, choices, skillName, "#chixinmai-choose")
+    local choice = room:askToChoice(target, {
+      choices = choices, skill_name = skillName, prompt = "#chixinmai-choose",
+    })
     
     if choice == "chixinmai1" then
       room:damage({

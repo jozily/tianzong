@@ -9,7 +9,7 @@ niwochencangRemake:addEffect("viewas", {
   prompt = "#niwochencangRemake",
   
   interaction = function(self, player)
-    if player:usedSkillTimes(niwochencangRemake.name, Player.HistoryTurn) > 0 then return end
+    if player:usedSkillTimes(niwochencangRemake.name, Player.HistoryRound) > 0 then return end
     
     local room = player.room
     local targets = {}

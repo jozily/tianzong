@@ -44,11 +44,7 @@ end
 
 chicangsui:addEffect("viewas", {
   pattern = ".",
-  prompt = function(self, player)
-    local x = get_after_abort_len(player)
-    local available = #get_available_virtual_names(player) > 0 and "chicangsui_available" or "chicangsui_unavailable"
-    return "#chicangsui-status:::" .. x .. ":" .. available
-  end,
+  prompt = "#chicangsui",
 
   interaction = function(self, player)
     if player:getMark(USED_MARK) ~= 0 then return end

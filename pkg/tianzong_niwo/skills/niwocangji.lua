@@ -12,13 +12,16 @@ niwocangji:addEffect(fk.EventPhaseStart, {
       and player.phase == Player.Play
   end,
   on_cost = function(self, event, target, player, data)
-    return player.room:askToSkillInvoke(player, { skill_name = niwocangji.name })
+    return player.room:askToSkillInvoke(player, {
+      skill_name = niwocangji.name,
+      prompt = "#niwocangji-invoke",
+    })
   end,
   on_use = function(self, event, target, player, data)
     local room = player.room
     local targets = {}
     for _, p in ipairs(room.alive_players) do
-      if p ~= player and not p:inMyAttackRange(player) then
+      if p ~= player and not player:inMyAttackRange(p) then
         table.insert(targets, p)
       end
     end
@@ -26,13 +29,18 @@ niwocangji:addEffect(fk.EventPhaseStart, {
     if #targets == 0 then return end
     
     for _, target_player in ipairs(targets) do
-      local judge_result = { who = target_player, reason = niwocangji.name, pattern = "." }
-      room:judge(judge_result)
-      local card = judge_result.card
-      local damage_num = card:getNameLength(true)
-      local damage_type = card.type == Card.TypeBasic and fk.ThunderDamage
-        or card.type == Card.TypeTrick and fk.FireDamage
-        or fk.IceDamage
+      local judge_result = room:judge(target_player, niwocangji.name)
+      local damage_num = judge_result.card:getNameLength(true)
+      local damage_type = nil
+      
+      local suit = judge_result.card:getSuit()
+      if suit == Card.Spade or suit == Card.Club then
+        damage_type = fk.Thunder
+      elseif suit == Card.Heart then
+        damage_type = fk.Fire
+      elseif suit == Card.Diamond then
+        damage_type = fk.Ice
+      end
       
       room:damage({
         from = player,
@@ -43,15 +51,8 @@ niwocangji:addEffect(fk.EventPhaseStart, {
       })
     end
     
-    for _, p in ipairs(room.alive_players) do
-      local to_lose = table.filter(p:getSkillNameList(), function(name)
-        return Fk:translate(":" .. name):find("距离", 1, true) ~= nil
-      end)
-      if #to_lose > 0 then
-        room:handleAddLoseSkills(p, table.concat(table.map(to_lose, function(name) return "-" .. name end), "|"))
-      end
-    end
-    room:handleAddLoseSkills(player, "-niwochencang|niwochencangRemake|niwochoulu|weimu")
+    player:removeSkill("niwochencang")
+    player:addSkill("niwochencangRemake")
   end,
 })
 
