@@ -1,10 +1,12 @@
 local tianzong_niwo = require "packages/tianzong/pkg/tianzong_niwo"
 local tianzong_chixue = require "packages/tianzong/pkg/tianzong_chixue"
 local tianzong_cards = require "packages/tianzong/pkg/tianzong_cards"
+local tianzong_limited = require "packages/tianzong/pkg/tianzong_limited"
 
 
 return {  
   tianzong_niwo,
   tianzong_chixue,
   tianzong_cards,
+  tianzong_limited,
 }
