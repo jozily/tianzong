@@ -146,6 +146,26 @@ chijinghong:addEffect("viewas", {
   end,
 })
 
+chijinghong:addTest(function(room, me)
+  room:setCurrent(me)
+  me.phase = Player.Play
+
+  local names = get_available_basic_names(me)
+  lu.assertTrue(table.contains(names, "analeptic"))
+
+  me.hp = me.maxHp - 1
+  names = get_available_basic_names(me)
+  lu.assertTrue(table.contains(names, "peach"))
+
+  local interaction = UI.TianzongCardNameBox {
+    choices = names,
+    all_choices = Fk:getAllCardNames("b"),
+  }
+  lu.assertEquals(interaction.type, "cardname")
+  lu.assertTrue(table.contains(interaction.choices, "analeptic"))
+  lu.assertTrue(table.contains(interaction.choices, "peach"))
+end)
+
 Fk:loadTranslationTable{
   ["chijinghong"] = "惊鸿",
   [":chijinghong"] = "你可以展示当前回合角色区域内的一张牌并将之置于牌堆顶或牌堆底，视为使用或打出一张基本牌，然后移除此牌名。当你的蓄谋牌有已移除牌名时，恢复之。",
