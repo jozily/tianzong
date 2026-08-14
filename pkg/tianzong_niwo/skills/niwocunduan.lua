@@ -24,7 +24,7 @@ niwocunduan:addEffect("viewas", {
   prompt = "#niwocunduan",
   interaction = function(self, player)
     local names = player:getViewAsCardNames(niwocunduan.name, Fk:getAllCardNames("b"))
-    if #names > 0 then return UI.CardNameBox{ choices = names, all_choices = names } end
+    if #names > 0 then return UI.TianzongCardNameBox{ choices = names, all_choices = names } end
   end,
   card_filter = Util.FalseFunc,
   view_as = function(self, player, cards)

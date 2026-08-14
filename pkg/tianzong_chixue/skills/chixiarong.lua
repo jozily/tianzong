@@ -17,7 +17,7 @@ chixiarong:addEffect("viewas", {
   prompt = "#chixiarong",
   interaction = function(self, player)
     local choices = names(player)
-    if #choices > 0 then return UI.CardNameBox{ choices = choices, all_choices = choices } end
+    if #choices > 0 then return UI.TianzongCardNameBox{ choices = choices, all_choices = choices } end
   end,
   card_filter = function(self, player, to_select, selected)
     if not self.interaction.data or not table.contains(player:getCardIds("h"), to_select) then return false end

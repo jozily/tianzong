@@ -84,7 +84,7 @@ chixique:addEffect("active", {
     local all_names = get_names_leq(remain)
     local names = player:getViewAsCardNames("chidieren", all_names)
     if #names == 0 then return end
-    return UI.CardNameBox {
+    return UI.TianzongCardNameBox {
       choices = names,
       all_choices = all_names,
     }

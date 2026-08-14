@@ -142,7 +142,7 @@ chijueyi:addEffect("viewas", {
 
     names = player:getViewAsCardNames(chijueyi.name, names)
     if #names > 0 then
-      return UI.CardNameBox {
+      return UI.TianzongCardNameBox {
         choices = names,
         all_choices = names,
       }

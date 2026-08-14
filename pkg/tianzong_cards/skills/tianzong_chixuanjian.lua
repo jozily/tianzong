@@ -20,7 +20,7 @@ chixuanjian:addEffect("viewas", {
   handly_pile = true,
   interaction = function(self, player)
     local names = slash_names(player)
-    if #names > 0 then return UI.CardNameBox{ choices = names, all_choices = names } end
+    if #names > 0 then return UI.TianzongCardNameBox{ choices = names, all_choices = names } end
   end,
   card_filter = function(self, player, to_select, selected)
     local card = Fk:getCardById(to_select)

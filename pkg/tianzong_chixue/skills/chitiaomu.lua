@@ -32,7 +32,7 @@ chitiaomu:addEffect("viewas", {
   prompt = "#chitiaomu",
   interaction = function(self, player)
     local choices = names(player)
-    if #choices > 0 then return UI.CardNameBox{ choices = choices, all_choices = Fk:getAllCardNames("bt") } end
+    if #choices > 0 then return UI.TianzongCardNameBox{ choices = choices, all_choices = Fk:getAllCardNames("bt") } end
   end,
   card_filter = Util.FalseFunc,
   view_as = function(self, player, cards)

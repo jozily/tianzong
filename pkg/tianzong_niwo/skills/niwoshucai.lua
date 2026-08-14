@@ -56,7 +56,7 @@ niwoshucai:addEffect("viewas", {
 
     local names = player:getViewAsCardNames(niwoshucai.name, {"jink", "fire__slash"})
     if #names > 0 then
-      return UI.CardNameBox {
+      return UI.TianzongCardNameBox {
         choices = names,
         all_choices = {"jink", "fire__slash"},
       }

@@ -24,7 +24,7 @@ niwochencang:addEffect("viewas", {
     local all_names = Fk:getAllCardNames("bt")
     local names = player:getViewAsCardNames(niwochencang.name, all_names)
     if #names > 0 then
-      return UI.CardNameBox { choices = names, all_choices = all_names }
+      return UI.TianzongCardNameBox { choices = names, all_choices = all_names }
     end
   end,
 

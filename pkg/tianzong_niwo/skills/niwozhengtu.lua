@@ -14,7 +14,7 @@ niwozhengtu:addEffect("viewas", {
   prompt = "#niwozhengtu",
   interaction = function(self, player)
     local names = damage_names(player)
-    if #names > 0 then return UI.CardNameBox{ choices = names, all_choices = names } end
+    if #names > 0 then return UI.TianzongCardNameBox{ choices = names, all_choices = names } end
   end,
   card_filter = function(self, player, to_select, selected)
     return #selected == 0 and Fk:getCardById(to_select).type == Card.TypeEquip

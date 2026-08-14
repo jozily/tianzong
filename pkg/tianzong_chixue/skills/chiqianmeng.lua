@@ -17,7 +17,7 @@ chiqianmeng:addEffect("viewas", {
   interaction = function(self, player)
     local names = card_names(player)
     if #names > 0 then
-      return UI.CardNameBox{ choices = names, all_choices = Fk:getAllCardNames("bt") }
+      return UI.TianzongCardNameBox{ choices = names, all_choices = Fk:getAllCardNames("bt") }
     end
   end,
   card_filter = Util.FalseFunc,

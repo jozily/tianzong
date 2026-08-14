@@ -74,7 +74,7 @@ chijinghong:addEffect("viewas", {
 
     local names = get_available_basic_names(player)
     if #names > 0 then
-      return UI.CardNameBox {
+      return UI.TianzongCardNameBox {
         choices = names,
         all_choices = names,
       }

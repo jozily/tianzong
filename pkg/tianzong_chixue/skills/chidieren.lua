@@ -19,7 +19,7 @@ chidieren:addEffect("viewas", {
   interaction = function(self, player)
     local all_names = Fk:getAllCardNames("bt")
     local names = player:getViewAsCardNames(chidieren.name, all_names, nil, player:getTableMark(ROUND_MARK))
-    return UI.CardNameBox {
+    return UI.TianzongCardNameBox {
       choices = names,
       all_choices = all_names,
     }

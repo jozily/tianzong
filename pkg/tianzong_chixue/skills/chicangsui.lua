@@ -52,7 +52,7 @@ chicangsui:addEffect("viewas", {
 
     local names = get_available_virtual_names(player)
     if #names > 0 then
-      return UI.CardNameBox { choices = names, all_choices = names }
+      return UI.TianzongCardNameBox { choices = names, all_choices = names }
     end
   end,
 

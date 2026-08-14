@@ -12,7 +12,7 @@ niwoyuhe:addEffect("viewas", {
   prompt = "#niwoyuhe",
   interaction = function(self, player)
     local names = player:getViewAsCardNames(niwoyuhe.name, Fk:getAllCardNames("b"), nil, player:getTableMark(USED_MARK))
-    if #names > 0 then return UI.CardNameBox{ choices = names, all_choices = names } end
+    if #names > 0 then return UI.TianzongCardNameBox{ choices = names, all_choices = names } end
   end,
   card_filter = Util.FalseFunc,
   view_as = function(self, player, cards)

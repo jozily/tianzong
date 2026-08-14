@@ -15,7 +15,7 @@ chijulei:addEffect("viewas", {
   interaction = function(self, player)
     local names = card_names(player)
     if #names > 0 then
-      return UI.CardNameBox{ choices = names, all_choices = table.connect(FIRE_NAMES, TURNOVER_NAMES) }
+      return UI.TianzongCardNameBox{ choices = names, all_choices = table.connect(FIRE_NAMES, TURNOVER_NAMES) }
     end
   end,
   card_filter = Util.FalseFunc,

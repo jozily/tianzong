@@ -62,7 +62,7 @@ chishuowen:addEffect("viewas", {
     local all_names = Fk:getAllCardNames("bt")
     local choices = get_choices(player)
     if #choices == 0 then return end
-    return UI.CardNameBox{
+    return UI.TianzongCardNameBox{
       choices = choices,
       all_choices = all_names,
     }
