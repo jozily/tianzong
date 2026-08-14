@@ -1,6 +1,6 @@
 local chifushui = fk.CreateSkill{
    name = "chifushui" ,
-   related_skills = "chiyidi",
+   related_skills = { "chiyidi" },
   }
 local STAGE = "chifushui_stage"
 
@@ -24,5 +24,15 @@ chifushui:addEffect(fk.CardRespondFinished, {
     end
   end,
 })
+
+chifushui:addTest(function()
+  for _, entry in ipairs(Fk.generals["chi__yuji"].all_skills) do
+    local name = entry[1]
+    for _ = 1, 2 do
+      lu.assertNotNil(Fk.skill_skels[name])
+      for _, related in ipairs(Fk.skill_skels[name].related_skills) do name = related end
+    end
+  end
+end)
 
 return chifushui

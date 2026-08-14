@@ -60,12 +60,6 @@ Fk:addQmlMark{
     if type(suits) ~= "table" or #suits == 0 then return "" end
     return table.concat(table.map(suits, suit_symbol), "/")
   end,
-  qml_data = function(name, value, p)
-    return {}
-  end,
-  qml_path = function(name, value, p)
-    return ""
-  end,
 }
 
 local function do_yongtang(room, player, data, user_is_self)
@@ -142,5 +136,9 @@ chiyongtang:addEffect(fk.TurnEnd, {
     player.room:setPlayerMark(player, TURN_MARK, 0)
   end,
 })
+
+Fk:loadTranslationTable{
+  ["@@chiyongtang_once-turn"] = "雍赯·本回合已结算",
+}
 
 return chiyongtang

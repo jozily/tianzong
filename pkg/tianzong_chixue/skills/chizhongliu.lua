@@ -2,6 +2,7 @@ local chizhongliu = fk.CreateSkill{
   name = "chizhongliu",
   tags = { Skill.Compulsory },
 }
+local Common = require "packages.tianzong.pkg.tianzong_chixue.lib.common"
 
 chizhongliu:addEffect(fk.PreCardUse, {
   can_trigger = function(self, event, target, player, data)
@@ -13,7 +14,7 @@ chizhongliu:addEffect(fk.PreCardUse, {
     end) ~= nil
   end,
   on_use = function(self, event, target, player, data)
-    for _, skill_name in ipairs(player:getSkillNameList()) do
+    for _, skill_name in ipairs(Common.get_skill_names(player)) do
       player:setSkillUseHistory(skill_name, 0, Player.HistoryPhase)
       player:setSkillUseHistory(skill_name, 0, Player.HistoryTurn)
       player:setSkillUseHistory(skill_name, 0, Player.HistoryRound)

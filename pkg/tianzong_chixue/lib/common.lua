@@ -2,6 +2,15 @@ local U = require "packages.utility.utility"
 
 local M = {}
 
+function M.get_skill_names(player)
+  local names = {}
+  for _, general_name in ipairs({ player.general, player.deputyGeneral }) do
+    local general = general_name and Fk.generals[general_name]
+    if general then table.insertTableIfNeed(names, general:getSkillNameList(true)) end
+  end
+  return names
+end
+
 -- 注意：这里只保留原本稳定的4种基础牌名，避免影响孤凫/恢复逻辑
 M.all_basic_names = {
   "slash",

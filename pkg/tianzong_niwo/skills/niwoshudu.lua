@@ -4,69 +4,50 @@ local niwoshudu = fk.CreateSkill{
   tags = { Skill.Compulsory },
 }
 
+local function distance_mark(to)
+  return "niwoshudu_distance_to_" .. to.id
+end
+
+local function closer_mark(to)
+  return "niwochencang_distance_to_" .. to.id
+end
+
+local function grant_if_isolated(player)
+  if table.find(player.room:getOtherPlayers(player), function(p) return p:inMyAttackRange(player) end) then return end
+  local skills = {}
+  if not player:hasSkill("niwocangji", true) then table.insert(skills, "niwocangji") end
+  if not player:hasSkill("niwochoulu", true) then table.insert(skills, "niwochoulu") end
+  if #skills > 0 then player.room:handleAddLoseSkills(player, table.concat(skills, "|")) end
+end
+
+local function increase(from, to, owner)
+  from.room:addPlayerMark(from, distance_mark(to), 1)
+  grant_if_isolated(owner)
+end
+
 niwoshudu:addEffect(fk.CardUsing, {
-  anim_type = "offensive",
   can_trigger = function(self, event, target, player, data)
-    if not player:hasSkill(niwoshudu.name) then return false end
-    if not data.to or #data.to == 0 then return false end
-    
-    for _, p in ipairs(data.to or {}) do
-      if p:isAlive() and p ~= player then
-        return true
-      end
-    end
-    return false
+    return target == player and player:hasSkill(self.name) and data.card and data.card.is_damage_card and
+      table.find(data.tos or {}, function(p) return p ~= player and p:isAlive() end) ~= nil
   end,
-  on_cost = Util.TrueFunc,
   on_use = function(self, event, target, player, data)
-    local room = player.room
-    
-    for _, p in ipairs(data.to or {}) do
-      if p:isAlive() and p ~= player then
-        player:addSkillDistance(p, 1)
-      end
-    end
-    
-    local in_range = false
-    for _, other in ipairs(room:getOtherPlayers(player)) do
-      if player:inMyAttackRange(other) then
-        in_range = true
-        break
-      end
-    end
-    
-    if not in_range then
-      player:addSkill("niwocangji")
-      player:addSkill("niwochoulu")
+    for _, p in ipairs(data.tos or {}) do
+      if p ~= player and p:isAlive() then increase(p, player, player) end
     end
   end,
 })
 
-niwoshudu:addEffect(fk.Damaged, {
-  anim_type = "defensive",
+niwoshudu:addEffect(fk.TargetConfirmed, {
   can_trigger = function(self, event, target, player, data)
-    if not player:hasSkill(niwoshudu.name) then return false end
-    if not data.from or not data.from:isAlive() or data.from == player then return false end
-    return true
+    return target == player and player:hasSkill(self.name) and data.card and data.card.is_damage_card and
+      data.from and data.from ~= player and data.from:isAlive()
   end,
-  on_cost = Util.TrueFunc,
-  on_use = function(self, event, target, player, data)
-    local room = player.room
-    
-    player:addSkillDistance(data.from, 1)
-    
-    local in_range = false
-    for _, other in ipairs(room:getOtherPlayers(player)) do
-      if player:inMyAttackRange(other) then
-        in_range = true
-        break
-      end
-    end
-    
-    if not in_range then
-      player:addSkill("niwocangji")
-      player:addSkill("niwochoulu")
-    end
+  on_use = function(self, event, target, player, data) increase(player, data.from, player) end,
+})
+
+niwoshudu:addEffect("distance", {
+  correct_func = function(self, from, to)
+    return from:getMark(distance_mark(to)) - from:getMark(closer_mark(to))
   end,
 })
 

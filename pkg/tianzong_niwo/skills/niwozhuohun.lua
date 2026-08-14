@@ -7,7 +7,7 @@ local INVALID_MARK = "@@niwozhuohun_invalid-turn"
 niwozhuohun:addEffect(fk.RoundStart, {
   anim_type = "support",
   can_trigger = function(self, event, target, player, data)
-    return target == player and player:hasSkill(niwozhuohun.name)
+    return player:hasSkill(niwozhuohun.name)
   end,
   on_use = function(self, event, target, player, data)
     local room = player.room

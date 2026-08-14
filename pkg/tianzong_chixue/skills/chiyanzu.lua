@@ -51,7 +51,7 @@ local function refresh_if_needed(player, card)
         player:setSkillUseHistory("chiyanzu", 0, Player.HistoryTurn)
       end
     end
-    room:drawCards(player, alive, "chiyanzu")
+    player:drawCards(alive, "chiyanzu")
   end
 end
 
@@ -113,7 +113,7 @@ chiyanzu:addEffect(fk.TurnStart, {
   end,
 })
 
-chiyanzu:addEffect(fk.AskForCardUse, {
+local chiyanzu_use_spec = {
   anim_type = "control",
   can_trigger = function(self, event, target, player, data)
     if not player or target ~= player then return false end
@@ -139,23 +139,19 @@ chiyanzu:addEffect(fk.AskForCardUse, {
 
     if #valid == 0 then return false end
 
-    local chosen = room:askForCardChosen(
-      player,
-      player,
-      { card_data = { { self.name, valid } } },
-      self.name,
-      "#chiyanzu_choose_use",
-      true
-    )
-    if chosen and chosen ~= -1 then
-      self.cost_data = chosen
+    local chosen = room:askToChooseCards(player, {
+      target = player, flag = { card_data = { { self.name, valid } } },
+      min = 0, max = 1, skill_name = self.name, prompt = "#chiyanzu_choose_use", cancelable = true,
+    })
+    if #chosen > 0 then
+      event:setCostData(self, chosen[1])
       return true
     end
     return false
   end,
   on_use = function(self, event, target, player, data)
     local room = player.room
-    local id = self.cost_data
+    local id = event:getCostData(self)
     local card = id and Fk:getCardById(id) or nil
     if not card then return end
 
@@ -163,14 +159,17 @@ chiyanzu:addEffect(fk.AskForCardUse, {
     move_to_processing(room, player, id, self.name)
 
     data.result = {
-      from = player.id,
+      from = player,
       card = Fk:getCardById(id) or card,
     }
+    if event == fk.AskForCardUse then data.result.tos = {} end
 
     refresh_if_needed(player, Fk:getCardById(id) or card)
     room:setPlayerMark(player, "chiyanzu_block-turn", 0)
   end,
-})
+}
+chiyanzu:addEffect(fk.AskForCardUse, chiyanzu_use_spec)
+chiyanzu:addEffect(fk.AskForCardResponse, chiyanzu_use_spec)
 
 chiyanzu:addEffect(fk.Damaged, {
   anim_type = "control",
@@ -197,32 +196,28 @@ chiyanzu:addEffect(fk.Damaged, {
 
     if #valid == 0 then return false end
 
-    local chosen = room:askForCardChosen(
-      player,
-      player,
-      { card_data = { { self.name, valid } } },
-      self.name,
-      "#chiyanzu_choose_damaged",
-      true
-    )
-    if chosen and chosen ~= -1 then
-      self.cost_data = chosen
+    local chosen = room:askToChooseCards(player, {
+      target = player, flag = { card_data = { { self.name, valid } } },
+      min = 0, max = 1, skill_name = self.name, prompt = "#chiyanzu_choose_damaged", cancelable = true,
+    })
+    if #chosen > 0 then
+      event:setCostData(self, chosen[1])
       return true
     end
     return false
   end,
   on_use = function(self, event, target, player, data)
     local room = player.room
-    local id = self.cost_data
+    local id = event:getCostData(self)
     local card = id and Fk:getCardById(id) or nil
     if not card then return end
 
     room:setPlayerMark(player, "chiyanzu_block-turn", 1)
-    move_to_processing(room, player, id, self.name)
-    room:useCard{
-      from = player.id,
-      card = Fk:getCardById(id) or card,
-    }
+    local use = room:askToUseRealCard(player, {
+      pattern = { id }, skill_name = self.name, prompt = "#chiyanzu_choose_damaged",
+      cancelable = false, skip = true, extra_data = { expand_pile = { id }, bypass_times = true },
+    })
+    if use then room:useCard(use) end
     if not player.dead then
       refresh_if_needed(player, Fk:getCardById(id) or card)
     end

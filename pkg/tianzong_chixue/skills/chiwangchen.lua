@@ -15,10 +15,10 @@ local function connect_big_cards_of_current(room, player, card)
   local current = room.current
   if not current or current.dead or not card then return end
   local point = card.number or 0
-  local ids = current:getCardIds("hej")
+  local ids = current:getCardIds("h")
   for _, id in ipairs(ids) do
     local c = Fk:getCardById(id)
-    if c and c.number > point then
+    if c and c.number > point and not U.isConnectedCard(c) then
       U.connectCards(room, id)
     end
   end
@@ -111,7 +111,7 @@ chiwangchen:addEffect("maxcards", {
 
 chiwangchen:addEffect(fk.RoundStart, {
   can_refresh = function(self, event, target, player, data)
-    return target == player and player:hasSkill(chiwangchen.name)
+    return player:hasSkill(chiwangchen.name)
   end,
   on_refresh = function(self, event, target, player, data)
     player.room:setPlayerMark(player, ROUND_MARK, 0)

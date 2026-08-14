@@ -2,6 +2,18 @@ local niwocangji = fk.CreateSkill{
   name = "niwocangji",
   tags = { Skill.Limited },
 }
+local Common = require "packages.tianzong.pkg.tianzong_niwo.lib.common"
+
+local function remove_distance_skills(room)
+  for _, p in ipairs(room.alive_players) do
+    local names = table.filter(Common.get_skill_names(p), function(name)
+      return string.find(Fk:translate(":" .. name), "距离", 1, true) ~= nil
+    end)
+    if #names > 0 then
+      room:handleAddLoseSkills(p, "-" .. table.concat(names, "|-"), nil, true, false)
+    end
+  end
+end
 
 niwocangji:addEffect(fk.EventPhaseStart, {
   anim_type = "offensive",
@@ -21,7 +33,7 @@ niwocangji:addEffect(fk.EventPhaseStart, {
     local room = player.room
     local targets = {}
     for _, p in ipairs(room.alive_players) do
-      if p ~= player and not player:inMyAttackRange(p) then
+      if p ~= player and not p:inMyAttackRange(player) then
         table.insert(targets, p)
       end
     end
@@ -29,17 +41,13 @@ niwocangji:addEffect(fk.EventPhaseStart, {
     if #targets == 0 then return end
     
     for _, target_player in ipairs(targets) do
-      local judge_result = room:judge(target_player, niwocangji.name)
+      local judge_result = room:judge{ who = target_player, reason = niwocangji.name }
       local damage_num = judge_result.card:getNameLength(true)
-      local damage_type = nil
-      
-      local suit = judge_result.card:getSuit()
-      if suit == Card.Spade or suit == Card.Club then
-        damage_type = fk.Thunder
-      elseif suit == Card.Heart then
-        damage_type = fk.Fire
-      elseif suit == Card.Diamond then
-        damage_type = fk.Ice
+      local damage_type = fk.ThunderDamage
+      if judge_result.card.type == Card.TypeTrick then
+        damage_type = fk.FireDamage
+      elseif judge_result.card.type == Card.TypeEquip then
+        damage_type = fk.IceDamage
       end
       
       room:damage({
@@ -50,9 +58,8 @@ niwocangji:addEffect(fk.EventPhaseStart, {
         skillName = niwocangji.name,
       })
     end
-    
-    player:removeSkill("niwochencang")
-    player:addSkill("niwochencangRemake")
+    remove_distance_skills(room)
+    room:handleAddLoseSkills(player, "-niwochencang|niwochencangRemake|niwochoulu|weimu", nil, true, false)
   end,
 })
 

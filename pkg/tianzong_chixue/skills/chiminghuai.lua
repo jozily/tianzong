@@ -18,7 +18,7 @@ local chiminghuai = fk.CreateSkill{
       end
     end
     
-    local drawCount = math.min(limitedCount, player:getHp())
+    local drawCount = math.min(limitedCount, player.hp)
     return "铭怀：全场限定技" .. limitedCount .. "个，可摸" .. drawCount .. "张"
   end,
 }
@@ -89,7 +89,7 @@ chiminghuai:addEffect(fk.EventPhaseEnd, {
       end
     end
     
-    local drawCount = math.min(limitedCount, player:getHp())
+    local drawCount = math.min(limitedCount, player.hp)
     if drawCount > 0 then
       player:drawCards(drawCount, skillName)
     end

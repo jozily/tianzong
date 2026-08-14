@@ -92,7 +92,7 @@ chishangjiao:addEffect("maxcards", {
 
 chishangjiao:addEffect(fk.RoundStart, {
   can_refresh = function(self, event, target, player, data)
-    return target == player and player:hasSkill(chishangjiao.name, true)
+    return player:hasSkill(chishangjiao.name, true)
   end,
   on_refresh = function(self, event, target, player, data)
     local room = player.room

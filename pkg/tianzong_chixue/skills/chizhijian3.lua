@@ -296,7 +296,7 @@ chizhijian3:addEffect("targetmod", {
 
 chizhijian3:addEffect(fk.RoundStart, {
   can_refresh = function(self, event, target, player, data)
-    return target == player and player:hasSkill(chizhijian3.name, true)
+    return player:hasSkill(chizhijian3.name, true)
   end,
   on_refresh = function(self, event, target, player, data)
     zhijian_init_opts(player, OPT_MARK, 3)

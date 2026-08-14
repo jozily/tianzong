@@ -6,7 +6,7 @@ local chitianshi = fk.CreateSkill{
   anim_type = "support",
   dynamic_desc = function(self, player, lang)
     if not player then return "" end
-    local myHp = player:getHp()
+    local myHp = player.hp
     return "恬适：体力" .. myHp .. "，牌名字数≥" .. myHp .. "的牌无效"
   end,
 }
@@ -27,9 +27,9 @@ chitianshi:addEffect(fk.CardEffecting, {
     local skillName = self.name
     local nameLength = data.card:getNameLength(true)
     
-    if nameLength >= player:getHp() then
+    if nameLength >= player.hp then
       data.nullified = true
-      player:setMark(skillName .. "_" .. data.from.id, 1)
+      player.room:setPlayerMark(player, skillName .. "_" .. data.from.id, 1)
     end
   end,
 })
@@ -46,7 +46,7 @@ chitianshi:addEffect(fk.CardEffectFinished, {
     local skillName = self.name
     local nameLength = data.card:getNameLength(true)
     
-    if nameLength >= (12 - data.from:getHp()) then
+    if nameLength >= (12 - data.from.hp) then
       room:askToUseVirtualCard(
         player,
         {
@@ -54,7 +54,7 @@ chitianshi:addEffect(fk.CardEffectFinished, {
           skill_name = skillName,
         }
       )
-      player:setMark("chitianshi_use_" .. data.from.id, 1)
+      player.room:setPlayerMark(player, "chitianshi_use_" .. data.from.id, 1)
     end
   end,
 })

@@ -1,4 +1,5 @@
 local chijieji = fk.CreateSkill{ name = "chijieji" }
+local Common = require "packages.tianzong.pkg.tianzong_chixue.lib.common"
 local COUNT_MARK = "@chijieji_count-turn"
 
 local function target_num(player, card)
@@ -40,14 +41,14 @@ chijieji:addEffect("active", {
     return player:usedSkillTimes(chijieji.name, Player.HistoryPhase) == 0 and
       table.find(player.room.alive_players, function(p)
         return not p:isKongcheng() and
-          (p:getHandcardNum() >= player:getHandcardNum() or #p:getSkillNameList() >= #player:getSkillNameList()) and
+          (p:getHandcardNum() >= player:getHandcardNum() or #Common.get_skill_names(p) >= #Common.get_skill_names(player)) and
           #usable_cards(player, p) > 0
       end) ~= nil
   end,
   target_filter = function(self, player, to_select, selected)
     return #selected == 0 and not to_select:isKongcheng() and
       (to_select:getHandcardNum() >= player:getHandcardNum() or
-        #to_select:getSkillNameList() >= #player:getSkillNameList()) and
+        #Common.get_skill_names(to_select) >= #Common.get_skill_names(player)) and
       #usable_cards(player, to_select) > 0
   end,
   on_use = function(self, room, effect)

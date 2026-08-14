@@ -1,4 +1,3 @@
-local U = require "packages.utility.utility"
 local chihuaiji = fk.CreateSkill{ name = "chihuaiji", tags = { Skill.Switch } }
 
 chihuaiji:addEffect(fk.CardUsing, {
@@ -21,7 +20,6 @@ chihuaiji:addEffect(fk.CardUsing, {
     player.room:changeMaxHp(player, -cost.x)
     if player.dead then return end
     data.tos, data.subTos = cost.use.tos, cost.use.subTos
-    U.SetSwitchSkillState(player, chihuaiji.name, fk.SwitchYin)
   end,
 })
 
@@ -38,7 +36,6 @@ chihuaiji:addEffect(fk.TargetConfirmed, {
   end,
   on_use = function(self, event, target, player, data)
     player.room:changeMaxHp(player, #data.use.tos)
-    U.SetSwitchSkillState(player, chihuaiji.name, fk.SwitchYang)
   end,
 })
 

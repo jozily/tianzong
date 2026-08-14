@@ -216,7 +216,7 @@ chihantang:addEffect(fk.Damaged, {
 
 chihantang:addEffect(fk.RoundStart, {
   can_refresh = function(self, event, target, player, data)
-    return target == player and player:hasSkill(chihantang.name)
+    return player:hasSkill(chihantang.name)
   end,
   on_refresh = function(self, event, target, player, data)
     player.room:setPlayerMark(player, "chihantang_damaged-round", 0)

@@ -11,7 +11,7 @@ niwochoulu:addEffect(fk.Damaged, {
     if player:usedSkillTimes(niwochoulu.name, Player.HistoryRound) > 0 then return false end
     if not target or not target:isAlive() then return false end
     if not data.from or not data.from:isAlive() or data.from == player then return false end
-    if not player:inMyAttackRange(target) then return false end
+    if player:distanceTo(target) > 1 then return false end
     return true
   end,
   on_cost = function(self, event, target, player, data)
@@ -38,7 +38,7 @@ niwochoulu:addEffect(fk.Damaged, {
       room:useCard(use)
       room:addTableMark(player, ONCE_MARK, 1)
       
-      if use.damageDealt and use.damageDealt > 0 then
+      if next(use.damageDealt or {}) ~= nil then
         local turn_event = room.logic:getCurrentEvent():findParent(GameEvent.Turn)
         if turn_event then
           turn_event:shutdown()
@@ -50,7 +50,7 @@ niwochoulu:addEffect(fk.Damaged, {
 
 niwochoulu:addEffect(fk.RoundStart, {
   can_refresh = function(self, event, target, player, data)
-    return target == player and player:hasSkill(niwochoulu.name)
+    return player:hasSkill(niwochoulu.name)
   end,
   on_refresh = function(self, event, target, player, data)
     player.room:setPlayerMark(player, ONCE_MARK, 0)

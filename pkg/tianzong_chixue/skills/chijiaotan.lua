@@ -1,5 +1,6 @@
 local chijiaotan = fk.CreateSkill{ name = "chijiaotan" }
 local U = require "packages.utility.utility"
+local Common = require "packages.tianzong.pkg.tianzong_chixue.lib.common"
 local LAST_RESULT = "@chijiaotan_result"
 
 chijiaotan:addEffect("active", {
@@ -12,7 +13,7 @@ chijiaotan:addEffect("active", {
   end,
   target_filter = function(self, player, to_select, selected)
     return to_select ~= player and not to_select:isKongcheng()
-      and #to_select:getSkillNameList() > #player:getSkillNameList()
+      and #Common.get_skill_names(to_select) > #Common.get_skill_names(player)
   end,
   on_use = function(self, room, effect)
     local player = effect.from

@@ -54,7 +54,7 @@ chicixuan:addEffect("active", {
       
       if #choice > 0 then
         for _, id in ipairs(choice) do
-          player:setMark("chicixuan_ren_" .. id, 1)
+          room:setPlayerMark(player, "chicixuan_ren_" .. id, 1)
         end
         player:drawCards(#choice, skillName)
       end
@@ -69,7 +69,7 @@ chicixuan:addEffect("active", {
       
       if #renCards > 0 then
         for i = 1, math.min(3, #renCards) do
-          player:setMark("chicixuan_ren_" .. renCards[i], 0)
+          room:setPlayerMark(player, "chicixuan_ren_" .. renCards[i], 0)
         end
       end
     end

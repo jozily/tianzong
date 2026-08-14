@@ -58,12 +58,6 @@ Fk:addQmlMark{
     if type(suits) ~= "table" or #suits == 0 then return "" end
     return table.concat(table.map(suits, suit_symbol), "/")
   end,
-  qml_data = function(name, value, p)
-    return {}
-  end,
-  qml_path = function(name, value, p)
-    return ""
-  end,
 }
 
 chimingzhi:addEffect(fk.AfterCardsMove, {

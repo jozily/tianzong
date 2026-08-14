@@ -1,133 +1,75 @@
--- chizhichen.lua (炙尘)
 local chizhichen = fk.CreateSkill{
   name = "chizhichen",
   tags = { Skill.Compulsory },
   description = ":chizhichen",
-  anim_type = "support",
-  dynamic_desc = function(self, player, lang)
-    if not player then return "" end
-    local dustCount = player:getMark("chizhichen_dust") or 0
-    return "炙尘：" .. dustCount .. "个尘"
-  end,
 }
 
-Fk:loadTranslationTable{
-  ["chizhichen"] = "炙尘",
-  [":chizhichen"] = "锁定技，每轮开始时，你的上家和下家获得“尘”标记。当你受到/造成伤害后，你令伤害来源/目标横置并获得“尘”标记，若当前回合角色横置或翻面，你重铸手牌中花色最多的所有牌。",
-}
+local DUST_MARK = "chizhichen_dust"
 
-chizhichen:addEffect(fk.EventPhaseStart, {
+local function add_dust(player)
+  if player and player:isAlive() then
+    player:setChainState(true)
+    player.room:addPlayerMark(player, DUST_MARK, 1)
+  end
+end
+
+local function recast_most_suit(room, player)
+  local current = room.current
+  if not current or not current:isAlive() or
+    (not current.chained and not current:isFlipped()) then return end
+  local hand = player:getCardIds("h")
+  if #hand == 0 then return end
+  local suits = {}
+  for _, id in ipairs(hand) do
+    local card = Fk:getCardById(id)
+    if card then
+      suits[card.suit] = suits[card.suit] or {}
+      table.insert(suits[card.suit], id)
+    end
+  end
+  local max_suit, max_cards
+  for suit, ids in pairs(suits) do
+    if not max_cards or #ids > #max_cards then
+      max_suit, max_cards = suit, ids
+    end
+  end
+  if max_cards and #max_cards > 0 then
+    room:recastCard(max_cards, player, chizhichen.name)
+  end
+end
+
+chizhichen:addEffect(fk.RoundStart, {
   anim_type = "support",
   can_trigger = function(self, event, target, player, data)
-    return target == player and player:hasSkill(self.name) and target.phase == Player.PrepareStage
+    return player:hasSkill(chizhichen.name)
   end,
   on_use = function(self, event, target, player, data)
-    local room = player.room
-    local skillName = self.name
-    
-    local prev = player:getPreviousPlayer()
-    local next = player:getNextPlayer()
-    
-    if prev:isAlive() then
-      prev:setMark("chizhichen_dust", (prev:getMark("chizhichen_dust") or 0) + 1)
-    end
-    
-    if next:isAlive() then
-      next:setMark("chizhichen_dust", (next:getMark("chizhichen_dust") or 0) + 1)
-    end
+    add_dust(player:getLastAlive())
+    add_dust(player:getNextAlive())
   end,
 })
 
 chizhichen:addEffect(fk.Damaged, {
   anim_type = "support",
   can_trigger = function(self, event, target, player, data)
-    return target == player and player:hasSkill(self.name) and data.from and data.from:isAlive()
+    return target == player and player:hasSkill(chizhichen.name) and
+      data.from and data.from:isAlive()
   end,
   on_use = function(self, event, target, player, data)
-    local room = player.room
-    local skillName = self.name
-    local from = data.from
-    
-    from:setFlipped(true)
-    from:setMark("chizhichen_dust", (from:getMark("chizhichen_dust") or 0) + 1)
-    
-    if room.current.player:isFlipped() then
-      local handcards = player:getCardIds("h")
-      if #handcards > 0 then
-        local suits = {}
-        for _, id in ipairs(handcards) do
-          local card = Fk:getCardById(id)
-          local suit = card.suit
-          if not suits[suit] then
-            suits[suit] = {}
-          end
-          table.insert(suits[suit], id)
-        end
-        
-        local maxSuit = nil
-        local maxCount = 0
-        for suit, cards in pairs(suits) do
-          if #cards > maxCount then
-            maxCount = #cards
-            maxSuit = suit
-          end
-        end
-        
-        if maxSuit and suits[maxSuit] then
-          room:throwCard(suits[maxSuit], skillName, player, player)
-          player:drawCards(#suits[maxSuit], skillName)
-        end
-      end
-    end
+    add_dust(data.from)
+    recast_most_suit(player.room, player)
   end,
 })
 
-chizhichen:addEffect(fk.DamageInflicted, {
+chizhichen:addEffect(fk.DamageCaused, {
   anim_type = "support",
   can_trigger = function(self, event, target, player, data)
-    return target == player and player:hasSkill(self.name) and
-      data.tos and #data.tos > 0
+    return target == player and player:hasSkill(chizhichen.name) and
+      data.from == player and data.to and data.to:isAlive()
   end,
   on_use = function(self, event, target, player, data)
-    local room = player.room
-    local skillName = self.name
-    
-    for _, toId in ipairs(data.tos) do
-      local toPlayer = room:getPlayerById(toId)
-      if toPlayer and toPlayer:isAlive() then
-        toPlayer:setFlipped(true)
-        toPlayer:setMark("chizhichen_dust", (toPlayer:getMark("chizhichen_dust") or 0) + 1)
-      end
-    end
-    
-    if room.current.player:isFlipped() then
-      local handcards = player:getCardIds("h")
-      if #handcards > 0 then
-        local suits = {}
-        for _, id in ipairs(handcards) do
-          local card = Fk:getCardById(id)
-          local suit = card.suit
-          if not suits[suit] then
-            suits[suit] = {}
-          end
-          table.insert(suits[suit], id)
-        end
-        
-        local maxSuit = nil
-        local maxCount = 0
-        for suit, cards in pairs(suits) do
-          if #cards > maxCount then
-            maxCount = #cards
-            maxSuit = suit
-          end
-        end
-        
-        if maxSuit and suits[maxSuit] then
-          room:throwCard(suits[maxSuit], skillName, player, player)
-          player:drawCards(#suits[maxSuit], skillName)
-        end
-      end
-    end
+    add_dust(data.to)
+    recast_most_suit(player.room, player)
   end,
 })
 

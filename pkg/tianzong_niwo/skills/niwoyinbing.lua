@@ -4,59 +4,59 @@ local niwoyinbing = fk.CreateSkill{
 }
 
 niwoyinbing:addEffect(fk.Damaged, {
-  anim_type = "offensive",
   can_trigger = function(self, event, target, player, data)
-    return player:hasSkill(niwoyinbing.name) and data.from and data.from:isAlive() and data.from ~= player
+    return player:hasSkill(niwoyinbing.name) and data.from and data.from:isAlive() and
+      data.to and data.to:isAlive() and data.from ~= data.to and
+      (data.from == player or data.to == player)
   end,
-  on_cost = Util.TrueFunc,
+  on_cost = function(self, event, target, player, data)
+    return table.contains(player:getTableMark("contracted_skills"), niwoyinbing.name) or
+      player.room:askToSkillInvoke(player, {
+        skill_name = niwoyinbing.name,
+        prompt = "#niwoyinbing-invoke",
+      })
+  end,
   on_use = function(self, event, target, player, data)
-    local room = player.room
-    local damage_from = data.from
-    
-    local use = room:askToUseCard(damage_from, {
+    local room, user, source = player.room, data.to, data.from
+    room:addTableMarkIfNeed(player, "contracted_skills", niwoyinbing.name)
+    local use = room:askToUseVirtualCard(user, {
+      name = "ice__slash",
       skill_name = niwoyinbing.name,
-      prompt = "#niwoyinbing-ice",
-      pattern = "ice__slash",
+      prompt = "#niwoyinbing-ice::" .. source.id,
+      cancelable = true,
+      skip = true,
       extra_data = {
-        exclusive_targets = { damage_from.id },
+        exclusive_targets = { source.id },
         bypass_times = true,
-      }
+        bypass_distances = true,
+      },
     })
-    
-    if use then
-      room:useCard(use)
-      
-      if not use.damageDealt or use.damageDealt == 0 then
-        damage_from:drawCards(2, niwoyinbing.name)
-        room:loseHp(damage_from, 1, niwoyinbing.name)
-      else
-        local has_death = false
-        for _, to in ipairs(use.to or {}) do
-          if to.dead then
-            has_death = true
-            break
-          end
-        end
-        
-        if has_death then
-          local targets = {}
-          for _, p in ipairs(room:getOtherPlayers(player)) do
-            if p:isAlive() then
-              table.insert(targets, p)
-            end
-          end
-          
-          if #targets > 0 then
-            local chosen = room:askToChoosePlayers(player, {
-              targets = targets, min_num = 1, max_num = 1,
-              skill_name = niwoyinbing.name, prompt = "#niwoyinbing-acquire",
-              cancelable = false,
-            })
-            local target_player = chosen[1]
-            if target_player then
-              target_player:addSkill(niwoyinbing.name)
-            end
-          end
+    if not use then return end
+    room:useCard(use)
+
+    local dealt = false
+    for _, n in pairs(use.damageDealt or {}) do
+      if n > 0 then dealt = true break end
+    end
+    if not dealt and user:isAlive() then
+      user:drawCards(2, niwoyinbing.name)
+      if user:isAlive() then room:loseHp(user, 1, niwoyinbing.name) end
+    end
+    if source.dead and player:isAlive() then
+      local targets = table.filter(room:getOtherPlayers(player), function(p)
+        return p:isAlive() and not p:hasSkill(niwoyinbing.name, true)
+      end)
+      if #targets > 0 then
+        local chosen = room:askToChoosePlayers(player, {
+          targets = targets,
+          min_num = 1,
+          max_num = 1,
+          skill_name = niwoyinbing.name,
+          prompt = "#niwoyinbing-acquire",
+          cancelable = false,
+        })
+        if #chosen > 0 then
+          room:handleAddLoseSkills(chosen[1], niwoyinbing.name, nil, true, false)
         end
       end
     end

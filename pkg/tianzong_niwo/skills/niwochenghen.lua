@@ -39,7 +39,7 @@ niwochenghen:addEffect(fk.AfterCardsMove, {
   anim_type = "drawcard",
   can_trigger = function(self, event, target, player, data)
     if not player:hasSkill(niwochenghen.name) then return false end
-
+    local cards = {}
     for _, move in ipairs(data) do
       if move.from and move.from ~= player and move.toArea == Card.DiscardPile then
         for _, info in ipairs(move.moveInfo) do
@@ -48,31 +48,41 @@ niwochenghen:addEffect(fk.AfterCardsMove, {
             and c:getMark("@@niwo_mo") > 0
             and (move.moveReason == fk.ReasonUse or move.moveReason == fk.ReasonResponse)
           then
-            event:setCostData(self, { card = info.cardId })
-            return true
+            table.insertIfNeed(cards, info.cardId)
           end
         end
       end
     end
+    if #cards > 0 then event:setCostData(self, { cards = cards }); return true end
     return false
   end,
+  on_cost = function(self, event, target, player, data)
+    return player.room:askToSkillInvoke(player, {
+      skill_name = niwochenghen.name,
+      prompt = "#niwochenghen-obtain:::" .. #event:getCostData(self).cards,
+    })
+  end,
   on_use = function(self, event, target, player, data)
-    local id = event:getCostData(self).card
     local room = player.room
-    if id and room:getCardArea(id) == Card.DiscardPile then
-      room:obtainCard(player, id, false, fk.ReasonPrey, player, niwochenghen.name)
+    local ids = table.filter(event:getCostData(self).cards, function(id)
+      return room:getCardArea(id) == Card.DiscardPile
+    end)
+    if #ids > 0 then
+      room:obtainCard(player, ids, false, fk.ReasonPrey, player, niwochenghen.name)
+      for _, id in ipairs(ids) do
       local c = Fk:getCardById(id)
       if c then
         room:setCardMark(c, "@@niwo_mo", 1)
+      end
       end
     end
   end,
 })
 
-niwochenghen:addEffect(fk.Death, {
+niwochenghen:addEffect(fk.EnterDying, {
   anim_type = "special",
   can_trigger = function(self, event, target, player, data)
-    return target == player and player:hasSkill(self.name, false, true)
+    return target == player and player:hasSkill(self.name)
   end,
   on_cost = function(self, event, target, player, data)
     local room = player.room
@@ -104,22 +114,19 @@ niwochenghen:addEffect(fk.Death, {
       if to.dead then return end
       local c = Fk:getCardById(id, true)
       if c then
-        local owner = c:getMark("niwo_mo_owner")
         local name = c.trueName or c.name
-        if owner == player.id then
-          -- 我的“殁”：尽量对目标使用
-          if name and to:canUse(Fk:cloneCard(name)) then
-            room:useVirtualCard(name, nil, player, to, niwochenghen.name, true)
-          end
-        else
-          -- 别人的“殁”：不能用就直接弃置
-          if name and to:canUse(Fk:cloneCard(name)) then
-            room:useVirtualCard(name, nil, player, to, niwochenghen.name, true)
-          else
-            if room:getCardArea(id) ~= Card.DiscardPile and room:getCardArea(id) ~= Card.Void then
-              room:moveCardTo(id, Card.DiscardPile, nil, fk.ReasonPutIntoDiscardPile, niwochenghen.name, nil, true, player)
-            end
-          end
+        local card = name and Fk:cloneCard(name) or nil
+        if card then
+          card:addSubcard(id)
+          card.skillName = niwochenghen.name
+        end
+        local can_use = card and player:canUse(card, { bypass_times = true }) and
+          not player:isProhibited(to, card) and card.skill:modTargetFilter(player, to, {}, card)
+        if can_use then
+          room:useCard{ from = player, card = card, tos = { to }, extraUse = true }
+        elseif room:getCardArea(id) ~= Card.DiscardPile and room:getCardArea(id) ~= Card.Void then
+          room:moveCardTo(id, Card.DiscardPile, nil, fk.ReasonPutIntoDiscardPile,
+            niwochenghen.name, nil, true, player)
         end
       end
     end

@@ -9,14 +9,6 @@ local function get_after_abort_len(player)
   return math.max(1, aborted + 1)
 end
 
-local function get_names_by_len(len)
-  local all_names = Fk:getAllCardNames("bt")
-  return table.filter(all_names, function(name)
-    local c = Fk:cloneCard(name)
-    return c and c:getNameLength(true) == len
-  end)
-end
-
 local function ask_abort_slot(room, player)
   local choices = table.simpleClone(player:getAvailableEquipSlots())
   table.insert(choices, "Cancel")
@@ -48,11 +40,7 @@ chicangsui_draw:addEffect("active", {
   can_use = function(self, player)
     if player.phase ~= Player.Play then return false end
     if player:getMark(USED_MARK) ~= 0 then return false end
-    if #player:getAvailableEquipSlots() == 0 then return false end
-
-    local x = get_after_abort_len(player)
-    local all_names = get_names_by_len(x)
-    return #player:getViewAsCardNames("chicangsui", all_names) == 0
+    return #player:getAvailableEquipSlots() > 0
   end,
 
   card_filter = Util.FalseFunc,
@@ -65,7 +53,7 @@ chicangsui_draw:addEffect("active", {
     room:abortPlayerArea(player, { choice })
     room:setPlayerMark(player, USED_MARK, 1)
 
-    local x = math.max(1, 5 - #player:getAvailableEquipSlots())
+    local x = get_after_abort_len(player) - 1
     player:drawCards(x, "chicangsui")
   end,
 })

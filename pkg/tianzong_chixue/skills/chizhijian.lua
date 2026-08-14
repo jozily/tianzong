@@ -17,12 +17,6 @@ Fk:addQmlMark{
     if type(value) ~= "number" or value <= 0 then return "" end
     return tostring(value)
   end,
-  qml_data = function(name, value, p)
-    return {}
-  end,
-  qml_path = function(name, value, p)
-    return ""
-  end,
 }
 
 Fk:addQmlMark{
@@ -33,12 +27,6 @@ Fk:addQmlMark{
     local b = p:getMark("chizhijian_swap_b-turn")
     if type(a) ~= "number" or type(b) ~= "number" or a == 0 or b == 0 then return "" end
     return zhijian_num_text(a) .. "-" .. zhijian_num_text(b)
-  end,
-  qml_data = function(name, value, p)
-    return {}
-  end,
-  qml_path = function(name, value, p)
-    return ""
   end,
 }
 
@@ -307,7 +295,7 @@ chizhijian:addEffect("targetmod", {
 
 chizhijian:addEffect(fk.RoundStart, {
   can_refresh = function(self, event, target, player, data)
-    return target == player and player:hasSkill(chizhijian.name, true)
+    return player:hasSkill(chizhijian.name, true)
   end,
   on_refresh = function(self, event, target, player, data)
     zhijian_init_opts(player, OPT_MARK, 1)

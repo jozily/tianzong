@@ -34,7 +34,7 @@ chiqihai:addEffect(fk.Damaged, {
       local cards = from:getCardIds("he")
       if #cards > 0 then
         local selectedCard = cards[math.random(1, #cards)]
-        player:setMark("chiqihai_ren_" .. selectedCard, 1)
+        room:setPlayerMark(player, "chiqihai_ren_" .. selectedCard, 1)
       end
     else
       local renCards = {}
@@ -52,7 +52,7 @@ chiqihai:addEffect(fk.Damaged, {
           card = Fk:getCardById(selectedCard),
           skillName = skillName,
         })
-        player:setMark("chiqihai_ren_" .. selectedCard, 0)
+        room:setPlayerMark(player, "chiqihai_ren_" .. selectedCard, 0)
       end
     end
   end,

@@ -3,65 +3,50 @@ local niwoxianwang = fk.CreateSkill{
   tags = { Skill.Compulsory },
 }
 
+local WIND_MARK = "niwoxungu_wind"
+local USED_MARK = "niwoxianwang_names-turn"
+
+local function matching_wind(player, card)
+  if not card or card:hasSkill("niwoxungu") or #Card:getIdList(card) == 0 then return end
+  return table.find(player:getTableMark(WIND_MARK), function(id)
+    return Fk:getCardById(id).trueName == card.trueName
+  end)
+end
+
+local function consume_wind(player, id)
+  local room = player.room
+  local suit = Fk:getCardById(id).suit
+  local winds = table.filter(player:getTableMark(WIND_MARK), function(wind_id) return wind_id ~= id end)
+  room:setPlayerMark(player, WIND_MARK, winds)
+  room:throwCard(id, niwoxianwang.name, player, player)
+  local n = #table.filter(winds, function(wind_id) return Fk:getCardById(wind_id).suit == suit end)
+  if n > 0 and player:isAlive() then player:drawCards(n, niwoxianwang.name) end
+end
+
 niwoxianwang:addEffect(fk.CardUsing, {
-  anim_type = "support",
   can_trigger = function(self, event, target, player, data)
-    if not player:hasSkill(niwoxianwang.name) then return false end
-    if not data.card:hasSkill("niwoxungu") then return false end
-    
-    local winds = player:getTableMark("niwoxungu_wind")
-    if not winds or #winds == 0 then return false end
-    
-    local card_name = data.card:getName()
-    for _, wind_id in ipairs(winds) do
-      local wind_card = Fk:getCardById(wind_id)
-      if wind_card:getName() == card_name then
-        return true
-      end
-    end
-    return false
+    return target == player and player:hasSkill(self.name) and matching_wind(player, data.card) ~= nil and
+      not table.contains(player:getTableMark(USED_MARK), data.card.trueName)
   end,
   on_use = function(self, event, target, player, data)
-    local room = player.room
-    local card_name = data.card:getName()
-    local winds = player:getTableMark("niwoxungu_wind")
-    
-    for _, wind_id in ipairs(winds) do
-      local wind_card = Fk:getCardById(wind_id)
-      if wind_card:getName() == card_name then
-        local suit = wind_card:getSuit()
-        room:throwCard({wind_id}, niwoxianwang.name, player, player)
-        
-        local new_winds = {}
-        for _, id in ipairs(winds) do
-          if id ~= wind_id then
-            table.insert(new_winds, id)
-          end
-        end
-        room:setPlayerMark(player, "niwoxungu_wind", new_winds)
-        
-        local same_suit_count = 0
-        for _, remaining_wind_id in ipairs(new_winds) do
-          local remaining_wind = Fk:getCardById(remaining_wind_id)
-          if remaining_wind:getSuit() == suit then
-            same_suit_count = same_suit_count + 1
-          end
-        end
-        
-        if same_suit_count > 0 then
-          player:drawCards(same_suit_count, niwoxianwang.name)
-        end
-        
-        data.extra_data = data.extra_data or {}
-        data.extra_data.niwoxianwang_repeat = true
-        
-        room:useCard({
-          from = player.id,
-          card = data.card,
-          to = data.to,
-        })
-        break
-      end
+    local id = matching_wind(player, data.card)
+    if not id then return end
+    player.room:addTableMarkIfNeed(player, USED_MARK, data.card.trueName)
+    consume_wind(player, id)
+    data.additionalEffect = (data.additionalEffect or 0) + 1
+  end,
+})
+
+niwoxianwang:addEffect(fk.CardResponding, {
+  can_trigger = function(self, event, target, player, data)
+    return target == player and player:hasSkill(self.name) and matching_wind(player, data.card) ~= nil and
+      not table.contains(player:getTableMark(USED_MARK), data.card.trueName)
+  end,
+  on_use = function(self, event, target, player, data)
+    local id = matching_wind(player, data.card)
+    if id then
+      player.room:addTableMarkIfNeed(player, USED_MARK, data.card.trueName)
+      consume_wind(player, id)
     end
   end,
 })

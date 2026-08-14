@@ -23,18 +23,6 @@ Fk:addQmlMark{
       "/"
     )
   end,
-  qml_data = function(name, value, p)
-    if not p then return {} end
-    local names = p:getTableMark(NAME_MARK)
-    if type(names) ~= "table" then return {} end
-    return table.map(names, function(card_name)
-      return Fk:translate(card_name)
-    end)
-  end,
-  qml_path = function(name, value, p)
-    if type(value) ~= "table" or #value == 0 then return "" end
-    return "packages/utility/qml/ShowArrayMark"
-  end,
 }
 
 chikonglan:addEffect("maxcards", {
@@ -108,7 +96,7 @@ chikonglan:addEffect(fk.TargetConfirmed, {
 
 chikonglan:addEffect(fk.RoundStart, {
   can_refresh = function(self, event, target, player, data)
-    return target == player and player:hasSkill(chikonglan.name)
+    return player:hasSkill(chikonglan.name)
   end,
   on_refresh = function(self, event, target, player, data)
     local room = player.room

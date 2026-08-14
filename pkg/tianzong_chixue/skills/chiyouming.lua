@@ -45,7 +45,7 @@ chiyouming:addEffect(fk.Damaged, {
   can_trigger = function(self, event, target, player, data)
     return target == player and player:hasSkill(self.name) and
       player:usedSkillTimes(self.name .. "_dying", Player.HistoryRound) == 0 and
-      player:getHp() - data.damage <= 0 and
+      player.hp - data.damage <= 0 and
       not player:isFlipped()
   end,
   on_use = function(self, event, target, player, data)
