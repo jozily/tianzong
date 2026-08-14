@@ -8,7 +8,7 @@ local slot_names = {
 }
 
 local function is_fengji_card(info)
-  return info.virtualEquip and info.virtualEquip.trueName == "tianzong_limited__fengji"
+  return info.virtualEquip and info.virtualEquip.trueName == fengji.trueName
 end
 
 local function empty_slots(player)
@@ -19,7 +19,9 @@ fengji:addEffect(fk.Damaged, {
   can_trigger = function(self, event, target, player, data)
     return player:hasSkill(fengji.name) and player:usedSkillTimes(fengji.name, Player.HistoryRound) == 0 and
       data.from and data.from:isAlive() and player:distanceTo(data.from) == 1 and
-      #empty_slots(data.from) > 0 and #player:getCardIds("h") > 0
+      #empty_slots(data.from) > 0 and table.find(player:getCardIds("h"), function(id)
+        return Fk:getCardById(id).trueName == "slash"
+      end) ~= nil
   end,
   on_cost = function(self, event, target, player, data)
     local ids = table.filter(player:getCardIds("h"), function(id) return Fk:getCardById(id).trueName == "slash" end)
@@ -94,6 +96,12 @@ fengji:addEffect("prohibit", {
     return table.contains(player:getTableMark("tianzong_limited__fengji_suit-turn"), card.suit)
   end,
 })
+
+fengji:addTest(function()
+  for _, name in pairs(slot_names) do
+    lu.assertEquals(Fk:cloneCard(name .. "__tianzong_limited__fengji").trueName, fengji.trueName)
+  end
+end)
 
 Fk:loadTranslationTable {
   ["#tianzong_limited__fengji"] = "风纪：将一张【杀】置入 %dest 的一个空装备栏",

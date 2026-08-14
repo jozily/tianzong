@@ -47,7 +47,7 @@ Fk:loadTranslationTable {
   ["designer:tianzong_limited__shirai"] = "公冶天纵",
   ["illustrator:tianzong_limited__shirai"] = "灰村清孝",
   ["tianzong_limited__shunyi"] = "瞬移",
-  [":tianzong_limited__shunyi"] = "出牌阶段限一次，你可以将与你距离不大于1的一名角色的：①一张手牌区、装备区或判定区的牌移动至另一名角色的相应区域；②座次移动至两名其他角色中间，然后移除此选项。",
+  [":tianzong_limited__shunyi"] = "出牌阶段限一次，你可以将与你距离不大于1的一名角色的：①一张手牌区、装备区或判定区的牌移动至另一名角色的相应区域；②将一名角色的座次移动至两名其他角色中间，然后移除此选项。",
   ["tianzong_limited__fengji"] = "风纪",
   [":tianzong_limited__fengji"] = "每轮限一次，当有角色受到伤害后，若伤害来源与你距离为1，你可以将一张【杀】置于其装备区；有角色装备区有除了装备牌外的牌进入时，其需选择一项：1.本回合不能使用或打出与此牌花色相同的牌且所有非锁定技失效；2.保留此牌和一张手牌，然后弃置所有牌。",
   ["weapon__tianzong_limited__fengji"] = "风纪",

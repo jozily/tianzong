@@ -22,20 +22,20 @@ shunyi:addEffect("active", {
     local room = current_room(player)
     if not room then return false end
     return table.contains(movable_sources(player), to_select) or
-      (player:getMark("tianzong_limited__shunyi_seat") == 0 and #room.alive_players >= 4 and to_select ~= player)
+      (player:getMark("tianzong_limited__shunyi_seat") == 0 and #room.alive_players >= 3)
   end,
   can_use = function(self, player)
     local room = current_room(player)
     if not room then return false end
     return player:usedSkillTimes(shunyi.name, Player.HistoryPhase) == 0 and
       (#movable_sources(player) > 0 or
-        (player:getMark("tianzong_limited__shunyi_seat") == 0 and #room.alive_players >= 4))
+        (player:getMark("tianzong_limited__shunyi_seat") == 0 and #room.alive_players >= 3))
   end,
   on_use = function(self, room, effect)
     local player, source = effect.from, effect.tos[1]
     local choices = {}
     if table.contains(movable_sources(player), source) then table.insert(choices, "tianzong_limited__shunyi_card") end
-    if player:getMark("tianzong_limited__shunyi_seat") == 0 and source ~= player and #room.alive_players >= 4 then
+    if player:getMark("tianzong_limited__shunyi_seat") == 0 and #room.alive_players >= 3 then
       table.insert(choices, "tianzong_limited__shunyi_seat")
     end
     if #choices == 0 then return end
@@ -73,7 +73,7 @@ shunyi:addEffect("active", {
       end
     else
       local targets = table.filter(room.alive_players, function(p)
-        return p ~= player and p ~= source and source:getNextAlive() ~= p
+        return p ~= source and source:getNextAlive() ~= p
       end)
       if #targets == 0 then return end
       local tos = room:askToChoosePlayers(player, {
@@ -85,6 +85,17 @@ shunyi:addEffect("active", {
     end
   end,
 })
+
+shunyi:addTest(function(room, me)
+  FkTest.runInRoom(function()
+    room:handleAddLoseSkills(me, shunyi.name)
+    room:setCurrent(me)
+    me.phase = Player.Play
+  end)
+  local skill = Fk.skills[shunyi.name]
+  lu.assertTrue(skill:canUse(me))
+  lu.assertTrue(skill:targetFilter(me, me, {}, {}))
+end)
 
 Fk:loadTranslationTable {
   ["#tianzong_limited__shunyi"] = "瞬移：选择一名距离不大于1的有牌角色，或选择要移动座次的角色",

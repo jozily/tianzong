@@ -1,24 +1,47 @@
 local zhoushe = fk.CreateSkill {
   name = "tianzong_limited__zhoushe",
-  related_skills = { "#tianzong_limited__zhoushe_use" },
+  related_skills = { "#tianzong_limited__zhoushe_response" },
 }
 
-zhoushe:addEffect("viewas", {
-  pattern = "slash",
-  prompt = "#tianzong_limited__zhoushe-response",
+local function current_room(player)
+  return player.room or Fk:currentRoom()
+end
+
+zhoushe:addEffect("active", {
+  prompt = "#tianzong_limited__zhoushe-use",
   card_filter = Util.FalseFunc,
-  view_as = function(self, player, cards)
-    local card = Fk:cloneCard("slash")
-    card.skillName = zhoushe.name
-    return card
+  target_filter = function(self, player, to_select, selected)
+    if #selected > 0 then return false end
+    local room = current_room(player)
+    if not room then return false end
+    local slash = Fk:cloneCard("thunder__slash")
+    return table.find(room.alive_players, function(p)
+      return p ~= player and to_select:inMyAttackRange(p) and
+        player:canUseTo(slash, p, { bypass_times = true })
+    end) ~= nil
   end,
-  before_use = function(self, player, use)
-    player.room:setPlayerMark(player, "tianzong_limited__zhoushe_response-turn", 1)
+  can_use = function(self, player)
+    local room = current_room(player)
+    if not room or player:getMark("tianzong_limited__zhoushe_use-turn") ~= 0 then return false end
+    local slash = Fk:cloneCard("thunder__slash")
+    return table.find(room.alive_players, function(anchor)
+      return table.find(room.alive_players, function(p)
+        return p ~= player and anchor:inMyAttackRange(p) and
+          player:canUseTo(slash, p, { bypass_times = true })
+      end) ~= nil
+    end) ~= nil
   end,
-  enabled_at_play = Util.FalseFunc,
-  enabled_at_response = function(self, player, response)
-    return response and player:getMark("tianzong_limited__zhoushe_response-turn") == 0 and
-      Exppattern:Parse(Fk.currentResponsePattern):match(Fk:cloneCard("slash"))
+  on_use = function(self, room, effect)
+    local player, anchor = effect.from, effect.tos[1]
+    local slash = Fk:cloneCard("thunder__slash")
+    slash.skillName = zhoushe.name
+    local tos = table.filter(room.alive_players, function(p)
+      return p ~= player and anchor:inMyAttackRange(p) and
+        player:canUseTo(slash, p, { bypass_times = true })
+    end)
+    if #tos == 0 then return end
+    room:setPlayerMark(player, "tianzong_limited__zhoushe_use-turn", 1)
+    room:useCard { from = player, tos = tos, card = slash, extraUse = true }
   end,
 })
 
@@ -44,8 +67,17 @@ zhoushe:addEffect(fk.CardEffectCancelledOut, {
   end,
 })
 
-zhoushe:addTest(function()
-  lu.assertNotNil(Fk.skill_skels["#tianzong_limited__zhoushe_use"])
+zhoushe:addTest(function(room, me)
+  FkTest.runInRoom(function()
+    room:handleAddLoseSkills(me, zhoushe.name)
+    room:setCurrent(me)
+    me.phase = Player.Play
+  end)
+  local skill = Fk.skills[zhoushe.name]
+  lu.assertNotNil(skill)
+  lu.assertTrue(skill.visible)
+  lu.assertTrue(skill:canUse(me))
+  lu.assertNotNil(Fk.skill_skels["#tianzong_limited__zhoushe_response"])
 end)
 
 Fk:loadTranslationTable {

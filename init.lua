@@ -5,6 +5,7 @@ local tianzong_chixue = require "packages/tianzong/pkg/tianzong_chixue"
 local tianzong_cards = require "packages/tianzong/pkg/tianzong_cards"
 local tianzong_limited = require "packages/tianzong/pkg/tianzong_limited"
 
+require "packages/tianzong/pkg/runtime_translations"
 
 return {  
   tianzong_niwo,
