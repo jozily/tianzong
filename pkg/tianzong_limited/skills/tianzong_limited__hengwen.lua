@@ -1,6 +1,7 @@
 local hengwen = fk.CreateSkill {
   name = "tianzong_limited__hengwen",
   tags = { Skill.Limited },
+  related_skills = { "#tianzong_limited__hengwen_restore" },
 }
 
 hengwen:addEffect("active", {
@@ -19,30 +20,11 @@ hengwen:addEffect("active", {
   end,
 })
 
-hengwen:addEffect(fk.HpChanged, {
-  can_trigger = function(self, event, target, player, data)
-    return target and target:isAlive() and target.hp > 0 and
-      target:getMark("@tianzong_limited__hengwen") == player.id and
-      player:hasSkill(hengwen.name, true) and target.hp ~= target:getMark("tianzong_limited__hengwen_hp")
-  end,
-  on_cost = function(self, event, target, player, data)
-    if player.room:askToSkillInvoke(player, { skill_name = hengwen.name, prompt = "#tianzong_limited__hengwen-invoke::" .. target.id }) then
-      event:setCostData(self, { tos = { target } })
-      return true
-    end
-  end,
-  on_use = function(self, event, target, player, data)
-    local room, hp = player.room, target:getMark("tianzong_limited__hengwen_hp")
-    room:setPlayerMark(target, "@tianzong_limited__hengwen", 0)
-    room:setPlayerMark(target, "tianzong_limited__hengwen_hp", 0)
-    if target.hp < hp then
-      room:recover { who = target, num = hp - target.hp, recoverBy = player, skillName = hengwen.name }
-    elseif target.hp > hp then
-      room:loseHp(target, target.hp - hp, hengwen.name)
-    end
-    player:setSkillUseHistory("tianzong_limited__zonghuan", 0, Player.HistoryGame)
-  end,
-})
+hengwen:addTest(function()
+  local restore = Fk.skill_skels["#tianzong_limited__hengwen_restore"]
+  lu.assertNotNil(restore)
+  lu.assertFalse(table.contains(restore.tags or {}, Skill.Limited))
+end)
 
 Fk:loadTranslationTable {
   ["#tianzong_limited__hengwen"] = "恒温：令一名角色获得“恒温”并记录其当前体力值",

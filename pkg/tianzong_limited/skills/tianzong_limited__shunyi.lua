@@ -1,7 +1,13 @@
 local shunyi = fk.CreateSkill { name = "tianzong_limited__shunyi" }
 
+local function current_room(player)
+  return player.room or Fk:currentRoom()
+end
+
 local function movable_sources(player)
-  return table.filter(player.room.alive_players, function(p)
+  local room = current_room(player)
+  if not room then return {} end
+  return table.filter(room.alive_players, function(p)
     return player:distanceTo(p) <= 1 and #p:getCardIds("hej") > 0
   end)
 end
@@ -13,13 +19,17 @@ shunyi:addEffect("active", {
   card_filter = Util.FalseFunc,
   target_filter = function(self, player, to_select, selected)
     if #selected > 0 then return false end
+    local room = current_room(player)
+    if not room then return false end
     return table.contains(movable_sources(player), to_select) or
-      (player:getMark("tianzong_limited__shunyi_seat") == 0 and #player.room.alive_players >= 4 and to_select ~= player)
+      (player:getMark("tianzong_limited__shunyi_seat") == 0 and #room.alive_players >= 4 and to_select ~= player)
   end,
   can_use = function(self, player)
+    local room = current_room(player)
+    if not room then return false end
     return player:usedSkillTimes(shunyi.name, Player.HistoryPhase) == 0 and
       (#movable_sources(player) > 0 or
-        (player:getMark("tianzong_limited__shunyi_seat") == 0 and #player.room.alive_players >= 4))
+        (player:getMark("tianzong_limited__shunyi_seat") == 0 and #room.alive_players >= 4))
   end,
   on_use = function(self, room, effect)
     local player, source = effect.from, effect.tos[1]

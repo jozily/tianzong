@@ -3,8 +3,6 @@ local zhoushe = fk.CreateSkill {
   related_skills = { "#tianzong_limited__zhoushe_use" },
 }
 
-local zhoushe_use = fk.CreateSkill { name = "#tianzong_limited__zhoushe_use" }
-
 zhoushe:addEffect("viewas", {
   pattern = "slash",
   prompt = "#tianzong_limited__zhoushe-response",
@@ -21,34 +19,6 @@ zhoushe:addEffect("viewas", {
   enabled_at_response = function(self, player, response)
     return response and player:getMark("tianzong_limited__zhoushe_response-turn") == 0 and
       Exppattern:Parse(Fk.currentResponsePattern):match(Fk:cloneCard("slash"))
-  end,
-})
-
-zhoushe_use:addEffect("active", {
-  prompt = "#tianzong_limited__zhoushe-use",
-  card_filter = Util.FalseFunc,
-  target_filter = function(self, player, to_select, selected)
-    if #selected > 0 then return false end
-    local slash = Fk:cloneCard("thunder__slash")
-    return table.find(player.room.alive_players, function(p)
-      return p ~= player and to_select:inMyAttackRange(p) and
-        player:canUseTo(slash, p, { bypass_times = true })
-    end)
-  end,
-  can_use = function(self, player)
-    return player:hasSkill(zhoushe.name) and player:getMark("tianzong_limited__zhoushe_use-turn") == 0
-  end,
-  on_use = function(self, room, effect)
-    local player, anchor = effect.from, effect.tos[1]
-    local slash = Fk:cloneCard("thunder__slash")
-    slash.skillName = zhoushe.name
-    local tos = table.filter(room.alive_players, function(p)
-      return p ~= player and anchor:inMyAttackRange(p) and
-        player:canUseTo(slash, p, { bypass_times = true })
-    end)
-    if #tos == 0 then return end
-    room:setPlayerMark(player, "tianzong_limited__zhoushe_use-turn", 1)
-    room:useCard { from = player, tos = tos, card = slash, extraUse = true }
   end,
 })
 
@@ -73,6 +43,10 @@ zhoushe:addEffect(fk.CardEffectCancelledOut, {
     end
   end,
 })
+
+zhoushe:addTest(function()
+  lu.assertNotNil(Fk.skill_skels["#tianzong_limited__zhoushe_use"])
+end)
 
 Fk:loadTranslationTable {
   ["#tianzong_limited__zhoushe-response"] = "轴射：视为打出一张【杀】",
