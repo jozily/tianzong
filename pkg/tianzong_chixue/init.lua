@@ -75,7 +75,7 @@ local chi__zhupeilan = General:new(extension, "chi__zhupeilan", "wu", 3, 3, Gene
 chi__zhupeilan:addSkills { "chikuili", "chitiaomu" }
 
 -- 炽董予安 016
-local chi__dongguiren = General:new(extension, "chi__dongguiren", "qun", 3, 3, General.Female)
+local chi__dongguiren = General:new(extension, "chi__dongguiren", "qun", 6, 3, General.Female)
 chi__dongguiren:addSkills { "chishanquan", "chisimi" }
 
 local chi__renwan = General:new(extension, "chi__renwan", "wei", 3, 3, General.Female)
