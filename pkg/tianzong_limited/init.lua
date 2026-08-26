@@ -28,6 +28,8 @@ General:new(extension, "tianzong_limited__uiharu", "tianzong_science", 3, 3, Gen
   :addSkills { "tianzong_limited__hengwen", "tianzong_limited__zonghuan" }
 General:new(extension, "tianzong_limited__kungou", "tianzong_science", 4, 4, General.Female)
   :addSkills { "tianzong_limited__zhoushe" }
+General:new(extension, "tianzong_limited__saten", "tianzong_science", 4, 4, General.Female)
+  :addSkills { "tianzong_limited__yichu", "tianzong_limited__juben", "tianzong_limited__daoyan" }
 
 Fk:loadTranslationTable {
   ["tianzong_limited"] = "限时武将",
@@ -71,6 +73,17 @@ Fk:loadTranslationTable {
   ["illustrator:tianzong_limited__kungou"] = "幻想收束",
   ["tianzong_limited__zhoushe"] = "轴射",
   [":tianzong_limited__zhoushe"] = "每回合各限一次，①你可以视为打出一张【杀】；②你可以视为对一名角色攻击范围内的所有角色使用一张雷【杀】，若此【杀】被【闪】抵消，你令其选择一项：1.失去1点体力；2.弃置装备区所有牌。",
+
+  ["tianzong_limited__saten"] = "佐天泪子",
+  ["#tianzong_limited__saten"] = "Lv.0.都市传说探索者",
+  ["designer:tianzong_limited__saten"] = "公冶天纵",
+  ["illustrator:tianzong_limited__saten"] = "灰村清孝",
+  ["tianzong_limited__yichu"] = "衣橱",
+  [":tianzong_limited__yichu"] = "锁定技，你的手牌上限和体力上限+X；每轮开始时，你随机将牌堆的一张装备牌置入你的装备区（X为你装备区牌的数量）。当你的装备区首次有牌离开后，你永久获得该装备牌效果。当你每轮首次造成伤害后，目标随机弃置一张牌，若为装备牌，你获得之。",
+  ["tianzong_limited__juben"] = "剧本",
+  [":tianzong_limited__juben"] = "出牌阶段开始时或每轮开始时，你可以记录一个不重复的牌名、角色和花色。①当有角色使用牌指定目标后，若此牌牌名或目标已记录，你可以更改此牌目标或牌名（需合法）。②当已记录角色发动技能时，你可以改为你发动此技能。③当出现已记录花色或牌名的判定牌后，你可以将此牌改为你记录的花色或牌名。当你触发上述效果后，你移除对应记录并摸两张牌。",
+  ["tianzong_limited__daoyan"] = "导演",
+  [":tianzong_limited__daoyan"] = "限定技，出牌阶段，你可以获得牌堆中所有已记录牌名的牌、已记录角色的所有牌和弃牌堆中所有已记录花色且由你使用或弃置的牌，然后你失去“剧本”。",
 }
 
 return extension
