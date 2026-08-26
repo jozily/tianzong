@@ -99,10 +99,19 @@ juben:addEffect(fk.SkillEffect, {
       prompt = "#tianzong_limited__juben-skill::" .. data.who.id .. ":" .. data.skill.name })
   end,
   on_use = function(self, event, target, player, data)
-    local original = data.who
-    data.who = player
+    local room, original = player.room, data.who
+    data.prevented = true
+    take(room, player, PM, original.id)
+    if player.dead then return end
     data.skill_data.from = player
-    take(player.room, player, PM, original.id)
+    local trigger_event = data.skill_data.trigger_event
+    if trigger_event then
+      room:useSkill(player, data.skill, function()
+        return data.skill:use(trigger_event, trigger_event.target, player, trigger_event.data)
+      end, data.skill_data)
+    else
+      room:useSkill(player, data.skill, data.skill_cb, data.skill_data)
+    end
   end,
 })
 
