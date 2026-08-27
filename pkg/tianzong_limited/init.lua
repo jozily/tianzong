@@ -30,6 +30,8 @@ General:new(extension, "tianzong_limited__kungou", "tianzong_science", 4, 4, Gen
   :addSkills { "tianzong_limited__zhoushe" }
 General:new(extension, "tianzong_limited__saten", "tianzong_science", 4, 4, General.Female)
   :addSkills { "tianzong_limited__yichu", "tianzong_limited__juben", "tianzong_limited__daoyan" }
+General:new(extension, "tianzong_limited__shokuhou", "tianzong_science", 3, 3, General.Female)
+  :addSkills { "tianzong_limited__duxin", "tianzong_limited__paihu", "tianzong_limited__waizhuang" }
 
 Fk:loadTranslationTable {
   ["tianzong_limited"] = "限时武将",
@@ -84,6 +86,24 @@ Fk:loadTranslationTable {
   [":tianzong_limited__juben"] = "出牌阶段开始时或每轮开始时，你可以记录一个不重复的牌名、角色和花色。①当有角色使用牌指定目标后，若此牌牌名或目标已记录，你可以更改此牌目标或牌名（需合法）。②当已记录角色发动技能时，你可以改为你发动此技能。③当出现已记录花色或牌名的判定牌后，你可以将此牌改为你记录的花色或牌名。当你触发上述效果后，你移除对应记录并摸两张牌。",
   ["tianzong_limited__daoyan"] = "导演",
   [":tianzong_limited__daoyan"] = "限定技，出牌阶段，你可以获得牌堆中所有已记录牌名的牌、已记录角色的所有牌和弃牌堆中所有已记录花色且由你使用或弃置的牌，然后你失去“剧本”。",
+
+  ["tianzong_limited__shokuhou"] = "食蜂操祈",
+  ["#tianzong_limited__shokuhou"] = "常盘台的女王",
+  ["designer:tianzong_limited__shokuhou"] = "公冶天纵",
+  ["illustrator:tianzong_limited__shokuhou"] = "灰村清孝",
+  ["tianzong_limited__duxin"] = "读心",
+  [":tianzong_limited__duxin"] = "蓄力技（1/7），①出牌阶段，你可以消耗一枚蓄力点并选择一名角色，观看其手牌并使用其中一张（视为该角色使用）；②当有其他角色发动技能指定目标后或使用单体牌指定目标后，你可消耗2枚蓄力点重新选择目标。",
+  ["#tianzong_limited__duxin-choose"] = "读心：选择一名角色观看其手牌",
+  ["#tianzong_limited__duxin-card"] = "读心：选择其一张手牌使用",
+  ["tianzong_limited__paihu"] = "派阀",
+  [":tianzong_limited__paihu"] = "限定技，出牌阶段，若场上角色数量不小于3，你可以令一名其他角色摸X张牌并恢复一点体力值，若其获胜条件与你不一致且其所处阵营剩余人数大于1人，你可以令其获胜条件改为与你一致并获得“仰慕”。",
+  ["#tianzong_limited__paihu"] = "派阀：选择一名其他角色令其摸牌并恢复体力",
+  ["tianzong_limited__waizhuang"] = "外装",
+  [":tianzong_limited__waizhuang"] = "锁定技，当你使用了一组基本牌、锦囊牌和装备牌后或你的回合内，一组基本牌、锦囊牌和装备牌因被使用或弃置离开其他角色的区域后，你获得一枚蓄力点；当你受到伤害后，你的“读心”蓄力值上限-1。",
+  ["tianzong_limited__yangmu"] = "仰慕",
+  [":tianzong_limited__yangmu"] = "食蜂操祈可随时观看你的手牌。每轮各限一次，①当食蜂操祈即将受到伤害后，你可以失去一点体力上限防止此伤害；②食蜂操祈可如手牌般使用或打出你的手牌。",
+  ["#tianzong_limited__yangmu-guard"] = "仰慕：选择一名角色失去1点体力上限并防止你受到的伤害",
+  ["@[list]tianzong_limited__yangmu"] = "仰慕",
 }
 
 return extension
