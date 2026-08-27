@@ -6,18 +6,6 @@ waizhuang:addEffect(fk.CardUsing, {
   on_use = function(self, event, target, player, data) U.skillCharged(player, 1) end,
 })
 
-waizhuang:addEffect("filter", {
-  handly_cards = function(self, player)
-    local cards = {}
-    for _, p in ipairs(Fk:currentRoom().alive_players) do
-      if table.contains(p:getTableMark("@[list]tianzong_limited__yangmu"), player) then
-        table.insertTable(cards, p:getCardIds("h"))
-      end
-    end
-    return #cards > 0 and cards or nil
-  end,
-})
-
 waizhuang:addEffect(fk.DamageInflicted, {
   can_trigger = function(self, event, target, player, data)
     if target ~= player or not player:hasSkill(waizhuang.name) then return false end
