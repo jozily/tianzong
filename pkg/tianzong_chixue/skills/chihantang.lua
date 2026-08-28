@@ -162,6 +162,20 @@ chihantang:addEffect("active", {
   end,
 })
 
+-- Record successful damage before the first-damage trigger can invoke Hantang.
+-- This makes a nested second damage see the original damage in the same round.
+chihantang:addEffect(fk.Damage, {
+  mute = true,
+  can_refresh = function(self, event, target, player, data)
+    return target == player
+      and data.to ~= nil
+      and player:hasSkill(chihantang.name, true)
+  end,
+  on_refresh = function(self, event, target, player, data)
+    player.room:addTableMark(player, "chihantang_damaged-round", data.to.id)
+  end,
+})
+
 chihantang:addEffect(fk.Damage, {
   anim_type = "offensive",
   can_trigger = function(self, event, target, player, data)
@@ -201,16 +215,6 @@ chihantang:addEffect(fk.Damaged, {
     local room = player.room
     room:setPlayerMark(player, "chihantang_firsthurt-turn", 1)
     do_hantang(room, player)
-  end,
-})
-
-chihantang:addEffect(fk.Damaged, {
-  mute = true,
-  can_refresh = function(self, event, target, player, data)
-    return data.from == player and player:hasSkill(chihantang.name, true)
-  end,
-  on_refresh = function(self, event, target, player, data)
-    player.room:addTableMark(player, "chihantang_damaged-round", target.id)
   end,
 })
 
