@@ -96,7 +96,7 @@ Fk:loadTranslationTable {
   ["#tianzong_limited__duxin-choose"] = "读心：选择一名角色观看其手牌",
   ["#tianzong_limited__duxin-card"] = "读心：选择其一张手牌使用",
   ["tianzong_limited__paihu"] = "派阀",
-  [":tianzong_limited__paihu"] = "限定技，出牌阶段，若场上角色数量不小于3，你可以令一名其他角色摸X张牌并恢复一点体力值，若其获胜条件与你不一致且其所处阵营剩余人数大于1人，你可以令其获胜条件改为与你一致并获得“仰慕”。",
+  [":tianzong_limited__paihu"] = "限定技，出牌阶段，若场上角色数量不小于3，你可以令一名其他角色摸X张牌并恢复一点体力值（X为与你同阵营的角色数且至少为1），若其获胜条件与你不一致且其所处阵营剩余人数大于1人，你可以令其获胜条件改为与你一致并获得“仰慕”。",
   ["#tianzong_limited__paihu"] = "派阀：选择一名其他角色令其摸牌并恢复体力",
   ["tianzong_limited__waizhuang"] = "外装",
   [":tianzong_limited__waizhuang"] = "锁定技，当你使用了一组基本牌、锦囊牌和装备牌后或你的回合内，一组基本牌、锦囊牌和装备牌因被使用或弃置离开其他角色的区域后，你获得一枚蓄力点；当你受到伤害后，你的“读心”蓄力值上限-1。",
@@ -107,3 +107,4 @@ Fk:loadTranslationTable {
 }
 
 return extension
+

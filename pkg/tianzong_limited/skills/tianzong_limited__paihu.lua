@@ -7,9 +7,12 @@ paihu:addEffect("active", {
   target_filter = function(self, player, to_select, selected) return to_select ~= player and #selected == 0 end,
   on_use = function(self, room, effect)
     local player, target = effect.from, effect.tos[1]
-    target:drawCards(math.max(1, player:getHandcardNum()), self.name)
+    local x = math.max(1, #table.filter(room.alive_players, function(p) return p.kingdom == player.kingdom end))
+    target:drawCards(x, self.name)
     if target:isWounded() then room:recover { who = target, num = 1, recoverBy = player, skillName = self.name } end
     room:addTableMarkIfNeed(target, "@[list]tianzong_limited__yangmu", player)
   end,
 })
 return paihu
+
+
