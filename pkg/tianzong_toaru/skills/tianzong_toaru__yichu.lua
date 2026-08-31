@@ -1,5 +1,5 @@
-local yichu = fk.CreateSkill { name = "tianzong_limited__yichu", tags = { Skill.Compulsory } }
-local bonus, saved = "tianzong_limited__yichu_maxhp", "tianzong_limited__yichu_saved"
+local yichu = fk.CreateSkill { name = "tianzong_toaru__yichu", tags = { Skill.Compulsory } }
+local bonus, saved = "tianzong_toaru__yichu_maxhp", "tianzong_toaru__yichu_saved"
 
 local function sync(room, player)
   local old = player:getMark(bonus)
@@ -60,12 +60,12 @@ yichu:addEffect(fk.AfterCardsMove, {
   on_cost = Util.TrueFunc,
   on_use = function(self, event, target, player, data)
     local room = player.room
-    if player:getMark("tianzong_limited__yichu_first") == 0 then
+    if player:getMark("tianzong_toaru__yichu_first") == 0 then
       for _, move in ipairs(data) do
         if move.from == player then
           local info = table.find(move.moveInfo, function(i) return i.fromArea == Card.PlayerEquip end)
           if info then
-            room:setPlayerMark(player, "tianzong_limited__yichu_first", 1)
+            room:setPlayerMark(player, "tianzong_toaru__yichu_first", 1)
             room:addTableMarkIfNeed(player, saved, Fk:getCardById(info.cardId, true).name)
             break
           end
@@ -83,12 +83,12 @@ end)
 yichu:addEffect(fk.Damage, {
   can_trigger = function(self, event, target, player, data)
     return data.from == player and player:hasSkill(yichu.name) and data.to and not data.to.dead and
-      player:getMark("tianzong_limited__yichu_damage-round") == 0 and not data.to:isNude()
+      player:getMark("tianzong_toaru__yichu_damage-round") == 0 and not data.to:isNude()
   end,
   on_cost = Util.TrueFunc,
   on_use = function(self, event, target, player, data)
     local room, to = player.room, data.to
-    room:setPlayerMark(player, "tianzong_limited__yichu_damage-round", 1)
+    room:setPlayerMark(player, "tianzong_toaru__yichu_damage-round", 1)
     local id = room:tableRandomPick(to:getCardIds("he"))
     room:throwCard(id, yichu.name, to, player)
     if Fk:getCardById(id, true).type == Card.TypeEquip and room:getCardArea(id) == Card.DiscardPile and not player.dead then

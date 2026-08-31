@@ -1,8 +1,8 @@
 local U = require "packages.utility.utility"
-local duxin = fk.CreateSkill { name = "tianzong_limited__duxin", tags = { Skill.Charge } }
+local duxin = fk.CreateSkill { name = "tianzong_toaru__duxin", tags = { Skill.Charge } }
 
 duxin:addEffect("active", {
-  prompt = "#tianzong_limited__duxin-choose", target_num = 1, card_num = 0,
+  prompt = "#tianzong_toaru__duxin-choose", target_num = 1, card_num = 0,
   can_use = function(self, player)
     return player.phase == Player.Play and player:getMark("skill_charge") > 0 and
       table.find(player.room.alive_players, function(p) return p ~= player and not p:isKongcheng() end) ~= nil
@@ -14,11 +14,11 @@ duxin:addEffect("active", {
     local player, target = effect.from, effect.tos[1]
     U.skillCharged(player, -1)
     room:viewCards(player, { cards = target:getCardIds("h"), skill_name = self.name, prompt = "$ViewCardsFrom:" .. target.id })
-    local id = room:askToChooseCard(player, { target = target, flag = "h", skill_name = self.name, prompt = "#tianzong_limited__duxin-card" })
+    local id = room:askToChooseCard(player, { target = target, flag = "h", skill_name = self.name, prompt = "#tianzong_toaru__duxin-card" })
     if id then
       local use = room:askToUseRealCard(target, {
         pattern = { id }, expand_pile = { id }, skill_name = self.name,
-        prompt = "#tianzong_limited__duxin-card", cancelable = true,
+        prompt = "#tianzong_toaru__duxin-card", cancelable = true,
         skip = true, extra_data = { expand_pile = { id }, bypass_times = true, extraUse = true },
       })
       if use then room:useCard(use) end

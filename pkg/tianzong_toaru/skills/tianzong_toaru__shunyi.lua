@@ -1,4 +1,4 @@
-local shunyi = fk.CreateSkill { name = "tianzong_limited__shunyi" }
+local shunyi = fk.CreateSkill { name = "tianzong_toaru__shunyi" }
 
 local function current_room(player)
   return player.room or Fk:currentRoom()
@@ -13,7 +13,7 @@ local function movable_sources(player)
 end
 
 shunyi:addEffect("active", {
-  prompt = "#tianzong_limited__shunyi",
+  prompt = "#tianzong_toaru__shunyi",
   min_target_num = 1,
   max_target_num = 1,
   card_filter = Util.FalseFunc,
@@ -22,27 +22,27 @@ shunyi:addEffect("active", {
     local room = current_room(player)
     if not room then return false end
     return table.contains(movable_sources(player), to_select) or
-      (player:getMark("tianzong_limited__shunyi_seat") == 0 and #room.alive_players >= 3)
+      (player:getMark("tianzong_toaru__shunyi_seat") == 0 and #room.alive_players >= 3)
   end,
   can_use = function(self, player)
     local room = current_room(player)
     if not room then return false end
     return player:usedSkillTimes(shunyi.name, Player.HistoryPhase) == 0 and
       (#movable_sources(player) > 0 or
-        (player:getMark("tianzong_limited__shunyi_seat") == 0 and #room.alive_players >= 3))
+        (player:getMark("tianzong_toaru__shunyi_seat") == 0 and #room.alive_players >= 3))
   end,
   on_use = function(self, room, effect)
     local player, source = effect.from, effect.tos[1]
     local choices = {}
-    if table.contains(movable_sources(player), source) then table.insert(choices, "tianzong_limited__shunyi_card") end
-    if player:getMark("tianzong_limited__shunyi_seat") == 0 and #room.alive_players >= 3 then
-      table.insert(choices, "tianzong_limited__shunyi_seat")
+    if table.contains(movable_sources(player), source) then table.insert(choices, "tianzong_toaru__shunyi_card") end
+    if player:getMark("tianzong_toaru__shunyi_seat") == 0 and #room.alive_players >= 3 then
+      table.insert(choices, "tianzong_toaru__shunyi_seat")
     end
     if #choices == 0 then return end
     local choice = #choices == 1 and choices[1] or room:askToChoice(player, {
       choices = choices, skill_name = shunyi.name,
     })
-    if choice == "tianzong_limited__shunyi_card" then
+    if choice == "tianzong_toaru__shunyi_card" then
       local destinations = table.filter(room.alive_players, function(p)
         return p ~= source and (table.find(source:getCardIds("ej"), function(id)
           return source:canMoveCardInBoardTo(p, id)
@@ -51,18 +51,18 @@ shunyi:addEffect("active", {
       if #destinations == 0 then return end
       local tos = room:askToChoosePlayers(player, {
         targets = destinations, min_num = 1, max_num = 1, cancelable = false,
-        skill_name = shunyi.name, prompt = "#tianzong_limited__shunyi-to::" .. source.id,
+        skill_name = shunyi.name, prompt = "#tianzong_toaru__shunyi-to::" .. source.id,
       })
       local to = tos[1]
       local choices = {}
       if table.find(source:getCardIds("ej"), function(id) return source:canMoveCardInBoardTo(to, id) end) then
-        table.insert(choices, "tianzong_limited__shunyi_board")
+        table.insert(choices, "tianzong_toaru__shunyi_board")
       end
-      if #source:getCardIds("h") > 0 then table.insert(choices, "tianzong_limited__shunyi_hand") end
+      if #source:getCardIds("h") > 0 then table.insert(choices, "tianzong_toaru__shunyi_hand") end
       local area = #choices == 1 and choices[1] or room:askToChoice(player, {
         choices = choices, skill_name = shunyi.name,
       })
-      if area == "tianzong_limited__shunyi_board" then
+      if area == "tianzong_toaru__shunyi_board" then
         room:askToMoveCardInBoard(player, {
           target_one = source, target_two = to, move_from = source,
           skill_name = shunyi.name, skip = false,
@@ -78,10 +78,10 @@ shunyi:addEffect("active", {
       if #targets == 0 then return end
       local tos = room:askToChoosePlayers(player, {
         targets = targets, min_num = 1, max_num = 1, cancelable = false,
-        skill_name = shunyi.name, prompt = "#tianzong_limited__shunyi-seat::" .. source.id,
+        skill_name = shunyi.name, prompt = "#tianzong_toaru__shunyi-seat::" .. source.id,
       })
       room:moveSeatToNext(source, tos[1])
-      room:setPlayerMark(player, "tianzong_limited__shunyi_seat", 1)
+      room:setPlayerMark(player, "tianzong_toaru__shunyi_seat", 1)
     end
   end,
 })
@@ -98,13 +98,13 @@ shunyi:addTest(function(room, me)
 end)
 
 Fk:loadTranslationTable {
-  ["#tianzong_limited__shunyi"] = "瞬移：选择一名距离不大于1的有牌角色，或选择要移动座次的角色",
-  ["tianzong_limited__shunyi_card"] = "移动其区域内一张牌",
-  ["tianzong_limited__shunyi_seat"] = "移动其座次，然后移除此选项",
-  ["#tianzong_limited__shunyi-to"] = "瞬移：选择接收 %dest 区域内一张牌的角色",
-  ["tianzong_limited__shunyi_board"] = "移动其装备区或判定区的一张牌",
-  ["tianzong_limited__shunyi_hand"] = "移动其一张手牌",
-  ["#tianzong_limited__shunyi-seat"] = "瞬移：选择一名角色，将 %dest 移至其下家",
+  ["#tianzong_toaru__shunyi"] = "瞬移：选择一名距离不大于1的有牌角色，或选择要移动座次的角色",
+  ["tianzong_toaru__shunyi_card"] = "移动其区域内一张牌",
+  ["tianzong_toaru__shunyi_seat"] = "移动其座次，然后移除此选项",
+  ["#tianzong_toaru__shunyi-to"] = "瞬移：选择接收 %dest 区域内一张牌的角色",
+  ["tianzong_toaru__shunyi_board"] = "移动其装备区或判定区的一张牌",
+  ["tianzong_toaru__shunyi_hand"] = "移动其一张手牌",
+  ["#tianzong_toaru__shunyi-seat"] = "瞬移：选择一名角色，将 %dest 移至其下家",
 }
 
 return shunyi

@@ -1,6 +1,6 @@
 local U = require "packages.utility.utility"
-local juben = fk.CreateSkill { name = "tianzong_limited__juben" }
-local NM, PM, SM = "@tianzong_limited__juben_names", "@tianzong_limited__juben_players", "@tianzong_limited__juben_suits"
+local juben = fk.CreateSkill { name = "tianzong_toaru__juben" }
+local NM, PM, SM = "@tianzong_toaru__juben_names", "@tianzong_toaru__juben_players", "@tianzong_toaru__juben_suits"
 local suits = { log_spade = Card.Spade, log_heart = Card.Heart, log_club = Card.Club, log_diamond = Card.Diamond }
 
 local function take(room, player, mark, value)
@@ -14,11 +14,11 @@ local function record(room, player)
     return not table.contains(player:getTableMark(SM), suits[s])
   end)
   if #names == 0 or #people == 0 or #suit_names == 0 then return end
-  local name = U.askForChooseCardNames(room, player, names, 1, 1, juben.name, "#tianzong_limited__juben-name", names, false)[1]
+  local name = U.askForChooseCardNames(room, player, names, 1, 1, juben.name, "#tianzong_toaru__juben-name", names, false)[1]
   local who = room:askToChoosePlayers(player, { targets = people, min_num = 1, max_num = 1,
-    skill_name = juben.name, prompt = "#tianzong_limited__juben-player", cancelable = false })[1]
+    skill_name = juben.name, prompt = "#tianzong_toaru__juben-player", cancelable = false })[1]
   local suit = room:askToChoice(player, { choices = suit_names, skill_name = juben.name,
-    prompt = "#tianzong_limited__juben-suit" })
+    prompt = "#tianzong_toaru__juben-suit" })
   room:addTableMarkIfNeed(player, NM, name)
   room:addTableMarkIfNeed(player, PM, who.id)
   room:addTableMarkIfNeed(player, SM, suits[suit])
@@ -26,7 +26,7 @@ end
 
 local record_spec = {
   on_cost = function(self, event, target, player)
-    return player.room:askToSkillInvoke(player, { skill_name = juben.name, prompt = "#tianzong_limited__juben-record" })
+    return player.room:askToSkillInvoke(player, { skill_name = juben.name, prompt = "#tianzong_toaru__juben-record" })
   end,
   on_use = function(self, event, target, player) record(player.room, player) end,
 }
@@ -55,13 +55,13 @@ juben:addEffect(fk.AfterCardTargetDeclared, {
       local remaining = table.filter(data.tos, function(other) return other ~= p end)
       return data.card.skill:feasible(data.from, remaining, {})
     end)
-    if #extras > 0 or #removals > 0 then table.insert(choices, "tianzong_limited__juben_target") end
+    if #extras > 0 or #removals > 0 then table.insert(choices, "tianzong_toaru__juben_target") end
     local names = table.filter(Fk:getAllCardNames("bt"), function(name)
       if name == data.card.name then return false end
       local card = Fk:cloneCard(name, data.card.suit, data.card.number)
       return card.skill and card.skill:feasible(data.from, data.tos, {})
     end)
-    if #names > 0 then table.insert(choices, "tianzong_limited__juben_card") end
+    if #names > 0 then table.insert(choices, "tianzong_toaru__juben_card") end
     if #choices == 0 then return false end
     table.insert(choices, "Cancel")
     local choice = player.room:askToChoice(player, { choices = choices, skill_name = juben.name })
@@ -73,15 +73,15 @@ juben:addEffect(fk.AfterCardTargetDeclared, {
     local room, cost = player.room, event:getCostData(self)
     local used_name = table.contains(player:getTableMark(NM), data.card.name) and data.card.name
     local used_player = table.find(data.tos, function(p) return table.contains(player:getTableMark(PM), p.id) end)
-    if cost.choice == "tianzong_limited__juben_target" then
+    if cost.choice == "tianzong_toaru__juben_target" then
       local candidates = table.simpleClone(cost.extras)
       table.insertTableIfNeed(candidates, cost.removals)
       local to = room:askToChoosePlayers(player, { targets = candidates, min_num = 1, max_num = 1,
-        skill_name = juben.name, prompt = "#tianzong_limited__juben-change-target", cancelable = false })[1]
+        skill_name = juben.name, prompt = "#tianzong_toaru__juben-change-target", cancelable = false })[1]
       if table.contains(data.tos, to) then data:removeTarget(to) else data:addTarget(to) end
     else
       local name = U.askForChooseCardNames(room, player, cost.names, 1, 1, juben.name,
-        "#tianzong_limited__juben-change-card", cost.names, false)[1]
+        "#tianzong_toaru__juben-change-card", cost.names, false)[1]
       data:changeCard(name, data.card.suit, data.card.number, juben.name)
     end
     if used_name then take(room, player, NM, used_name)
@@ -96,7 +96,7 @@ juben:addEffect(fk.SkillEffect, {
   end,
   on_cost = function(self, event, target, player, data)
     return player.room:askToSkillInvoke(player, { skill_name = juben.name,
-      prompt = "#tianzong_limited__juben-skill::" .. data.who.id .. ":" .. data.skill.name })
+      prompt = "#tianzong_toaru__juben-skill::" .. data.who.id .. ":" .. data.skill.name })
   end,
   on_use = function(self, event, target, player, data)
     local room, original = player.room, data.who
@@ -121,16 +121,16 @@ juben:addEffect(fk.FinishRetrial, {
       (table.contains(player:getTableMark(NM), data.card.name) or table.contains(player:getTableMark(SM), data.card.suit))
   end,
   on_cost = function(self, event, target, player)
-    return player.room:askToSkillInvoke(player, { skill_name = juben.name, prompt = "#tianzong_limited__juben-judge" })
+    return player.room:askToSkillInvoke(player, { skill_name = juben.name, prompt = "#tianzong_toaru__juben-judge" })
   end,
   on_use = function(self, event, target, player, data)
     local room, options = player.room, {}
-    if #player:getTableMark(NM) > 0 then table.insert(options, "tianzong_limited__juben_card") end
-    if #player:getTableMark(SM) > 0 then table.insert(options, "tianzong_limited__juben_suit") end
+    if #player:getTableMark(NM) > 0 then table.insert(options, "tianzong_toaru__juben_card") end
+    if #player:getTableMark(SM) > 0 then table.insert(options, "tianzong_toaru__juben_suit") end
     local choice = #options == 1 and options[1] or room:askToChoice(player, { choices = options, skill_name = juben.name })
-    if choice == "tianzong_limited__juben_card" then
+    if choice == "tianzong_toaru__juben_card" then
       local names = player:getTableMark(NM)
-      local name = U.askForChooseCardNames(room, player, names, 1, 1, juben.name, "#tianzong_limited__juben-change-card", names, false)[1]
+      local name = U.askForChooseCardNames(room, player, names, 1, 1, juben.name, "#tianzong_toaru__juben-change-card", names, false)[1]
       data.card = Fk:cloneCard(name, data.card.suit, data.card.number)
       take(room, player, NM, name)
     else
@@ -155,7 +155,7 @@ juben:addEffect(fk.AfterCardsMove, {
       if move.from == player and move.toArea == Card.DiscardPile and
         table.contains({ fk.ReasonUse, fk.ReasonDiscard }, move.moveReason) then
         for _, info in ipairs(move.moveInfo) do
-          player.room:addTableMarkIfNeed(player, "tianzong_limited__juben_discards", info.cardId)
+          player.room:addTableMarkIfNeed(player, "tianzong_toaru__juben_discards", info.cardId)
         end
       end
     end
@@ -164,15 +164,15 @@ juben:addEffect(fk.AfterCardsMove, {
 
 Fk:loadTranslationTable {
   [NM] = "剧本·牌名", [PM] = "剧本·角色", [SM] = "剧本·花色",
-  ["#tianzong_limited__juben-record"] = "剧本：是否记录一个新牌名、角色和花色？",
-  ["#tianzong_limited__juben-name"] = "剧本：记录一个未记录过的牌名",
-  ["#tianzong_limited__juben-player"] = "剧本：记录一名未记录过的角色",
-  ["#tianzong_limited__juben-suit"] = "剧本：记录一个未记录过的花色",
-  ["tianzong_limited__juben_target"] = "更改目标", ["tianzong_limited__juben_card"] = "更改牌名",
-  ["tianzong_limited__juben_suit"] = "更改花色",
-  ["#tianzong_limited__juben-change-target"] = "剧本：增加或移除一个合法目标",
-  ["#tianzong_limited__juben-change-card"] = "剧本：选择要更改成的牌名",
-  ["#tianzong_limited__juben-skill"] = "剧本：是否改为由你发动 %dest 的“%arg”？",
-  ["#tianzong_limited__juben-judge"] = "剧本：是否更改此判定牌？",
+  ["#tianzong_toaru__juben-record"] = "剧本：是否记录一个新牌名、角色和花色？",
+  ["#tianzong_toaru__juben-name"] = "剧本：记录一个未记录过的牌名",
+  ["#tianzong_toaru__juben-player"] = "剧本：记录一名未记录过的角色",
+  ["#tianzong_toaru__juben-suit"] = "剧本：记录一个未记录过的花色",
+  ["tianzong_toaru__juben_target"] = "更改目标", ["tianzong_toaru__juben_card"] = "更改牌名",
+  ["tianzong_toaru__juben_suit"] = "更改花色",
+  ["#tianzong_toaru__juben-change-target"] = "剧本：增加或移除一个合法目标",
+  ["#tianzong_toaru__juben-change-card"] = "剧本：选择要更改成的牌名",
+  ["#tianzong_toaru__juben-skill"] = "剧本：是否改为由你发动 %dest 的“%arg”？",
+  ["#tianzong_toaru__juben-judge"] = "剧本：是否更改此判定牌？",
 }
 return juben

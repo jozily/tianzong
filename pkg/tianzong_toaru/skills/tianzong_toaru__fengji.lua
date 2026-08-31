@@ -1,4 +1,4 @@
-local fengji = fk.CreateSkill { name = "tianzong_limited__fengji" }
+local fengji = fk.CreateSkill { name = "tianzong_toaru__fengji" }
 
 local slots = { Card.SubtypeWeapon, Card.SubtypeArmor, Card.SubtypeOffensiveRide, Card.SubtypeDefensiveRide, Card.SubtypeTreasure }
 local slot_names = {
@@ -28,7 +28,7 @@ fengji:addEffect(fk.Damaged, {
     if #ids == 0 then return false end
     local chosen = player.room:askToCards(player, {
       min_num = 1, max_num = 1, include_equip = false, skill_name = fengji.name,
-      pattern = "slash", prompt = "#tianzong_limited__fengji::" .. data.from.id,
+      pattern = "slash", prompt = "#tianzong_toaru__fengji::" .. data.from.id,
       cancelable = true,
     })
     if #chosen > 0 then event:setCostData(self, { cards = chosen, tos = { data.from } }) return true end
@@ -38,10 +38,10 @@ fengji:addEffect(fk.Damaged, {
     local choices = empty_slots(to)
     local subtype = #choices == 1 and choices[1] or room:askToChoice(player, {
       choices = table.map(choices, Util.convertSubtypeAndEquipSlot), skill_name = fengji.name,
-      prompt = "#tianzong_limited__fengji-slot::" .. to.id,
+      prompt = "#tianzong_toaru__fengji-slot::" .. to.id,
     })
     if type(subtype) == "string" then subtype = Util.convertSubtypeAndEquipSlot(subtype) end
-    local card = Fk:cloneCard(slot_names[subtype] .. "__tianzong_limited__fengji")
+    local card = Fk:cloneCard(slot_names[subtype] .. "__tianzong_toaru__fengji")
     card:addSubcard(id)
     room:moveCardIntoEquip(to, card, fengji.name, true, player)
   end,
@@ -69,17 +69,17 @@ fengji:addEffect(fk.AfterCardsMove, {
     local id = cost.card
     if not recipient or recipient.dead or room:getCardArea(id) ~= Card.PlayerEquip then return end
     local choice = room:askToChoice(recipient, {
-      choices = { "tianzong_limited__fengji_restrict", "tianzong_limited__fengji_keep" },
+      choices = { "tianzong_toaru__fengji_restrict", "tianzong_toaru__fengji_keep" },
       skill_name = fengji.name,
     })
-    if choice == "tianzong_limited__fengji_restrict" then
-      room:addTableMarkIfNeed(recipient, "tianzong_limited__fengji_suit-turn", Fk:getCardById(id, true).suit)
+    if choice == "tianzong_toaru__fengji_restrict" then
+      room:addTableMarkIfNeed(recipient, "tianzong_toaru__fengji_suit-turn", Fk:getCardById(id, true).suit)
       room:addPlayerMark(recipient, MarkEnum.UncompulsoryInvalidity .. "-turn")
     else
       local keep = { id }
       if not recipient:isKongcheng() then
         local hand = room:askToCards(recipient, { min_num = 1, max_num = 1, include_equip = false,
-          skill_name = fengji.name, cancelable = false, prompt = "#tianzong_limited__fengji-keep" })
+          skill_name = fengji.name, cancelable = false, prompt = "#tianzong_toaru__fengji-keep" })
         table.insertTable(keep, hand)
       end
       local discard = table.filter(recipient:getCardIds("he"), function(cid) return not table.contains(keep, cid) end)
@@ -90,25 +90,25 @@ fengji:addEffect(fk.AfterCardsMove, {
 
 fengji:addEffect("prohibit", {
   prohibit_use = function(self, player, card)
-    return table.contains(player:getTableMark("tianzong_limited__fengji_suit-turn"), card.suit)
+    return table.contains(player:getTableMark("tianzong_toaru__fengji_suit-turn"), card.suit)
   end,
   prohibit_response = function(self, player, card)
-    return table.contains(player:getTableMark("tianzong_limited__fengji_suit-turn"), card.suit)
+    return table.contains(player:getTableMark("tianzong_toaru__fengji_suit-turn"), card.suit)
   end,
 })
 
 fengji:addTest(function()
   for _, name in pairs(slot_names) do
-    lu.assertEquals(Fk:cloneCard(name .. "__tianzong_limited__fengji").trueName, fengji.trueName)
+    lu.assertEquals(Fk:cloneCard(name .. "__tianzong_toaru__fengji").trueName, fengji.trueName)
   end
 end)
 
 Fk:loadTranslationTable {
-  ["#tianzong_limited__fengji"] = "风纪：将一张【杀】置入 %dest 的一个空装备栏",
-  ["#tianzong_limited__fengji-slot"] = "风纪：选择 %dest 的一个空装备栏",
-  ["tianzong_limited__fengji_restrict"] = "本回合不能使用或打出同花色牌，且非锁定技失效",
-  ["tianzong_limited__fengji_keep"] = "保留此牌和一张手牌，弃置其余所有牌",
-  ["#tianzong_limited__fengji-keep"] = "风纪：选择要保留的一张手牌",
+  ["#tianzong_toaru__fengji"] = "风纪：将一张【杀】置入 %dest 的一个空装备栏",
+  ["#tianzong_toaru__fengji-slot"] = "风纪：选择 %dest 的一个空装备栏",
+  ["tianzong_toaru__fengji_restrict"] = "本回合不能使用或打出同花色牌，且非锁定技失效",
+  ["tianzong_toaru__fengji_keep"] = "保留此牌和一张手牌，弃置其余所有牌",
+  ["#tianzong_toaru__fengji-keep"] = "风纪：选择要保留的一张手牌",
 }
 
 return fengji

@@ -1,6 +1,6 @@
 local zhoushe = fk.CreateSkill {
-  name = "tianzong_limited__zhoushe",
-  related_skills = { "#tianzong_limited__zhoushe_response" },
+  name = "tianzong_toaru__zhoushe",
+  related_skills = { "#tianzong_toaru__zhoushe_response" },
 }
 
 local function current_room(player)
@@ -8,7 +8,7 @@ local function current_room(player)
 end
 
 zhoushe:addEffect("active", {
-  prompt = "#tianzong_limited__zhoushe-use",
+  prompt = "#tianzong_toaru__zhoushe-use",
   card_filter = Util.FalseFunc,
   target_filter = function(self, player, to_select, selected)
     if #selected > 0 then return false end
@@ -22,7 +22,7 @@ zhoushe:addEffect("active", {
   end,
   can_use = function(self, player)
     local room = current_room(player)
-    if not room or player:getMark("tianzong_limited__zhoushe_use-turn") ~= 0 then return false end
+    if not room or player:getMark("tianzong_toaru__zhoushe_use-turn") ~= 0 then return false end
     local slash = Fk:cloneCard("thunder__slash")
     return table.find(room.alive_players, function(anchor)
       return table.find(room.alive_players, function(p)
@@ -40,7 +40,7 @@ zhoushe:addEffect("active", {
         player:canUseTo(slash, p, { bypass_times = true })
     end)
     if #tos == 0 then return end
-    room:setPlayerMark(player, "tianzong_limited__zhoushe_use-turn", 1)
+    room:setPlayerMark(player, "tianzong_toaru__zhoushe_use-turn", 1)
     room:useCard { from = player, tos = tos, card = slash, extraUse = true }
   end,
 })
@@ -53,13 +53,13 @@ zhoushe:addEffect(fk.CardEffectCancelledOut, {
   end,
   on_cost = Util.TrueFunc,
   on_use = function(self, event, target, player, data)
-    local choices = { "tianzong_limited__zhoushe_losehp" }
-    if #data.to:getCardIds("e") > 0 then table.insert(choices, "tianzong_limited__zhoushe_discard") end
+    local choices = { "tianzong_toaru__zhoushe_losehp" }
+    if #data.to:getCardIds("e") > 0 then table.insert(choices, "tianzong_toaru__zhoushe_discard") end
     local choice = #choices == 1 and choices[1] or player.room:askToChoice(data.to, {
       choices = choices, skill_name = zhoushe.name,
-      prompt = "#tianzong_limited__zhoushe-choice::" .. player.id,
+      prompt = "#tianzong_toaru__zhoushe-choice::" .. player.id,
     })
-    if choice == "tianzong_limited__zhoushe_discard" then
+    if choice == "tianzong_toaru__zhoushe_discard" then
       player.room:throwCard(data.to:getCardIds("e"), zhoushe.name, data.to, data.to)
     else
       player.room:loseHp(data.to, 1, zhoushe.name)
@@ -77,15 +77,15 @@ zhoushe:addTest(function(room, me)
   lu.assertNotNil(skill)
   lu.assertTrue(skill.visible)
   lu.assertTrue(skill:canUse(me))
-  lu.assertNotNil(Fk.skill_skels["#tianzong_limited__zhoushe_response"])
+  lu.assertNotNil(Fk.skill_skels["#tianzong_toaru__zhoushe_response"])
 end)
 
 Fk:loadTranslationTable {
-  ["#tianzong_limited__zhoushe-response"] = "轴射：视为打出一张【杀】",
-  ["#tianzong_limited__zhoushe-use"] = "轴射：选择一名角色，视为对其攻击范围内的所有角色使用雷【杀】",
-  ["#tianzong_limited__zhoushe-choice"] = "轴射：此雷【杀】被抵消，请选择一项",
-  ["tianzong_limited__zhoushe_losehp"] = "失去1点体力",
-  ["tianzong_limited__zhoushe_discard"] = "弃置装备区所有牌",
+  ["#tianzong_toaru__zhoushe-response"] = "轴射：视为打出一张【杀】",
+  ["#tianzong_toaru__zhoushe-use"] = "轴射：选择一名角色，视为对其攻击范围内的所有角色使用雷【杀】",
+  ["#tianzong_toaru__zhoushe-choice"] = "轴射：此雷【杀】被抵消，请选择一项",
+  ["tianzong_toaru__zhoushe_losehp"] = "失去1点体力",
+  ["tianzong_toaru__zhoushe_discard"] = "弃置装备区所有牌",
 }
 
 return zhoushe
