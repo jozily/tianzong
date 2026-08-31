@@ -3,7 +3,7 @@ local paihu = fk.CreateSkill { name = "tianzong_toaru__paihu", tags = { Skill.Li
 
 paihu:addEffect("active", {
   prompt = "#tianzong_toaru__paihu", target_num = 1, card_num = 0,
-  can_use = function(self, player) return player.phase == Player.Play and player:usedSkillTimes(self.name, Player.HistoryGame) == 0 and #player.room.alive_players >= 3 end,
+  can_use = function(self, player) return player.phase == Player.Play and player:usedSkillTimes(self.name, Player.HistoryGame) == 0 and #Fk:currentRoom().alive_players >= 3 end,
   target_filter = function(self, player, to_select, selected) return to_select ~= player and #selected == 0 end,
   on_use = function(self, room, effect)
     local player, target = effect.from, effect.tos[1]

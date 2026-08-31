@@ -6,7 +6,7 @@ local function target_num(player, card)
   if not card or player:prohibitUse(card) or not player:canUse(card) then return 0 end
   if card.skill:getMinTargetNum() == 0 and not card.multiple_targets then return 1 end
   local n = 0
-  for _, p in ipairs(player.room.alive_players) do
+  for _, p in ipairs(Fk:currentRoom().alive_players) do
     if not player:isProhibited(p, card) and card.skill:modTargetFilter(player, p, {}, card) then
       n = n + 1
     end
@@ -39,7 +39,7 @@ chijieji:addEffect("active", {
   prompt = "#chijieji",
   can_use = function(self, player)
     return player:usedSkillTimes(chijieji.name, Player.HistoryPhase) == 0 and
-      table.find(player.room.alive_players, function(p)
+      table.find(Fk:currentRoom().alive_players, function(p)
         return not p:isKongcheng() and
           (p:getHandcardNum() >= player:getHandcardNum() or #Common.get_skill_names(p) >= #Common.get_skill_names(player)) and
           #usable_cards(player, p) > 0

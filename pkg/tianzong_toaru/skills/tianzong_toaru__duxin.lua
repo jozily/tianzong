@@ -5,7 +5,7 @@ duxin:addEffect("active", {
   prompt = "#tianzong_toaru__duxin-choose", target_num = 1, card_num = 0,
   can_use = function(self, player)
     return player.phase == Player.Play and player:getMark("skill_charge") > 0 and
-      table.find(player.room.alive_players, function(p) return p ~= player and not p:isKongcheng() end) ~= nil
+      table.find(Fk:currentRoom().alive_players, function(p) return p ~= player and not p:isKongcheng() end) ~= nil
   end,
   target_filter = function(self, player, to_select, selected)
     return to_select ~= player and #selected == 0 and not to_select:isKongcheng()

@@ -11,7 +11,7 @@ niwochencangRemake:addEffect("viewas", {
   interaction = function(self, player)
     if player:usedSkillTimes(niwochencangRemake.name, Player.HistoryRound) > 0 then return end
     
-    local room = player.room
+    local room = Fk:currentRoom()
     local targets = {}
     for _, p in ipairs(room:getOtherPlayers(player)) do
       if p:isAlive() and player:inMyAttackRange(p) then

@@ -5,14 +5,14 @@ local function target_num(player, card)
   if player:prohibitUse(card) or not player:canUse(card, { bypass_times = true }) then return 0 end
   if card.skill:getMinTargetNum() == 0 and not card.multiple_targets then return 1 end
   local n = 0
-  for _, p in ipairs(player.room.alive_players) do
+  for _, p in ipairs(Fk:currentRoom().alive_players) do
     if not player:isProhibited(p, card) and card.skill:modTargetFilter(player, p, {}, card) then n = n + 1 end
   end
   return n
 end
 
 local function turned_after_cost(player)
-  local n = #table.filter(player.room.alive_players, function(p) return not p.faceup end)
+  local n = #table.filter(Fk:currentRoom().alive_players, function(p) return not p.faceup end)
   return n + (player.faceup and 1 or -1)
 end
 

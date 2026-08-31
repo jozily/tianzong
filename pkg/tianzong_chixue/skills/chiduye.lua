@@ -36,7 +36,7 @@ chiduye:addEffect("active", {
   target_num = 0,
   can_use = function(self, player)
     return player:usedSkillTimes(chiduye.name, Player.HistoryPhase) == 0 and
-      #all_field_cards(player.room) > 0
+      #all_field_cards(Fk:currentRoom()) > 0
   end,
   card_filter = Util.FalseFunc,
   target_filter = Util.FalseFunc,

@@ -3,7 +3,7 @@ local PILE = "niwoxuejiu_lie"
 
 local function all_lies(player)
   local ids = {}
-  for _, p in ipairs(player.room.players) do table.insertTable(ids, p:getPile(PILE)) end
+  for _, p in ipairs(Fk:currentRoom().players) do table.insertTable(ids, p:getPile(PILE)) end
   return ids
 end
 

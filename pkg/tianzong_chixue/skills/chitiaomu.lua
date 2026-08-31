@@ -5,7 +5,7 @@ local function target_num(player, card)
   if player:prohibitUse(card) or not player:canUse(card, { bypass_times = true }) then return 0 end
   if card.skill:getMinTargetNum() == 0 and not card.multiple_targets then return 1 end
   local n = 0
-  for _, p in ipairs(player.room.alive_players) do
+  for _, p in ipairs(Fk:currentRoom().alive_players) do
     if not player:isProhibited(p, card) and card.skill:modTargetFilter(player, p, {}, card) then n = n + 1 end
   end
   return n
@@ -13,7 +13,7 @@ end
 
 local function discard_candidates(player, wanted)
   local length, targets = wanted:getNameLength(true), target_num(player, wanted)
-  return table.filter(player.room.discard_pile, function(id)
+  return table.filter(Fk:currentRoom().discard_pile, function(id)
     local card = Fk:getCardById(id)
     return (card.type == Card.TypeBasic or card:isCommonTrick()) and
       (card:getNameLength(true) == length or target_num(player, card) == targets)

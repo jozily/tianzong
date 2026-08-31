@@ -4,7 +4,7 @@ local CARD_MARK = "@@niwo_mo"
 local OWNER_MARK = "niwo_mo_owner"
 
 local function valid_targets(player)
-  return table.filter(player.room:getOtherPlayers(player), function(p) return not p:isNude() end)
+  return table.filter(Fk:currentRoom():getOtherPlayers(player), function(p) return not p:isNude() end)
 end
 
 local function mark_cards(room, player, target)
