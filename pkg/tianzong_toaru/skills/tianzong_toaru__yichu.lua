@@ -1,5 +1,17 @@
 local yichu = fk.CreateSkill { name = "tianzong_toaru__yichu", tags = { Skill.Compulsory } }
 local bonus, saved = "tianzong_toaru__yichu_maxhp", "tianzong_toaru__yichu_saved"
+local saved_visible = "@[yichu_saved]"
+
+Fk:addQmlMark {
+  name = "yichu_saved",
+  how_to_show = function() return "衣橱" end,
+  qml = function(name, value)
+    return {
+      url = "packages/tianzong/qml/YichuMarkBox.qml",
+      prop = { name = name, value = type(value) == "table" and value or {} },
+    }
+  end,
+}
 
 local function sync(room, player)
   local old = player:getMark(bonus)
@@ -16,6 +28,8 @@ local function sync(room, player)
       end
     end
   end
+  local saved_cards = player:getTableMark(saved)
+  room:setPlayerMark(player, saved_visible, #saved_cards > 0 and table.simpleClone(saved_cards) or 0)
 end
 
 yichu:addEffect("maxcards", {
@@ -63,17 +77,26 @@ yichu:addEffect(fk.AfterCardsMove, {
   on_cost = Util.TrueFunc,
   on_use = function(self, event, target, player, data)
     local room = player.room
+    -- The wardrobe effect triggers only once per game. If several equipment
+    -- cards leave in that same move batch, record all of them.
     if player:getMark("tianzong_toaru__yichu_first") == 0 then
+      local found = false
       for _, move in ipairs(data) do
         if move.from == player then
-          local info = table.find(move.moveInfo, function(i) return i.fromArea == Card.PlayerEquip end)
-          if info then
-            room:setPlayerMark(player, "tianzong_toaru__yichu_first", 1)
-            room:addTableMarkIfNeed(player, saved, Fk:getCardById(info.cardId, true).name)
-            break
+          for _, info in ipairs(move.moveInfo) do
+            if info.fromArea == Card.PlayerEquip then
+              local card = Fk:getCardById(info.cardId, true)
+              if card then
+                found = true
+                if not table.contains(player:getTableMark(saved), card.name) then
+                  room:addTableMarkIfNeed(player, saved, card.name)
+                end
+              end
+            end
           end
         end
       end
+      if found then room:setPlayerMark(player, "tianzong_toaru__yichu_first", 1) end
     end
     sync(room, player)
   end,

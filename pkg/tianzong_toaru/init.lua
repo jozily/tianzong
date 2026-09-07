@@ -112,6 +112,7 @@ Fk:loadTranslationTable {
   ["@[juben_names]"] = "剧本·牌名",
   ["@[juben_players]"] = "剧本·角色",
   ["@[juben_suits]"] = "剧本·花色",
+  ["@[yichu_saved]"] = "衣橱",
 }
 
 return extension

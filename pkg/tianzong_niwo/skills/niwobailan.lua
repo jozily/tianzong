@@ -51,8 +51,8 @@ end
 
 Fk:addQmlMark{
   name = "niwobailan",
-  how_to_show = function(_, value)
-    return type(value) == "table" and ("百览 " .. tostring(value.x or 0)) or " "
+  how_to_show = function()
+    return "百览·技能标签"
   end,
   qml = function(name, value)
     return {
@@ -86,7 +86,10 @@ niwobailan:addEffect("active", {
       prompt = "#niwobailan-skill",
     })
     room:setPlayerMark(target, BAILAN_SKILL_MARK, choice_skill)
-    room:setPlayerMark(target, BAILAN_MARK, Fk:translate(choice_skill))
+    -- The selected skill is tracked on the target privately; Zhang Hua's
+    -- public mark remains the fixed, clickable tag summary.
+    update_bailan_mark(room, player)
+    room:setPlayerMark(target, BAILAN_MARK, 0)
     if target ~= player and player:isAlive() and x > 0 then
       room:loseHp(player, x, niwobailan.name)
     end
@@ -117,7 +120,7 @@ niwobailan:addEffect(fk.AfterSkillEffect, {
     if target ~= player or not data.skill then return false end
     local skeleton = data.skill:getSkeleton()
     local skill_name = skeleton and skeleton.name or data.skill.name
-    return player:getMark(BAILAN_SKILL_MARK) == skill_name
+    return player:getMark(BAILAN_SKILL_MARK) == skill_name and player:hasSkill(skill_name, true)
   end,
   on_cost = Util.TrueFunc,
   on_use = function(self, event, target, player, data)
@@ -125,7 +128,8 @@ niwobailan:addEffect(fk.AfterSkillEffect, {
     local skill_name = skeleton and skeleton.name or data.skill.name
     player.room:setPlayerMark(player, BAILAN_SKILL_MARK, 0)
     player.room:setPlayerMark(player, BAILAN_MARK, 0)
-    player.room:handleAddLoseSkills(player, "-" .. skill_name, niwobailan.name, true, false)
+    player.room:handleAddLoseSkills(player, "-" .. skill_name, niwobailan.name, false, true)
+    update_bailan_mark(player.room, player)
   end,
 })
 

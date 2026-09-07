@@ -10,11 +10,13 @@ niwoyinbing:addEffect(fk.Damaged, {
       (data.from == player or data.to == player)
   end,
   on_cost = function(self, event, target, player, data)
-    return table.contains(player:getTableMark("contracted_skills"), niwoyinbing.name) or
-      player.room:askToSkillInvoke(player, {
-        skill_name = niwoyinbing.name,
-        prompt = "#niwoyinbing-invoke",
-      })
+    if table.contains(player:getTableMark("contracted_skills"), niwoyinbing.name) then
+      return true
+    end
+    return player.room:askToSkillInvoke(player, {
+      skill_name = niwoyinbing.name,
+      prompt = "#niwoyinbing-invoke",
+    })
   end,
   on_use = function(self, event, target, player, data)
     local room, user, source = player.room, data.to, data.from
