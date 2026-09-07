@@ -41,9 +41,13 @@ fengji:addEffect(fk.Damaged, {
       prompt = "#tianzong_toaru__fengji-slot::" .. to.id,
     })
     if type(subtype) == "string" then subtype = Util.convertSubtypeAndEquipSlot(subtype) end
+    if not subtype then return end
     local card = Fk:cloneCard(slot_names[subtype] .. "__tianzong_toaru__fengji")
     card:addSubcard(id)
     room:moveCardIntoEquip(to, card, fengji.name, true, player)
+    if to:isAlive() then
+      room:notifySkillInvoked(player, fengji.name, "control")
+    end
   end,
 })
 

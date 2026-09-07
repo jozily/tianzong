@@ -1,6 +1,5 @@
 local hengwen = fk.CreateSkill {
   name = "tianzong_toaru__hengwen",
-  tags = { Skill.Limited },
 }
 
 hengwen:addEffect("active", {
@@ -14,7 +13,8 @@ hengwen:addEffect("active", {
   end,
   on_use = function(self, room, effect)
     local to = effect.tos[1]
-    room:setPlayerMark(to, "@tianzong_toaru__hengwen", effect.from.id)
+    room:setPlayerMark(to, "tianzong_toaru__hengwen_owner", effect.from.id)
+    room:setPlayerMark(to, "@tianzong_toaru__hengwen", to.hp)
     room:setPlayerMark(to, "tianzong_toaru__hengwen_hp", to.hp)
   end,
 })
@@ -23,7 +23,7 @@ hengwen:addEffect(fk.HpChanged, {
   is_delay_effect = true,
   can_trigger = function(self, event, target, player, data)
     return target and target:isAlive() and target.hp > 0 and
-      target:getMark("@tianzong_toaru__hengwen") == player.id and
+      target:getMark("tianzong_toaru__hengwen_owner") == player.id and
       player:hasSkill(hengwen.name, true) and
       target.hp ~= target:getMark("tianzong_toaru__hengwen_hp")
   end,
@@ -39,6 +39,7 @@ hengwen:addEffect(fk.HpChanged, {
   on_use = function(self, event, target, player, data)
     local room, hp = player.room, target:getMark("tianzong_toaru__hengwen_hp")
     room:setPlayerMark(target, "@tianzong_toaru__hengwen", 0)
+    room:setPlayerMark(target, "tianzong_toaru__hengwen_owner", 0)
     room:setPlayerMark(target, "tianzong_toaru__hengwen_hp", 0)
     if target.hp < hp then
       room:recover { who = target, num = hp - target.hp, recoverBy = player, skillName = hengwen.name }
@@ -52,7 +53,6 @@ hengwen:addEffect(fk.HpChanged, {
 hengwen:addTest(function()
   local skill = Fk.skills[hengwen.name]
   lu.assertNotNil(skill)
-  lu.assertTrue(skill:hasTag(Skill.Limited))
   lu.assertNil(Fk.skill_skels["#tianzong_toaru__hengwen_restore"])
 end)
 

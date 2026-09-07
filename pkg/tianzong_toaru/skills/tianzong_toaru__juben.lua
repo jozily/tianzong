@@ -1,6 +1,6 @@
 local U = require "packages.utility.utility"
 local juben = fk.CreateSkill { name = "tianzong_toaru__juben" }
-local NM, PM, SM = "@tianzong_toaru__juben_names", "@tianzong_toaru__juben_players", "@tianzong_toaru__juben_suits"
+local NM, PM, PDM, SM = "@[list]tianzong_toaru__juben_names", "tianzong_toaru__juben_player_ids", "@[list]tianzong_toaru__juben_players", "@[list]tianzong_toaru__juben_suits"
 local suits = { log_spade = Card.Spade, log_heart = Card.Heart, log_club = Card.Club, log_diamond = Card.Diamond }
 
 local function take(room, player, mark, value)
@@ -21,6 +21,7 @@ local function record(room, player)
     prompt = "#tianzong_toaru__juben-suit" })
   room:addTableMarkIfNeed(player, NM, name)
   room:addTableMarkIfNeed(player, PM, who.id)
+  room:addTableMarkIfNeed(player, PDM, who.general ~= "anjiang" and who.general or who.deputyGeneral)
   room:addTableMarkIfNeed(player, SM, suits[suit])
 end
 
@@ -85,7 +86,10 @@ juben:addEffect(fk.AfterCardTargetDeclared, {
       data:changeCard(name, data.card.suit, data.card.number, juben.name)
     end
     if used_name then take(room, player, NM, used_name)
-    elseif used_player then take(room, player, PM, used_player.id) end
+    elseif used_player then
+      room:removeTableMark(player, PDM, used_player.general ~= "anjiang" and used_player.general or used_player.deputyGeneral)
+      take(room, player, PM, used_player.id)
+    end
   end,
 })
 

@@ -5,13 +5,15 @@ local zonghuan = fk.CreateSkill {
 
 zonghuan:addEffect(fk.TargetConfirming, {
   can_trigger = function(self, event, target, player, data)
+    local extras = data:getExtraTargets({ bypass_distances = true })
     return target == player and player:hasSkill(zonghuan.name) and
       player:usedSkillTimes(zonghuan.name, Player.HistoryGame) == 0 and
-      data.from and data.from ~= player and #data:getExtraTargets() > 0
+      data.from and data.from ~= player and #extras > 0
   end,
   on_cost = function(self, event, target, player, data)
+    local extras = data:getExtraTargets({ bypass_distances = true })
     local tos = player.room:askToChoosePlayers(player, {
-      targets = data:getExtraTargets(), min_num = 1, max_num = 1,
+      targets = extras, min_num = 1, max_num = 1,
       skill_name = zonghuan.name, prompt = "#tianzong_toaru__zonghuan::" .. data.from.id,
       cancelable = true,
     })

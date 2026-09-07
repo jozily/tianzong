@@ -10,9 +10,9 @@ daoyan:addEffect("active", {
   end,
   on_use = function(self, room, effect)
     local player = effect.from
-    local names = player:getTableMark("@tianzong_toaru__juben_names")
-    local people = player:getTableMark("@tianzong_toaru__juben_players")
-    local suits = player:getTableMark("@tianzong_toaru__juben_suits")
+    local names = player:getTableMark("@[list]tianzong_toaru__juben_names")
+    local people = player:getTableMark("tianzong_toaru__juben_player_ids")
+    local suits = player:getTableMark("@[list]tianzong_toaru__juben_suits")
     local ids = table.filter(room.draw_pile, function(id)
       return table.contains(names, Fk:getCardById(id).name)
     end)
@@ -26,7 +26,7 @@ daoyan:addEffect("active", {
       end
     end
     if #ids > 0 then room:obtainCard(player, ids, true, fk.ReasonPrey, player, daoyan.name) end
-    room:handleAddLoseSkills(player, "-tianzong_toaru__juben", daoyan.name)
+    room:handleAddLoseSkills(player, "-tianzong_toaru__juben", nil, true, false)
   end,
 })
 

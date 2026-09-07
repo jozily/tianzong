@@ -13,15 +13,18 @@ duxin:addEffect("active", {
   on_use = function(self, room, effect)
     local player, target = effect.from, effect.tos[1]
     U.skillCharged(player, -1)
-    room:viewCards(player, { cards = target:getCardIds("h"), skill_name = self.name, prompt = "$ViewCardsFrom:" .. target.id })
-    local id = room:askToChooseCard(player, { target = target, flag = "h", skill_name = self.name, prompt = "#tianzong_toaru__duxin-card" })
+    local hand = target:getCardIds("h")
+    room:viewCards(player, { cards = hand, skill_name = self.name, prompt = "$ViewCardsFrom:" .. target.id })
+    local chosen = room:askToCards(player, { min_num = 1, max_num = 1, include_equip = false, cancelable = true,
+      pattern = tostring(Exppattern { id = hand }), expand_pile = hand, skill_name = self.name, prompt = "#tianzong_toaru__duxin-card" })
+    local id = chosen[1]
     if id then
-      local use = room:askToUseRealCard(target, {
+      local use = room:askToUseRealCard(player, {
         pattern = { id }, expand_pile = { id }, skill_name = self.name,
         prompt = "#tianzong_toaru__duxin-card", cancelable = true,
         skip = true, extra_data = { expand_pile = { id }, bypass_times = true, extraUse = true },
       })
-      if use then room:useCard(use) end
+      if use then use.from = target; room:useCard(use) end
     end
   end,
 })

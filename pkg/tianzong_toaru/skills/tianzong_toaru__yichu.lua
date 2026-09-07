@@ -46,7 +46,9 @@ yichu:addEffect(fk.RoundStart, {
   on_cost = Util.TrueFunc,
   on_use = function(self, event, target, player)
     local room = player.room
-    local ids = table.filter(room.draw_pile, function(id) return Fk:getCardById(id).type == Card.TypeEquip end)
+    local ids = table.filter(room.draw_pile, function(id)
+      return Fk:getCardById(id).type == Card.TypeEquip and player:canMoveCardIntoEquip(id, true)
+    end)
     if #ids > 0 then room:moveCardIntoEquip(player, room:tableRandomPick(ids), yichu.name, true, player) end
   end,
 })

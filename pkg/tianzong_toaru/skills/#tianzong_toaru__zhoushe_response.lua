@@ -1,6 +1,6 @@
 local MAIN_SKILL = "tianzong_toaru__zhoushe"
 
-local response = fk.CreateSkill { name = "#tianzong_toaru__zhoushe_response" }
+local response = fk.CreateSkill { name = "#tianzong_toaru__zhoushe_response", visible = false }
 
 response:addEffect("viewas", {
   pattern = "slash",

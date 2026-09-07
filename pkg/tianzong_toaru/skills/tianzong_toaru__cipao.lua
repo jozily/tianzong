@@ -13,14 +13,14 @@ cipao:addEffect("viewas", {
   end,
   before_use = function(self, player, use)
     use.extraUse = true
-    local lengths, distinct = {}, true
+    local types, distinct = {}, true
     for _, id in ipairs(use.card.subcards) do
-      local n = Fk:getCardById(id):getNameLength(true)
-      if lengths[n] then distinct = false break end
-      lengths[n] = true
+      local n = Fk:getCardById(id).type
+      if types[n] then distinct = false break end
+      types[n] = true
     end
     use.extra_data = use.extra_data or {}
-    use.extra_data.tianzong_toaru__cipao_damage = distinct and #use.card.subcards or nil
+    use.extra_data.tianzong_toaru__cipao_jink = distinct and #use.card.subcards or nil
   end,
   enabled_at_play = function(self, player)
     return player:usedSkillTimes(cipao.name, Player.HistoryPhase) == 0
@@ -33,17 +33,11 @@ cipao:addEffect(fk.TargetSpecified, {
   end,
   on_refresh = function(self, event, target, player, data)
     data.to:addQinggangTag(data)
-  end,
-})
-
-cipao:addEffect(fk.DamageCaused, {
-  can_refresh = function(self, event, target, player, data)
-    return target == player and data.card and data.card.skillName == cipao.name
-  end,
-  on_refresh = function(self, event, target, player, data)
-    local use = player.room.logic:getCurrentEvent():findParent(GameEvent.UseCard, true)
-    local x = use and use.data.extra_data and use.data.extra_data.tianzong_toaru__cipao_damage
-    if x then data.damage = x end
+    local n = data.use.extra_data and data.use.extra_data.tianzong_toaru__cipao_jink
+    if n then
+      data.fixedResponseTimesList = data.fixedResponseTimesList or {}
+      data.fixedResponseTimesList[data.to] = n
+    end
   end,
 })
 

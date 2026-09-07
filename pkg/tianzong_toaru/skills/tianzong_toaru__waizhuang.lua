@@ -11,17 +11,19 @@ waizhuang:addEffect(fk.DamageInflicted, {
     if target ~= player or not player:hasSkill(waizhuang.name) then return false end
     return table.find(player.room.alive_players, function(p)
       return p:getMark("tianzong_toaru__yangmu_guard-round") == 0 and
-        table.contains(p:getTableMark("@[list]tianzong_toaru__yangmu"), player)
+        table.contains(p:getTableMark("@[list]tianzong_toaru__yangmu"), player.id)
     end) ~= nil
   end,
   on_cost = function(self, event, target, player, data)
     local candidates = table.filter(player.room.alive_players, function(p)
       return p:getMark("tianzong_toaru__yangmu_guard-round") == 0 and
-        table.contains(p:getTableMark("@[list]tianzong_toaru__yangmu"), player)
+        table.contains(p:getTableMark("@[list]tianzong_toaru__yangmu"), player.id)
     end)
-    local who = player.room:askToChoosePlayers(player, { targets = candidates, min_num = 1, max_num = 1,
-      skill_name = "tianzong_toaru__yangmu", prompt = "#tianzong_toaru__yangmu-guard", cancelable = true })[1]
-    if who then event:setCostData(self, { tos = { who } }); return true end
+    for _, admirer in ipairs(candidates) do
+      if player.room:askToSkillInvoke(admirer, {
+        skill_name = "tianzong_toaru__yangmu", prompt = "#tianzong_toaru__yangmu-guard::" .. player.id,
+      }) then event:setCostData(self, { tos = { admirer } }); return true end
+    end
   end,
   on_use = function(self, event, target, player, data)
     local admirer = event:getCostData(self).tos[1]

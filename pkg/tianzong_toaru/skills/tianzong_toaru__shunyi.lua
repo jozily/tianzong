@@ -80,7 +80,7 @@ shunyi:addEffect("active", {
         targets = targets, min_num = 1, max_num = 1, cancelable = false,
         skill_name = shunyi.name, prompt = "#tianzong_toaru__shunyi-seat::" .. source.id,
       })
-      room:moveSeatToNext(source, tos[1])
+      room:swapSeat(source, tos[1])
       room:setPlayerMark(player, "tianzong_toaru__shunyi_seat", 1)
     end
   end,

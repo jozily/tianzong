@@ -43,6 +43,16 @@ leibi:addEffect(fk.DamageInflicted, {
   end,
 })
 
+leibi:addEffect(fk.DamageInflicted, {
+  can_trigger = function(self, event, target, player, data)
+    return player:hasSkill(leibi.name) and data.damageType == fk.ThunderDamage and data.damage > 0
+  end,
+  on_cost = Util.TrueFunc,
+  on_use = function(self, event, target, player, data)
+    player:drawCards(data.damage, leibi.name)
+  end,
+})
+
 Fk:loadTranslationTable {
   ["#tianzong_toaru__leibi-invoke"] = "雷壁：你可以视为对 %dest 使用一张雷【杀】",
   ["#tianzong_toaru__leibi-damage"] = "雷壁：你可以防止即将受到的 %arg 点雷电伤害并恢复等量体力",
