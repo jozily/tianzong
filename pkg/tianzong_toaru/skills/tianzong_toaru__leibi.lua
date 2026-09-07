@@ -38,8 +38,9 @@ leibi:addEffect(fk.DamageInflicted, {
     return player.room:askToSkillInvoke(player, { skill_name = leibi.name, prompt = "#tianzong_toaru__leibi-damage:::" .. data.damage })
   end,
   on_use = function(self, event, target, player, data)
+    local damage = data.damage
     data:preventDamage()
-    player.room:recover { who = player, num = data.damage, recoverBy = player, skillName = leibi.name }
+    player.room:recover { who = player, num = damage, recoverBy = player, skillName = leibi.name }
   end,
 })
 

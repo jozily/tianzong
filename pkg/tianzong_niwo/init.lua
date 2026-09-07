@@ -222,7 +222,8 @@ Fk:loadTranslationTable{
   ["$niwobailan2"] = "览遍古今，无所不知。",
   ["$niwoyinbing1"] = "饮冰十年，难凉热血。",
   ["$niwoyinbing2"] = "冰封于心，热血难凉。",
-  ["@[list]niwobailan"] = "百览",
+  ["@niwobailan"] = "百览：",
+  ["@[niwobailan]"] = "百览·技能标签",
 
   -- 逆赵云
   ["niwo__zhaoyun"] = "逆赵云",

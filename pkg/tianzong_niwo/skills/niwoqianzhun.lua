@@ -28,20 +28,15 @@ local function tag_length_names(player, target)
   local names = table.filter(Fk:getAllCardNames("bt"), function(name)
     local card = Fk:cloneCard(name)
     return card and (card.type == Card.TypeBasic or card:isCommonTrick()) and
-      card:getNameLength(true) == x
+      card:getNameLength() == x
   end)
   return player:getViewAsCardNames(niwoqianzhun.name, names)
 end
 
 local function use_one(room, player, names, prompt)
   if #names == 0 then return end
-  local name = #names == 1 and names[1] or room:askToChoice(player, {
-    choices = names,
-    skill_name = niwoqianzhun.name,
-    prompt = prompt,
-  })
   room:askToUseVirtualCard(player, {
-    name = name,
+    name = names,
     skill_name = niwoqianzhun.name,
     prompt = "#niwoqianzhun-use",
     cancelable = false,

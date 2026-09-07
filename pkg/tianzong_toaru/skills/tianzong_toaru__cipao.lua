@@ -14,10 +14,10 @@ cipao:addEffect("viewas", {
   before_use = function(self, player, use)
     use.extraUse = true
     local lengths, types = {}, {}
-    local different_names, different_types = true, true
+    local different_names, different_types = #use.card.subcards >= 2, #use.card.subcards >= 2
     for _, id in ipairs(use.card.subcards) do
       local card = Fk:getCardById(id)
-      local length, card_type = card:getNameLength(true), card.type
+      local length, card_type = card:getNameLength(), card.type
       if lengths[length] then different_names = false end
       if types[card_type] then different_types = false end
       lengths[length], types[card_type] = true, true

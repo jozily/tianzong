@@ -3,7 +3,9 @@ local niwobailan = fk.CreateSkill{
   tags = { Skill.Limited },
 }
 local Common = require "packages.tianzong.pkg.tianzong_niwo.lib.common"
-local BAILAN_MARK = "@[list]niwobailan"
+local BAILAN_MARK = "@niwobailan"
+local BAILAN_SKILL_MARK = "niwobailan_skill"
+local BAILAN_DETAIL_MARK = "@[niwobailan]"
 
 local function available_skills(player)
   return table.filter(Common.get_skill_names(player), function(skill_name)
@@ -14,16 +16,51 @@ local function available_skills(player)
 end
 
 local function tag_count(room)
-  local n = 0
+  local tags = {}
   for _, p in ipairs(room.alive_players) do
     for _, skill_name in ipairs(p:getSkillNameList()) do
       local skill = Fk.skills[skill_name]
       local skeleton = skill and skill:getSkeleton()
-      if skeleton then n = n + #(skeleton.tags or {}) end
+      if skeleton then
+        for _, tag in ipairs(skeleton.tags or {}) do tags[tag] = true end
+      end
     end
   end
+  local n = 0
+  for _ in pairs(tags) do n = n + 1 end
   return n
 end
+
+local function update_bailan_mark(room, owner)
+  local skills, tagset = {}, {}
+  for _, p in ipairs(room.alive_players) do
+    for _, skill_name in ipairs(p:getSkillNameList()) do
+      local skill = Fk.skills[skill_name]
+      local skeleton = skill and skill:getSkeleton()
+      local skilltags = skeleton and skeleton.tags or {}
+      if skill and skill.visible and #skilltags > 0 then
+        for _, tag in ipairs(skilltags) do tagset[tag] = true end
+        table.insertIfNeed(skills, skill_name)
+      end
+    end
+  end
+  local x = 0
+  for _ in pairs(tagset) do x = x + 1 end
+  room:setPlayerMark(owner, BAILAN_DETAIL_MARK, { x = x, skills = skills })
+end
+
+Fk:addQmlMark{
+  name = "niwobailan",
+  how_to_show = function(_, value)
+    return type(value) == "table" and ("百览 " .. tostring(value.x or 0)) or " "
+  end,
+  qml = function(name, value)
+    return {
+      url = "packages/utility/qml/DetailBox.qml",
+      prop = { name = name, value = type(value) == "table" and value.skills or {} },
+    }
+  end,
+}
 
 niwobailan:addEffect("active", {
   anim_type = "support",
@@ -48,10 +85,30 @@ niwobailan:addEffect("active", {
       skill_name = niwobailan.name,
       prompt = "#niwobailan-skill",
     })
-    room:setPlayerMark(target, BAILAN_MARK, { choice_skill })
+    room:setPlayerMark(target, BAILAN_SKILL_MARK, choice_skill)
+    room:setPlayerMark(target, BAILAN_MARK, Fk:translate(choice_skill))
     if target ~= player and player:isAlive() and x > 0 then
       room:loseHp(player, x, niwobailan.name)
     end
+  end,
+})
+
+niwobailan:addEffect(fk.GameStart, {
+  can_refresh = function(self, event, target, player)
+    return target == player and player:hasSkill(niwobailan.name, true)
+  end,
+  on_refresh = function(self, event, target, player)
+    update_bailan_mark(player.room, player)
+  end,
+})
+
+niwobailan:addEffect(fk.TurnStart, {
+  global = true,
+  can_refresh = function(self, event, target, player)
+    return player:hasSkill(niwobailan.name, true)
+  end,
+  on_refresh = function(self, event, target, player)
+    update_bailan_mark(player.room, player)
   end,
 })
 
@@ -60,12 +117,13 @@ niwobailan:addEffect(fk.AfterSkillEffect, {
     if target ~= player or not data.skill then return false end
     local skeleton = data.skill:getSkeleton()
     local skill_name = skeleton and skeleton.name or data.skill.name
-    return table.contains(player:getTableMark(BAILAN_MARK), skill_name)
+    return player:getMark(BAILAN_SKILL_MARK) == skill_name
   end,
   on_cost = Util.TrueFunc,
   on_use = function(self, event, target, player, data)
     local skeleton = data.skill:getSkeleton()
     local skill_name = skeleton and skeleton.name or data.skill.name
+    player.room:setPlayerMark(player, BAILAN_SKILL_MARK, 0)
     player.room:setPlayerMark(player, BAILAN_MARK, 0)
     player.room:handleAddLoseSkills(player, "-" .. skill_name, niwobailan.name, true, false)
   end,
