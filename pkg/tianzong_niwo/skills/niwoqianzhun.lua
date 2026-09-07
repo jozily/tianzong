@@ -1,4 +1,5 @@
 local Common = require "packages.tianzong.pkg.tianzong_niwo.lib.common"
+local U = require "packages.utility.utility"
 
 local niwoqianzhun = fk.CreateSkill{ name = "niwoqianzhun" }
 
@@ -35,13 +36,17 @@ end
 
 local function use_one(room, player, names, prompt)
   if #names == 0 then return end
-  room:askToUseVirtualCard(player, {
-    name = names,
-    skill_name = niwoqianzhun.name,
-    prompt = "#niwoqianzhun-use",
-    cancelable = false,
-    extra_data = { bypass_times = true },
-  })
+  local chosen = U.askForChooseCardNames(room, player, names, 1, 1,
+    niwoqianzhun.name, prompt, names, false)[1]
+  if chosen then
+    room:askToUseVirtualCard(player, {
+      name = chosen,
+      skill_name = niwoqianzhun.name,
+      prompt = "#niwoqianzhun-use",
+      cancelable = false,
+      extra_data = { bypass_times = true },
+    })
+  end
 end
 
 niwoqianzhun:addEffect("active", {
