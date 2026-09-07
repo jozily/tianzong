@@ -47,7 +47,7 @@ niwo__zhaoe:addSkills { "niwotianmeng", "niwotianmeng_mark", "niwofuxue", "niwoc
 
 Fk:loadTranslationTable{
   ["#niwobailan-invoke"] = "百览：你可以发动此限定技",
-  ["#niwobailan"] = "百览：令一名其他角色的一个非标签技变为限定技",
+  ["#niwobailan"] = "百览：选择一名有非限定技的角色",
   ["#niwocangji-invoke"] = "藏机：你可以发动此限定技",
   ["#niwochoulu-invoke"] = "仇戮：你可以对伤害来源使用一张无距离限制的【杀】",
   ["#niwoqianzhun-invoke"] = "谦准：你可以发动此技能",
@@ -82,8 +82,8 @@ Fk:loadTranslationTable{
   ["#niwofuxue"] = "覆血：失去1点体力，令伤害增加并摸牌，或恢复体力",
   ["niwofuxue_add"] = "令此伤害+X，然后摸2X张牌",
   ["niwofuxue_recover"] = "恢复X点体力",
-  ["#niwobailan-choose"] = "百览：选择一名角色，为其一个非标签技增加“限定技”标签",
-  ["#niwobailan-skill"] = "百览：选择要增加“限定技”标签的技能",
+  ["#niwobailan-choose"] = "百览：选择一名有非限定技的角色",
+  ["#niwobailan-skill"] = "百览：选择其武将牌上的一个非限定技",
   ["#niwochenghen-give"] = "承痕：令一名其他角色获得你的一个技能，然后对其依次使用场上的“殁”",
   ["#niwochenghen-obtain"] = "承痕：是否获得这%arg张因其他角色使用或打出而进入弃牌堆的“殁”？",
   ["#niwoqianzhun-choose"] = "千谆：选择一名角色",
@@ -213,15 +213,16 @@ Fk:loadTranslationTable{
   ["niwoqianzhun"] = "千谆",
   [":niwoqianzhun"] = "出牌阶段限一次，你可以选择一名角色并选择一项：①视为使用一张其技能描述中包含的牌；②视为使用一张牌名字数为X的基本牌或普通锦囊牌（X为其武将牌上技能标签数+1）。",
   ["niwobailan"] = "百览",
-  [":niwobailan"] = "限定技，出牌阶段，你可以令一名其他角色的一个非标签技变为限定技，然后你失去X点体力（X为你当前体力值）。",
+  [":niwobailan"] = "限定技，出牌阶段，你可以令一名角色摸4X张牌，然后你选择其武将牌上的一个非限定技，其下次发动该技能后失去此技能，若所选角色不为你，结算后你失去X点体力（X为场上存在的技能标签数量）。",
   ["niwoyinbing"] = "饮冰",
-  [":niwoyinbing"] = "<a href='sxrm__contract'>契定技</a>，当你受到或造成伤害后，受伤角色可以视为对伤害来源使用一张冰【杀】，结算后若没有角色因此受到伤害，此【杀】使用者摸两张牌并失去一点体力值；若有角色因此死亡，你可以令一名其他角色获得本技能。",
+  [":niwoyinbing"] = "<a href='sxrm__contract'>契定技</a>，当你受到或造成伤害后，受伤角色可以视为对伤害来源使用一张冰【杀】，你首次发动后此技能变为锁定技。结算后若没有角色因此受到伤害，此【杀】使用者摸两张牌并失去一点体力值；若有角色因此死亡，你可以令一名其他角色获得本技能。",
   ["$niwoqianzhun1"] = "千言万语，谆谆教诲。",
   ["$niwoqianzhun2"] = "谆谆善诱，字字珠玑。",
   ["$niwobailan1"] = "百卷览尽，胸有成竹。",
   ["$niwobailan2"] = "览遍古今，无所不知。",
   ["$niwoyinbing1"] = "饮冰十年，难凉热血。",
   ["$niwoyinbing2"] = "冰封于心，热血难凉。",
+  ["@[list]niwobailan"] = "百览",
 
   -- 逆赵云
   ["niwo__zhaoyun"] = "逆赵云",

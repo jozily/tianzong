@@ -3,14 +3,26 @@ local niwobailan = fk.CreateSkill{
   tags = { Skill.Limited },
 }
 local Common = require "packages.tianzong.pkg.tianzong_niwo.lib.common"
-local LIMITED_MARK = "niwobailan_limited"
+local BAILAN_MARK = "@[list]niwobailan"
 
 local function available_skills(player)
-  return table.filter(player:getSkillNameList(), function(skill_name)
+  return table.filter(Common.get_skill_names(player), function(skill_name)
     local skill = Fk.skills[skill_name]
     local skeleton = skill and skill:getSkeleton()
-    return skeleton and #(skeleton.tags or {}) == 0
+    return skill and skill.visible and skeleton and not table.contains(skeleton.tags or {}, Skill.Limited)
   end)
+end
+
+local function tag_count(room)
+  local n = 0
+  for _, p in ipairs(room.alive_players) do
+    for _, skill_name in ipairs(p:getSkillNameList()) do
+      local skill = Fk.skills[skill_name]
+      local skeleton = skill and skill:getSkeleton()
+      if skeleton then n = n + #(skeleton.tags or {}) end
+    end
+  end
+  return n
 end
 
 niwobailan:addEffect("active", {
@@ -22,10 +34,13 @@ niwobailan:addEffect("active", {
     return player:usedSkillTimes(niwobailan.name, Player.HistoryGame) == 0
   end,
   target_filter = function(self, player, to_select, selected)
-    return #selected == 0 and to_select ~= player and #available_skills(to_select) > 0
+    return #selected == 0 and #available_skills(to_select) > 0
   end,
   on_use = function(self, room, effect)
     local player, target = effect.from, effect.tos[1]
+    local x = tag_count(room)
+    if x > 0 then target:drawCards(4 * x, niwobailan.name) end
+    if target.dead then return end
     local skills = available_skills(target)
     if #skills == 0 then return end
     local choice_skill = #skills == 1 and skills[1] or room:askToChoice(player, {
@@ -33,20 +48,26 @@ niwobailan:addEffect("active", {
       skill_name = niwobailan.name,
       prompt = "#niwobailan-skill",
     })
-    room:addTableMarkIfNeed(target, LIMITED_MARK, choice_skill)
-    if player:isAlive() then
-      room:loseHp(player, player.hp, niwobailan.name)
+    room:setPlayerMark(target, BAILAN_MARK, { choice_skill })
+    if target ~= player and player:isAlive() and x > 0 then
+      room:loseHp(player, x, niwobailan.name)
     end
   end,
 })
 
-niwobailan:addEffect("invalidity", {
-  recheck_invalidity = true,
-  invalidity_func = function(self, from, skill)
-    local skeleton = skill:getSkeleton()
-    local skill_name = skeleton and skeleton.name or skill.name
-    return table.contains(from:getTableMark(LIMITED_MARK), skill_name) and
-      from:usedSkillTimes(skill_name, Player.HistoryGame) > 0
+niwobailan:addEffect(fk.AfterSkillEffect, {
+  can_trigger = function(self, event, target, player, data)
+    if target ~= player or not data.skill then return false end
+    local skeleton = data.skill:getSkeleton()
+    local skill_name = skeleton and skeleton.name or data.skill.name
+    return table.contains(player:getTableMark(BAILAN_MARK), skill_name)
+  end,
+  on_cost = Util.TrueFunc,
+  on_use = function(self, event, target, player, data)
+    local skeleton = data.skill:getSkeleton()
+    local skill_name = skeleton and skeleton.name or data.skill.name
+    player.room:setPlayerMark(player, BAILAN_MARK, 0)
+    player.room:handleAddLoseSkills(player, "-" .. skill_name, niwobailan.name, true, false)
   end,
 })
 
