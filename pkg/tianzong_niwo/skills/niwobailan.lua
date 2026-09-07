@@ -5,7 +5,7 @@ local niwobailan = fk.CreateSkill{
 local Common = require "packages.tianzong.pkg.tianzong_niwo.lib.common"
 local BAILAN_MARK = "@niwobailan"
 local BAILAN_SKILL_MARK = "niwobailan_skill"
-local BAILAN_DETAIL_MARK = "@[niwobailan]"
+local BAILAN_DETAIL_MARK = "@[niwobailan_detail]"
 
 local function available_skills(player)
   return table.filter(Common.get_skill_names(player), function(skill_name)
@@ -50,7 +50,7 @@ local function update_bailan_mark(room, owner)
 end
 
 Fk:addQmlMark{
-  name = "niwobailan",
+  name = "niwobailan_detail",
   how_to_show = function()
     return "百览·技能标签"
   end,
@@ -86,10 +86,10 @@ niwobailan:addEffect("active", {
       prompt = "#niwobailan-skill",
     })
     room:setPlayerMark(target, BAILAN_SKILL_MARK, choice_skill)
-    -- The selected skill is tracked on the target privately; Zhang Hua's
-    -- public mark remains the fixed, clickable tag summary.
+    -- Keep the selected skill prompt on the target; Zhang Hua gets only the
+    -- separate clickable tag-summary mark.
     update_bailan_mark(room, player)
-    room:setPlayerMark(target, BAILAN_MARK, 0)
+    room:setPlayerMark(target, BAILAN_MARK, Fk:translate(choice_skill))
     if target ~= player and player:isAlive() and x > 0 then
       room:loseHp(player, x, niwobailan.name)
     end
