@@ -17,9 +17,9 @@ local function addJubenMark(name)
     end,
   }
 end
-addJubenMark("tianzong_toaru__juben_names")
-addJubenMark("tianzong_toaru__juben_players")
-addJubenMark("tianzong_toaru__juben_suits")
+addJubenMark("juben_names")
+addJubenMark("juben_players")
+addJubenMark("juben_suits")
 
 local function take(room, player, mark, value)
   room:removeTableMark(player, mark, value)
