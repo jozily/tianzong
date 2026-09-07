@@ -1,7 +1,25 @@
 local U = require "packages.utility.utility"
 local juben = fk.CreateSkill { name = "tianzong_toaru__juben" }
-local NM, PM, PDM, SM = "@[list]tianzong_toaru__juben_names", "tianzong_toaru__juben_player_ids", "@[list]tianzong_toaru__juben_players", "@[list]tianzong_toaru__juben_suits"
+local NM, PM, PDM, SM = "@[juben_names]", "tianzong_toaru__juben_player_ids", "@[juben_players]", "@[juben_suits]"
 local suits = { log_spade = Card.Spade, log_heart = Card.Heart, log_club = Card.Club, log_diamond = Card.Diamond }
+
+local function addJubenMark(name)
+  Fk:addQmlMark {
+    name = name,
+    how_to_show = function(_, value)
+      return type(value) == "table" and tostring(#value) or " "
+    end,
+    qml = function(mark, value)
+      return {
+        url = "packages/tianzong/qml/JubenMarkBox.qml",
+        prop = { name = mark, value = type(value) == "table" and value or {} },
+      }
+    end,
+  }
+end
+addJubenMark("tianzong_toaru__juben_names")
+addJubenMark("tianzong_toaru__juben_players")
+addJubenMark("tianzong_toaru__juben_suits")
 
 local function take(room, player, mark, value)
   room:removeTableMark(player, mark, value)
@@ -165,6 +183,13 @@ juben:addEffect(fk.AfterCardsMove, {
     end
   end,
 })
+
+juben:addLoseEffect(function(self, player)
+  local room = player.room
+  for _, mark in ipairs({ NM, PM, PDM, SM, "tianzong_toaru__juben_discards" }) do
+    room:setPlayerMark(player, mark, 0)
+  end
+end)
 
 Fk:loadTranslationTable {
   [NM] = "剧本·牌名", [PM] = "剧本·角色", [SM] = "剧本·花色",

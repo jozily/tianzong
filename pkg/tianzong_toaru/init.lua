@@ -109,9 +109,9 @@ Fk:loadTranslationTable {
   [":tianzong_toaru__yangmu"] = "食蜂操祈可随时观看你的手牌。每轮各限一次，①当食蜂操祈即将受到伤害后，你可以失去一点体力上限防止此伤害；②食蜂操祈可如手牌般使用或打出你的手牌。",
   ["#tianzong_toaru__yangmu-guard"] = "仰慕：选择一名角色失去1点体力上限并防止你受到的伤害",
   ["@[list]tianzong_toaru__yangmu"] = "仰慕",
-  ["@[list]tianzong_toaru__juben_names"] = "剧本·牌名",
-  ["@[list]tianzong_toaru__juben_players"] = "剧本·角色",
-  ["@[list]tianzong_toaru__juben_suits"] = "剧本·花色",
+  ["@[juben_names]"] = "剧本·牌名",
+  ["@[juben_players]"] = "剧本·角色",
+  ["@[juben_suits]"] = "剧本·花色",
 }
 
 return extension
