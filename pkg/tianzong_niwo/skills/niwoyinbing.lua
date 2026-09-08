@@ -1,6 +1,6 @@
 local niwoyinbing = fk.CreateSkill{
   name = "niwoyinbing",
-  tags = { Skill.Contract },
+  tags = {},
   related_skills = { "niwochoulu" },
 }
 

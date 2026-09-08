@@ -1,12 +1,12 @@
 local chidangdan = fk.CreateSkill{
   name = "chidangdan",
-  tags = { Skill.Contract },
+  tags = { Skill.Compulsory },
 }
 
 local YUSHE_INVALID_MARK = "chidangdan_yushe_invalid-turn"
 
 local function is_contracted(player)
-  return table.contains(player:getTableMark("contracted_skills"), chidangdan.name)
+  return true
 end
 
 local function legal_target_num(player, card)
