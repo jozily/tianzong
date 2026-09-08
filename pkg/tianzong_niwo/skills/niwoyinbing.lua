@@ -1,6 +1,7 @@
 local niwoyinbing = fk.CreateSkill{
   name = "niwoyinbing",
   tags = { Skill.Contract },
+  related_skills = { "niwochoulu" },
 }
 
 niwoyinbing:addEffect(fk.Damaged, {
