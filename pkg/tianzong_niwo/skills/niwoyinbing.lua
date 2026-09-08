@@ -21,19 +21,21 @@ niwoyinbing:addEffect(fk.Damaged, {
   on_use = function(self, event, target, player, data)
     local room, user, source = player.room, data.to, data.from
     room:addTableMarkIfNeed(player, "contracted_skills", niwoyinbing.name)
-    local use = room:askToUseVirtualCard(user, {
-      name = "ice__slash",
-      skill_name = niwoyinbing.name,
-      prompt = "#niwoyinbing-ice::" .. source.id,
-      cancelable = true,
-      skip = true,
-      extra_data = {
-        exclusive_targets = { source.id },
-        bypass_times = true,
-        bypass_distances = true,
-      },
-    })
-    if not use then return end
+    local contracted = table.contains(player:getTableMark("contracted_skills"), niwoyinbing.name)
+    local use
+    if contracted then
+      local card = Fk:cloneCard("ice__slash")
+      card.skillName = niwoyinbing.name
+      use = { from = user, card = card, tos = { { source.id } }, skillName = niwoyinbing.name,
+        extraUse = true, bypassTimes = true, bypassDistances = true }
+    else
+      use = room:askToUseVirtualCard(user, {
+        name = "ice__slash", skill_name = niwoyinbing.name,
+        prompt = "#niwoyinbing-ice::" .. source.id, cancelable = true, skip = true,
+        extra_data = { exclusive_targets = { source.id }, bypass_times = true, bypass_distances = true },
+      })
+      if not use then return end
+    end
     room:useCard(use)
 
     local dealt = false
