@@ -33,6 +33,42 @@ local function spec(event)
     end,
   }
 end
+s:addEffect("active", {
+  anim_type = "control",
+  prompt = "#niwoqianzhun-reference",
+  card_num = 0,
+  target_num = 1,
+  can_use = function(self, player)
+    return player.phase == Player.Play and (player:getMark(DM) == 0 or player:getMark(TM) == 0)
+  end,
+  target_filter = function(self, player, to_select, selected)
+    return #selected == 0 and
+      ((player:getMark(DM) == 0 and #names(to_select, 1)>0) or
+       (player:getMark(TM) == 0 and #names(to_select, 2)>0))
+  end,
+  on_use = function(self, room, effect)
+    local player, who = effect.from, effect.tos[1]
+    local opts = {}
+    if player:getMark(DM) == 0 and #names(who, 1) > 0 then table.insert(opts, "niwoqianzhun_opt1") end
+    if player:getMark(TM) == 0 and #names(who, 2) > 0 then table.insert(opts, "niwoqianzhun_opt2") end
+    if #opts == 0 then return end
+    local opt = #opts == 1 and opts[1] or room:askToChoice(player, {
+      choices = opts, skill_name = s.name, prompt = "#niwoqianzhun-choice",
+    })
+    local list = names(who, opt == "niwoqianzhun_opt1" and 1 or 2)
+    local name = #list == 1 and list[1] or room:askToChoice(player, {
+      choices = list, skill_name = s.name, prompt = "#niwoqianzhun-card",
+    })
+    local use = room:askToUseVirtualCard(player, {
+      name = name, skill_name = s.name, prompt = "#niwoqianzhun-use", cancelable = false,
+      extra_data = { bypass_times = true },
+    })
+    if use then
+      room:setPlayerMark(player, opt == "niwoqianzhun_opt1" and DM or TM, 1)
+      room:useCard(use)
+    end
+  end,
+})
 s:addEffect(fk.AskForCardUse,spec(fk.AskForCardUse))
 s:addEffect(fk.AskForCardResponse,spec(fk.AskForCardResponse))
 return s
