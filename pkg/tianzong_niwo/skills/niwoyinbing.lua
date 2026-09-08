@@ -8,7 +8,8 @@ niwoyinbing:addEffect(fk.Damaged, {
   can_trigger = function(self, event, target, player, data)
     return player:hasSkill(niwoyinbing.name) and data.from and data.from:isAlive() and
       data.to and data.to:isAlive() and data.from ~= data.to and
-      (data.from == player or data.to == player)
+      (data.from == player or data.to == player) and
+      (not data.card or not table.contains(data.card.skillNames or {}, niwoyinbing.name))
   end,
   on_cost = function(self, event, target, player, data)
     if table.contains(player:getTableMark("contracted_skills"), niwoyinbing.name) then
