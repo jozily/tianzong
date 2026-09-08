@@ -31,16 +31,21 @@ local function record(room, player)
   local suit_names = table.filter({ "log_spade", "log_heart", "log_club", "log_diamond" }, function(s)
     return not table.contains(player:getTableMark(SM), suits[s])
   end)
-  if #names == 0 or #people == 0 or #suit_names == 0 then return end
-  local name = U.askForChooseCardNames(room, player, names, 1, 1, juben.name, "#tianzong_toaru__juben-name", names, false)[1]
-  local who = room:askToChoosePlayers(player, { targets = people, min_num = 1, max_num = 1,
-    skill_name = juben.name, prompt = "#tianzong_toaru__juben-player", cancelable = false })[1]
-  local suit = room:askToChoice(player, { choices = suit_names, skill_name = juben.name,
-    prompt = "#tianzong_toaru__juben-suit" })
-  room:addTableMarkIfNeed(player, NM, name)
-  room:addTableMarkIfNeed(player, PM, who.id)
-  room:addTableMarkIfNeed(player, PDM, who.general ~= "anjiang" and who.general or who.deputyGeneral)
-  room:addTableMarkIfNeed(player, SM, suits[suit])
+  if #names > 0 then
+    local name = U.askForChooseCardNames(room, player, names, 1, 1, juben.name, "#tianzong_toaru__juben-name", names, false)[1]
+    room:addTableMarkIfNeed(player, NM, name)
+  end
+  if #people > 0 then
+    local who = room:askToChoosePlayers(player, { targets = people, min_num = 1, max_num = 1,
+      skill_name = juben.name, prompt = "#tianzong_toaru__juben-player", cancelable = false })[1]
+    room:addTableMarkIfNeed(player, PM, who.id)
+    room:addTableMarkIfNeed(player, PDM, who.general ~= "anjiang" and who.general or who.deputyGeneral)
+  end
+  if #suit_names > 0 then
+    local suit = room:askToChoice(player, { choices = suit_names, skill_name = juben.name,
+      prompt = "#tianzong_toaru__juben-suit" })
+    room:addTableMarkIfNeed(player, SM, suits[suit])
+  end
 end
 
 local record_spec = {

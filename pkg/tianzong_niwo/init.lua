@@ -223,7 +223,7 @@ Fk:loadTranslationTable{
   ["$niwoyinbing1"] = "饮冰十年，难凉热血。",
   ["$niwoyinbing2"] = "冰封于心，热血难凉。",
   ["@niwobailan"] = "百览：",
-  ["@[niwobailan_detail]"] = "百览·技能标签",
+  ["@[niwobailan_detail]"] = "",
 
   -- 逆赵云
   ["niwo__zhaoyun"] = "逆赵云",

@@ -127,8 +127,7 @@ niwobailan:addEffect(fk.AfterSkillEffect, {
     local skeleton = data.skill:getSkeleton()
     local skill_name = skeleton and skeleton.name or data.skill.name
     player.room:setPlayerMark(player, BAILAN_SKILL_MARK, 0)
-    player.room:setPlayerMark(player, BAILAN_MARK, 0)
-    player.room:handleAddLoseSkills(player, "-" .. skill_name, niwobailan.name, false, true)
+    player.room:handleAddLoseSkills(player, "-" .. skill_name, nil, true, false)
     update_bailan_mark(player.room, player)
   end,
 })
