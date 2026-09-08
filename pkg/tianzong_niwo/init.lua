@@ -88,6 +88,7 @@ Fk:loadTranslationTable{
   ["#niwochenghen-obtain"] = "承痕：是否获得这%arg张因其他角色使用或打出而进入弃牌堆的“殁”？",
   ["#niwoqianzhun-choose"] = "千谆：选择一名角色",
   ["#niwoqianzhun"] = "千谆：选择一名角色，视为使用符合其技能描述或技能标签数的牌",
+  ["#niwoqianzhun-invoke"] = "千谆：是否发动并选择参考角色？",
   ["#niwoqianzhun-reference"] = "千谆：选择一名角色作为技能信息参考（并非此牌的目标）",
   ["#niwoqianzhun-choice"] = "千谆：选择一种视为使用或打出牌的方式",
   ["niwoqianzhun_opt1"] = "视为使用或打出其技能描述中包含的牌",

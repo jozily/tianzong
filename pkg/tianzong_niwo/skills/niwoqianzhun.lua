@@ -25,6 +25,7 @@ local function spec(event)
     end,
     on_cost=function(self,e,target,player,data)
       local room=player.room
+      if not room:askToSkillInvoke(player,{skill_name=s.name,prompt="#niwoqianzhun-invoke"}) then return false end
       local candidates=table.filter(room.alive_players,function(p)return (player:getMark(DM)==0 and #names(p,1,data.pattern)>0) or (player:getMark(TM)==0 and #names(p,2,data.pattern)>0) end)
       if #candidates==0 then return false end
       local who=room:askToChoosePlayers(player,{targets=candidates,min_num=1,max_num=1,skill_name=s.name,prompt="#niwoqianzhun-reference",cancelable=true})[1]

@@ -9,6 +9,7 @@ niwoyinbing:addEffect(fk.Damaged, {
     return player:hasSkill(niwoyinbing.name) and data.from and data.from:isAlive() and
       data.to and data.to:isAlive() and data.from ~= data.to and
       (data.from == player or data.to == player) and
+      player:getMark("niwoyinbing_inuse") == 0 and
       (not data.card or data.card:getMark("niwoyinbing_slash") == 0)
   end,
   on_cost = function(self, event, target, player, data)
@@ -44,7 +45,9 @@ niwoyinbing:addEffect(fk.Damaged, {
         not player:hasSkill("niwochoulu", true) then
       room:handleAddLoseSkills(player, "niwochoulu", nil, true, false)
     end
+    room:setPlayerMark(player, "niwoyinbing_inuse", 1)
     room:useCard(use)
+    room:setPlayerMark(player, "niwoyinbing_inuse", 0)
 
     local dealt = false
     for _, n in pairs(use.damageDealt or {}) do
