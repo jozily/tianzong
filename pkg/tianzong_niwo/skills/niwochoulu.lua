@@ -39,10 +39,9 @@ niwochoulu:addEffect(fk.Damaged, {
       room:addTableMark(player, ONCE_MARK, 1)
       
       if next(use.damageDealt or {}) ~= nil then
-        local turn_event = room.logic:getCurrentEvent():findParent(GameEvent.Turn)
-        if turn_event then
-          turn_event:shutdown()
-        end
+        -- End only the current turn; shutting down the Turn event directly
+        -- can propagate to the room and incorrectly end the whole game.
+        room:endTurn()
       end
     end
   end,
