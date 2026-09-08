@@ -9,7 +9,7 @@ niwoyinbing:addEffect(fk.Damaged, {
     return player:hasSkill(niwoyinbing.name) and data.from and data.from:isAlive() and
       data.to and data.to:isAlive() and data.from ~= data.to and
       (data.from == player or data.to == player) and
-      (not data.card or not table.contains(data.card.skillNames or {}, niwoyinbing.name))
+      (not data.card or data.card:getMark("niwoyinbing_slash") == 0)
   end,
   on_cost = function(self, event, target, player, data)
     if table.contains(player:getTableMark("contracted_skills"), niwoyinbing.name) then
@@ -28,6 +28,7 @@ niwoyinbing:addEffect(fk.Damaged, {
     if was_contracted then
       local card = Fk:cloneCard("ice__slash")
       card.skillName = niwoyinbing.name
+      card:setMark("niwoyinbing_slash", 1)
       use = { from = user, card = card, tos = { { source.id } }, skillName = niwoyinbing.name,
         extraUse = true, bypassTimes = true, bypassDistances = true }
     else
@@ -37,6 +38,7 @@ niwoyinbing:addEffect(fk.Damaged, {
         extra_data = { exclusive_targets = { source.id }, bypass_times = true, bypass_distances = true },
       })
       if not use then return end
+      use.card:setMark("niwoyinbing_slash", 1)
     end
     if not was_contracted and player:usedSkillTimes("niwobailan", Player.HistoryGame) > 0 and
         not player:hasSkill("niwochoulu", true) then

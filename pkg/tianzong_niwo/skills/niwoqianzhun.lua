@@ -1,10 +1,10 @@
 local U = require "packages.utility.utility"
 local s = fk.CreateSkill { name = "niwoqianzhun" }
 local DM, TM = "niwoqianzhun_desc-round", "niwoqianzhun_tag-round"
-local function choose_name(room, player, list, prompt, show_all)
+local function choose_name(room, player, list, prompt)
   if #list == 1 then return list[1] end
   return U.askForChooseCardNames(room, player, list, 1, 1, s.name, prompt,
-    show_all and Fk:getAllCardNames("bt") or list, false)[1]
+    list, false)[1]
 end
 local function names(target, mode, pattern)
   local out, x = {}, 1
@@ -32,7 +32,7 @@ local function spec(event)
       local opts={};if player:getMark(DM)==0 and #names(who,1,data.pattern)>0 then table.insert(opts,"niwoqianzhun_opt1") end;if player:getMark(TM)==0 and #names(who,2,data.pattern)>0 then table.insert(opts,"niwoqianzhun_opt2") end
       local opt=#opts==1 and opts[1] or room:askToChoice(player,{choices=opts,skill_name=s.name,prompt="#niwoqianzhun-choice"})
       local list=names(who,opt=="niwoqianzhun_opt1" and 1 or 2,data.pattern)
-      local n=choose_name(room,player,list,"#niwoqianzhun-card",opt=="niwoqianzhun_opt1")
+      local n=choose_name(room,player,list,"#niwoqianzhun-card")
       local card=Fk:cloneCard(n);card.skillName=s.name;data.result={from=player,card=card};if event==fk.AskForCardUse then data.result.tos={} end
       room:setPlayerMark(player,opt=="niwoqianzhun_opt1" and DM or TM,1)
       return true
@@ -62,8 +62,7 @@ s:addEffect("active", {
       choices = opts, skill_name = s.name, prompt = "#niwoqianzhun-choice",
     })
     local list = names(who, opt == "niwoqianzhun_opt1" and 1 or 2)
-    local name = choose_name(room, player, list, "#niwoqianzhun-card",
-      opt == "niwoqianzhun_opt1")
+    local name = choose_name(room, player, list, "#niwoqianzhun-card")
     local use = room:askToUseVirtualCard(player, {
       name = name, skill_name = s.name, prompt = "#niwoqianzhun-use", cancelable = false,
       extra_data = { bypass_times = true },
