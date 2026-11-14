@@ -4,7 +4,7 @@ local saved_visible = "@[yichu_saved]"
 
 Fk:addQmlMark {
   name = "yichu_saved",
-  how_to_show = function() return "衣橱 永久获得" end,
+  how_to_show = function() return "" end,
   qml = function(name, value)
     return {
       url = "packages/tianzong/qml/YichuMarkBox.qml",

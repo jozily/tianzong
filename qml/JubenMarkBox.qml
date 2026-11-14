@@ -21,16 +21,15 @@ ColumnLayout {
     Layout.fillWidth: true
     Layout.fillHeight: true
     clip: true
-    spacing: 8
+    spacing: 6
     model: root.value
     delegate: Text {
       required property var modelData
       width: root.width
-      color: "#E4D5A0"
-      font.pixelSize: 18
-      text: typeof modelData === "number"
-        ? (["", "♠", "♥", "♣", "♦"][modelData] || modelData.toString())
-        : Lua.tr(modelData)
+      color: ("" + modelData).startsWith("【") ? "#C8A96B" : "#E4D5A0"
+      font.pixelSize: ("" + modelData).startsWith("【") ? 16 : 18
+      font.bold: ("" + modelData).startsWith("【")
+      text: modelData
       wrapMode: Text.WordWrap
     }
   }

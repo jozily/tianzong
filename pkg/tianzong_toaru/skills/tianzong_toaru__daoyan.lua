@@ -10,9 +10,10 @@ daoyan:addEffect("active", {
   end,
   on_use = function(self, room, effect)
     local player = effect.from
-    local names = player:getTableMark("@[list]tianzong_toaru__juben_names")
-    local people = player:getTableMark("tianzong_toaru__juben_player_ids")
-    local suits = player:getTableMark("@[list]tianzong_toaru__juben_suits")
+    local juben = player:getTableMark("@[juben]")
+    local names = juben.names or {}
+    local people = juben.pids or {}
+    local suits = juben.suits or {}
     local ids = table.filter(room.draw_pile, function(id)
       return table.contains(names, Fk:getCardById(id).name)
     end)

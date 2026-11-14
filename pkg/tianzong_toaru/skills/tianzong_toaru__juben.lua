@@ -1,51 +1,144 @@
 local U = require "packages.utility.utility"
 local juben = fk.CreateSkill { name = "tianzong_toaru__juben" }
-local NM, PM, PDM, SM = "@[juben_names]", "tianzong_toaru__juben_player_ids", "@[juben_players]", "@[juben_suits]"
+
+-- 剧本的三类记录（牌名、角色、花色）合并为一个标记
+local JB = "@[juben]"
 local suits = { log_spade = Card.Spade, log_heart = Card.Heart, log_club = Card.Club, log_diamond = Card.Diamond }
 
-local function addJubenMark(name)
-  Fk:addQmlMark {
-    name = name,
-    how_to_show = function(_, value)
-      return type(value) == "table" and tostring(#value) or " "
-    end,
-    qml = function(mark, value)
-      return {
-        url = "packages/tianzong/qml/JubenMarkBox.qml",
-        prop = { name = mark, value = type(value) == "table" and value or {} },
-      }
-    end,
+Fk:addQmlMark {
+  name = "juben",
+  how_to_show = function(_, value)
+    if type(value) ~= "table" then return "" end
+    local n = #(value.names or {}) + #(value.pids or {}) + #(value.suits or {})
+    return n > 0 and tostring(n) or ""
+  end,
+  qml = function(mark, value)
+    local items, suits_sym = {}, { [Card.Spade] = "♠", [Card.Heart] = "♥", [Card.Club] = "♣", [Card.Diamond] = "♦" }
+    if type(value) == "table" then
+      local names, generals, suit_list = value.names or {}, value.generals or {}, value.suits or {}
+      if #names > 0 then
+        table.insert(items, "【牌名】")
+        for _, name in ipairs(names) do table.insert(items, Fk:translate(name)) end
+      end
+      if #generals > 0 then
+        table.insert(items, "【角色】")
+        local seen = {}
+        for _, general in ipairs(generals) do
+          local text = Fk:translate(general)
+          if not seen[text] then
+            seen[text] = true
+            table.insert(items, text)
+          end
+        end
+      end
+      if #suit_list > 0 then
+        table.insert(items, "【花色】")
+        for _, suit in ipairs(suit_list) do table.insert(items, suits_sym[suit] or tostring(suit)) end
+      end
+    end
+    return {
+      url = "packages/tianzong/qml/JubenMarkBox.qml",
+      prop = { name = mark, value = items },
+    }
+  end,
+}
+
+-- 读取时统一补全字段，写入时始终换新表，避免共享表被就地改写
+local function markOf(player)
+  local m = player:getTableMark(JB)
+  return {
+    names = m.names or {},
+    pids = m.pids or {},
+    generals = m.generals or {},
+    suits = m.suits or {},
   }
 end
-addJubenMark("juben_names")
-addJubenMark("juben_players")
-addJubenMark("juben_suits")
 
-local function take(room, player, mark, value)
-  room:removeTableMark(player, mark, value)
+local function save(room, player, m)
+  room:setPlayerMark(player, JB, m)
+end
+
+local function push(list, value)
+  local t = table.simpleClone(list)
+  if table.insertIfNeed(t, value) then return t end
+  return list
+end
+
+local function pull(list, value)
+  local t = table.simpleClone(list)
+  if table.removeOne(t, value) then return t end
+  return list
+end
+
+local function generalOf(player)
+  return player.general ~= "anjiang" and player.general or player.deputyGeneral
+end
+
+local function indexOf(list, value)
+  for i, v in ipairs(list) do
+    if v == value then return i end
+  end
+end
+
+local function hasName(player, name)
+  return table.contains(markOf(player).names, name)
+end
+
+local function hasSuit(player, suit)
+  return table.contains(markOf(player).suits, suit)
+end
+
+local function recordedPlayer(player, to)
+  if not to then return end
+  local m = markOf(player)
+  if table.contains(m.pids, to.id) then return to end
+end
+
+-- 消耗一条记录，并摸两张牌
+local function take(room, player, kind, value)
+  local m = markOf(player)
+  if kind == "name" then
+    m.names = pull(m.names, value)
+  elseif kind == "suit" then
+    m.suits = pull(m.suits, value)
+  else
+    local i = indexOf(m.pids, value)
+    if i then
+      local pids, generals = table.simpleClone(m.pids), table.simpleClone(m.generals)
+      table.remove(pids, i)
+      table.remove(generals, i)
+      m.pids, m.generals = pids, generals
+    end
+  end
+  save(room, player, m)
   if not player.dead then player:drawCards(2, juben.name) end
 end
+
 local function record(room, player)
-  local names = table.filter(Fk:getAllCardNames("bt"), function(n) return not table.contains(player:getTableMark(NM), n) end)
-  local people = table.filter(room.alive_players, function(p) return not table.contains(player:getTableMark(PM), p.id) end)
+  local m = markOf(player)
+  local names = table.filter(Fk:getAllCardNames("bt"), function(n) return not table.contains(m.names, n) end)
+  local people = table.filter(room.alive_players, function(p) return not table.contains(m.pids, p.id) end)
   local suit_names = table.filter({ "log_spade", "log_heart", "log_club", "log_diamond" }, function(s)
-    return not table.contains(player:getTableMark(SM), suits[s])
+    return not table.contains(m.suits, suits[s])
   end)
   if #names > 0 then
     local name = U.askForChooseCardNames(room, player, names, 1, 1, juben.name, "#tianzong_toaru__juben-name", names, false)[1]
-    room:addTableMarkIfNeed(player, NM, name)
+    if name then m.names = push(m.names, name) end
   end
   if #people > 0 then
     local who = room:askToChoosePlayers(player, { targets = people, min_num = 1, max_num = 1,
       skill_name = juben.name, prompt = "#tianzong_toaru__juben-player", cancelable = false })[1]
-    room:addTableMarkIfNeed(player, PM, who.id)
-    room:addTableMarkIfNeed(player, PDM, who.general ~= "anjiang" and who.general or who.deputyGeneral)
+    if who and not table.contains(m.pids, who.id) then
+      m.pids = push(m.pids, who.id)
+      m.generals = push(m.generals, generalOf(who))
+    end
   end
   if #suit_names > 0 then
     local suit = room:askToChoice(player, { choices = suit_names, skill_name = juben.name,
       prompt = "#tianzong_toaru__juben-suit" })
-    room:addTableMarkIfNeed(player, SM, suits[suit])
+    if suits[suit] then m.suits = push(m.suits, suits[suit]) end
   end
+  save(room, player, m)
 end
 
 local record_spec = {
@@ -56,7 +149,7 @@ local record_spec = {
 }
 juben:addEffect(fk.RoundStart, {
   can_trigger = function(self, event, target, player)
-    return target == player and player:hasSkill(juben.name)
+    return player:hasSkill(juben.name)
   end,
   on_cost = record_spec.on_cost, on_use = record_spec.on_use,
 })
@@ -70,8 +163,8 @@ juben:addEffect(fk.EventPhaseStart, {
 juben:addEffect(fk.AfterCardTargetDeclared, {
   can_trigger = function(self, event, target, player, data)
     return player:hasSkill(juben.name) and
-      (table.contains(player:getTableMark(NM), data.card.name) or
-       table.find(data.tos, function(p) return table.contains(player:getTableMark(PM), p.id) end))
+      (hasName(player, data.card.name) or
+       table.find(data.tos, function(p) return recordedPlayer(player, p) end))
   end,
   on_cost = function(self, event, target, player, data)
     local choices, extras = {}, data:getExtraTargets()
@@ -95,8 +188,8 @@ juben:addEffect(fk.AfterCardTargetDeclared, {
   end,
   on_use = function(self, event, target, player, data)
     local room, cost = player.room, event:getCostData(self)
-    local used_name = table.contains(player:getTableMark(NM), data.card.name) and data.card.name
-    local used_player = table.find(data.tos, function(p) return table.contains(player:getTableMark(PM), p.id) end)
+    local used_name = hasName(player, data.card.name) and data.card.name
+    local used_player = table.find(data.tos, function(p) return recordedPlayer(player, p) end)
     if cost.choice == "tianzong_toaru__juben_target" then
       local candidates = table.simpleClone(cost.extras)
       table.insertTableIfNeed(candidates, cost.removals)
@@ -108,10 +201,10 @@ juben:addEffect(fk.AfterCardTargetDeclared, {
         "#tianzong_toaru__juben-change-card", cost.names, false)[1]
       data:changeCard(name, data.card.suit, data.card.number, juben.name)
     end
-    if used_name then take(room, player, NM, used_name)
+    if used_name then
+      take(room, player, "name", used_name)
     elseif used_player then
-      room:removeTableMark(player, PDM, used_player.general ~= "anjiang" and used_player.general or used_player.deputyGeneral)
-      take(room, player, PM, used_player.id)
+      take(room, player, "player", used_player.id)
     end
   end,
 })
@@ -119,7 +212,7 @@ juben:addEffect(fk.AfterCardTargetDeclared, {
 juben:addEffect(fk.SkillEffect, {
   can_trigger = function(self, event, target, player, data)
     return player:hasSkill(juben.name) and data.who and data.who ~= player and
-      table.contains(player:getTableMark(PM), data.who.id) and not data.prevented
+      recordedPlayer(player, data.who) and not data.prevented
   end,
   on_cost = function(self, event, target, player, data)
     return player.room:askToSkillInvoke(player, { skill_name = juben.name,
@@ -128,7 +221,7 @@ juben:addEffect(fk.SkillEffect, {
   on_use = function(self, event, target, player, data)
     local room, original = player.room, data.who
     data.prevented = true
-    take(room, player, PM, original.id)
+    take(room, player, "player", original.id)
     if player.dead then return end
     data.skill_data.from = player
     local trigger_event = data.skill_data.trigger_event
@@ -145,27 +238,28 @@ juben:addEffect(fk.SkillEffect, {
 juben:addEffect(fk.FinishRetrial, {
   can_trigger = function(self, event, target, player, data)
     return player:hasSkill(juben.name) and data.card and
-      (table.contains(player:getTableMark(NM), data.card.name) or table.contains(player:getTableMark(SM), data.card.suit))
+      (hasName(player, data.card.name) or hasSuit(player, data.card.suit))
   end,
   on_cost = function(self, event, target, player)
     return player.room:askToSkillInvoke(player, { skill_name = juben.name, prompt = "#tianzong_toaru__juben-judge" })
   end,
   on_use = function(self, event, target, player, data)
     local room, options = player.room, {}
-    if #player:getTableMark(NM) > 0 then table.insert(options, "tianzong_toaru__juben_card") end
-    if #player:getTableMark(SM) > 0 then table.insert(options, "tianzong_toaru__juben_suit") end
+    local m = markOf(player)
+    if #m.names > 0 then table.insert(options, "tianzong_toaru__juben_card") end
+    if #m.suits > 0 then table.insert(options, "tianzong_toaru__juben_suit") end
     local choice = #options == 1 and options[1] or room:askToChoice(player, { choices = options, skill_name = juben.name })
     if choice == "tianzong_toaru__juben_card" then
-      local names = player:getTableMark(NM)
+      local names = m.names
       local name = U.askForChooseCardNames(room, player, names, 1, 1, juben.name, "#tianzong_toaru__juben-change-card", names, false)[1]
       data.card = Fk:cloneCard(name, data.card.suit, data.card.number)
-      take(room, player, NM, name)
+      take(room, player, "name", name)
     else
-      local values, labels = player:getTableMark(SM), {}
+      local values, labels = m.suits, {}
       for label, value in pairs(suits) do if table.contains(values, value) then table.insert(labels, label) end end
       local value = suits[room:askToChoice(player, { choices = labels, skill_name = juben.name })]
       data.card = Fk:cloneCard(data.card.name, value, data.card.number)
-      take(room, player, SM, value)
+      take(room, player, "suit", value)
     end
   end,
 })
@@ -191,13 +285,13 @@ juben:addEffect(fk.AfterCardsMove, {
 
 juben:addLoseEffect(function(self, player)
   local room = player.room
-  for _, mark in ipairs({ NM, PM, PDM, SM, "tianzong_toaru__juben_discards" }) do
+  for _, mark in ipairs({ JB, "tianzong_toaru__juben_discards" }) do
     room:setPlayerMark(player, mark, 0)
   end
 end)
 
 Fk:loadTranslationTable {
-  [NM] = "剧本·牌名", [PM] = "剧本·角色", [SM] = "剧本·花色",
+  [JB] = "剧本",
   ["#tianzong_toaru__juben-record"] = "剧本：是否记录一个新牌名、角色和花色？",
   ["#tianzong_toaru__juben-name"] = "剧本：记录一个未记录过的牌名",
   ["#tianzong_toaru__juben-player"] = "剧本：记录一名未记录过的角色",
