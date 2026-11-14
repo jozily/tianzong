@@ -16,8 +16,8 @@ chifenqing:addEffect("active", {
   target_filter = function(self, player, to_select, selected) return #selected == 0 and to_select ~= player end,
   on_use = function(self, room, effect)
     local player, target = effect.from, effect.tos[1]
-    if not player.chained then room:setPlayerChained(player, true) end
-    if not target.chained then room:setPlayerChained(target, true) end
+    if not player.chained then player:setChainState(true) end
+    if not target.chained then target:setChainState(true) end
     local choices = { "chifenqing_damage", "chifenqing_turnover", "chifenqing_backwater" }
     local mine = room:askToChoice(player, { choices = choices, skill_name = chifenqing.name, prompt = "#chifenqing-choice::" .. target.id })
     local theirs = room:askToChoice(target, { choices = choices, skill_name = chifenqing.name, prompt = "#chifenqing-choice::" .. player.id })

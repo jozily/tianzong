@@ -39,7 +39,7 @@ local function use_gufu(room, player)
     include_equip = true,
     pattern = tostring(Exppattern { id = cards }),
     skill_name = chiraoluo.name,
-    prompt = "#chiraoluo-gufu-cards",
+    prompt = (Fk:translate("#chiraoluo-gufu-cards"):gsub("%%arg", max_num)),
     cancelable = false,
   })
   if #chosen == 0 then return false end
@@ -164,7 +164,7 @@ Fk:loadTranslationTable{
   ["chiraoluo_opt1"] = "发动一次【孤凫】",
   ["chiraoluo_opt2"] = "使用一张手牌或蓄谋牌",
   ["chiraoluo_opt3"] = "背水：依次执行前两项，然后翻面",
-  ["#chiraoluo-gufu-cards"] = "扰洛：请选择重铸的牌",
+  ["#chiraoluo-gufu-cards"] = "扰洛：请选择至多%arg张牌重铸",
   ["#chiraoluo-gufu-place"] = "扰洛：请选择蓄谋牌堆顶或牌堆底",
   ["#chiraoluo-use-choice"] = "扰洛：请选择使用手牌或蓄谋牌",
   ["chiraoluo_use_hand"] = "使用一张手牌",

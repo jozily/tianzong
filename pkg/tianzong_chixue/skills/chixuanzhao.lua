@@ -129,7 +129,7 @@ chixuanzhao:addEffect("viewas", {
 
 chixuanzhao:addEffect(fk.RoundStart, {
   can_refresh = function(self, event, target, player, data)
-    return target == player and player:hasSkill(chixuanzhao.name)
+    return player:hasSkill(chixuanzhao.name)
   end,
   on_refresh = function(self, event, target, player, data)
     player.room:setPlayerMark(player, ROUND_MARK, 0)

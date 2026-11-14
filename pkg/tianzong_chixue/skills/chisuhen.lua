@@ -14,8 +14,8 @@ end
 
 local function virtual_fenqing(room, player, other)
   if not other or other.dead then return end
-  if not player.chained then room:setPlayerChained(player, true) end
-  if not other.chained then room:setPlayerChained(other, true) end
+  if not player.chained then player:setChainState(true) end
+  if not other.chained then other:setChainState(true) end
   local choices = { "chifenqing_damage", "chifenqing_turnover", "chifenqing_backwater" }
   local mine = room:askToChoice(player, { choices = choices, skill_name = chisuhen.name, prompt = "#chisuhen-choice::" .. other.id })
   local theirs = room:askToChoice(other, { choices = choices, skill_name = chisuhen.name, prompt = "#chisuhen-choice::" .. player.id })

@@ -28,7 +28,7 @@ chijulei:addEffect("viewas", {
   before_use = function(self, player, use)
     local room = player.room
     if table.contains(FIRE_NAMES, use.card.name) then
-      room:setPlayerChained(player, true)
+      player:setChainState(true)
     else
       player:turnOver()
     end

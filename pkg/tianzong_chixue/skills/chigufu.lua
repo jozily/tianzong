@@ -19,7 +19,10 @@ end
 
 chigufu:addEffect("active", {
   anim_type = "control",
-  prompt = "#chigufu",
+  -- 按钮上的“至多X张”要跟着“惊鸿”未移除的牌名数实时变化
+  prompt = function(self, player)
+    return (Fk:translate("#chigufu"):gsub("%%arg", common.get_unremoved_count(player)))
+  end,
   target_num = 0,
   min_card_num = 1,
   max_phase_use_time = 1,
@@ -38,6 +41,11 @@ chigufu:addEffect("active", {
     return #selected < common.get_unremoved_count(player)
       and not player:prohibitDiscard(to_select)
   end,
+  -- 按钮左下角的剩余发动次数
+  times = function(self, player)
+    if player.phase ~= Player.Play then return -1 end
+    return 1 - player:usedSkillTimes(chigufu.name, Player.HistoryPhase)
+  end,
 
   on_use = function(self, room, effect)
     local player = effect.from
@@ -52,7 +60,7 @@ Fk:loadTranslationTable{
   ["chigufu"] = "孤凫",
   [":chigufu"] = "出牌阶段限一次，你可以重铸任意张区域内的牌（至多为“惊鸿”未移除牌名数），然后蓄谋牌堆顶或牌堆底的等量张牌。",
 
-  ["#chigufu"] = "孤凫：出牌阶段限一次，选择至多X张牌重铸，然后选择从牌堆顶或牌堆底蓄谋等量牌",
+  ["#chigufu"] = "孤凫：出牌阶段限一次，选择至多%arg张牌重铸，然后选择从牌堆顶或牌堆底蓄谋等量牌",
   ["Top"] = "牌堆顶",
   ["Bottom"] = "牌堆底",
 }

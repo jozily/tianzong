@@ -3,7 +3,7 @@ local chiyilvRemake = fk.CreateSkill{
   tags = { Skill.Compulsory },
 }
 
-local XUNFU_MARK = "chixunfu_names-round"
+local XUNFU_MARK = "@@chixunfu_names-round"
 
 local function record_count(player)
   local n = 0
@@ -31,6 +31,8 @@ local function resolve(player)
     proposer = player.id,
     moveVisible = true,
   }
+  -- 走一遍正式的“展示”流程，扶风等展示类技能才能接到
+  room:showCards(ids, nil, player)
 
   local gain = {}
   for _, id in ipairs(ids) do

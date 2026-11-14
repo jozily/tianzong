@@ -3,12 +3,13 @@ local chixunfu = fk.CreateSkill{
   tags = { Skill.Compulsory },
 }
 
-local RECORD_MARK = "chixunfu_names-round"
+local RECORD_MARK = "@@chixunfu_names-round"
 
 Fk:loadTranslationTable{
   ["chixunfu"] = "徇覆",
   [":chixunfu"] = "锁定技，当你成为一张本轮未以此法记录过的非装备牌的目标时，来源需展示另一种颜色的一张手牌，否则此牌对你无效，然后你记录此牌牌名。",
   ["#chixunfu-show"] = "徇覆：展示一张与此牌颜色不同的手牌，否则此牌对 %dest 无效",
+  ["@@chixunfu_names-round"] = "徇覆·已记录",
 }
 
 chixunfu:addEffect(fk.TargetConfirmed, {

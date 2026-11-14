@@ -49,8 +49,11 @@ chidaojie:addEffect(fk.CardUseFinished, {
       room:loseHp(player, 1, chidaojie.name)
     end
 
+    -- CardUseFinished 在实体牌离开处理区之前就触发了，这时牌还在处理区，
+    -- 只认弃牌堆会永远筛出空表，蹈节就变成了“选完什么都没发生”
     local ids = table.filter(Card:getIdList(data.card), function(id)
-      return room:getCardArea(id) == Card.DiscardPile
+      local area = room:getCardArea(id)
+      return area == Card.Processing or area == Card.DiscardPile
     end)
     if #ids == 0 then return end
     local chosen = room:askToChoosePlayers(player, {

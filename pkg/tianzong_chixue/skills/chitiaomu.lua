@@ -48,8 +48,15 @@ chitiaomu:addEffect("viewas", {
     local id = room:tableRandomPick(ids, 1)[1]
     local same_name = Fk:getCardById(id).trueName == use.card.trueName
     room:obtainCard(player, id, true, fk.ReasonPrey, player, chitiaomu.name)
+    -- 随机拿到的是哪张要摆出来，否则玩家只看到牌直接没了
+    room:showCards({ id }, player, player)
     use.card:addSubcard(id)
     if same_name then room:addPlayerMark(player, BONUS_MARK, 1) end
+  end,
+  -- 按钮左下角：本回合还剩几次（同名额外次数算进去）
+  times = function(self, player)
+    local left = 1 + player:getMark(BONUS_MARK) - player:usedSkillTimes(chitiaomu.name, Player.HistoryTurn)
+    return left > 0 and left or -1
   end,
   enabled_at_play = function(self, player)
     return player:usedSkillTimes(chitiaomu.name, Player.HistoryTurn) < 1 + player:getMark(BONUS_MARK) and #names(player) > 0

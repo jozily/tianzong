@@ -16,7 +16,7 @@ end
 local function recast_most_suit(room, player)
   local current = room.current
   if not current or not current:isAlive() or
-    (not current.chained and not current:isFlipped()) then return end
+    (not current.chained and current.faceup) then return end
   local hand = player:getCardIds("h")
   if #hand == 0 then return end
   local suits = {}

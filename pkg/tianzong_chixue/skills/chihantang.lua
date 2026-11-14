@@ -4,6 +4,11 @@ local chihantang = fk.CreateSkill{
 
 local CANGSUI_USED_MARK = "chicangsui_used-turn"
 
+Fk:loadTranslationTable{
+  ["chihantang_ok"] = "确定",
+  ["chihantang_cancel"] = "放弃",
+}
+
 local function get_aborted_count(player)
   return math.max(1, 5 - #player:getAvailableEquipSlots())
 end
@@ -20,32 +25,26 @@ local function sum_name_length(ids)
   return sum
 end
 
+-- 选牌时校验（骨架见 chihantang_filter.lua）：和值必须恰好等于 X，“确定”才可点击
 local function choose_cards_sum_x(room, player, x)
   local all_cards = table.filter(player:getCardIds("he"), function(id)
-    return not player:prohibitDiscard(id)
+    return not player:prohibitDiscard(id) and Fk:getCardById(id):getNameLength(true) <= x
   end)
   if #all_cards == 0 then return {} end
 
-  while true do
-    local ids = room:askToCards(player, {
-      min_num = 1,
-      max_num = #all_cards,
-      include_equip = true,
-      skill_name = chihantang.name,
-      cancelable = true,
-      pattern = tostring(Exppattern{ id = all_cards }),
-      prompt = "#chihantang-discard:::" .. x,
-      expand_pile = all_cards,
-    })
+  local ids, choice = room:askToChooseCardsAndChoice(player, {
+    cards = all_cards,
+    choices = { "chihantang_cancel", "chihantang_ok" },
+    min_num = 0,
+    max_num = #all_cards,
+    skill_name = chihantang.name,
+    prompt = "#chihantang-discard:::" .. x,
+    filter_skel_name = "chihantang_filter",
+    extra_data = { x = x },
+  })
 
-    if #ids == 0 then
-      return {}
-    end
-
-    if sum_name_length(ids) == x then
-      return ids
-    end
-  end
+  if choice ~= "chihantang_ok" then return {} end
+  return ids
 end
 
 local function recover_one_slot(room, player)

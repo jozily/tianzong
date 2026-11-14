@@ -119,7 +119,7 @@ chishuowen:addEffect("viewas", {
 
 chishuowen:addEffect(fk.RoundStart, {
   can_refresh = function(self, event, target, player, data)
-    return target == player and player:hasSkill(chishuowen.name)
+    return player:hasSkill(chishuowen.name)
   end,
   on_refresh = function(self, event, target, player, data)
     player.room:setPlayerMark(player, "chishuowen-round", 0)

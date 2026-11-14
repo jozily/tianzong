@@ -46,12 +46,12 @@ chiyouming:addEffect(fk.Damaged, {
     return target == player and player:hasSkill(self.name) and
       player:usedSkillTimes(self.name .. "_dying", Player.HistoryRound) == 0 and
       player.hp - data.damage <= 0 and
-      not player:isFlipped()
+      player.faceup
   end,
   on_use = function(self, event, target, player, data)
     local room = player.room
-    player:setFlipped(true)
-    player:setHp(1)
+    player:turnOver()
+    room:setPlayerProperty(player, "hp", 1)
   end,
 })
 
