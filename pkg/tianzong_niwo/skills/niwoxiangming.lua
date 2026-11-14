@@ -91,8 +91,8 @@ niwoxiangming:addEffect(fk.RoundStart, {
     if #rest > 0 then
       room:askToGuanxing(player, {
         cards = rest,
-        top_limit = #rest,
-        bottom_limit = #rest,
+        top_limit = { 0, #rest },
+        bottom_limit = { 0, #rest },
         skill_name = niwoxiangming.name,
       })
     end

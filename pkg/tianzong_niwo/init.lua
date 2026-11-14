@@ -41,7 +41,7 @@ local niwo__jiaxu = General:new(extension, "niwo__jiaxu", "qun", 3, 3, General.M
 niwo__jiaxu:addSkills { "niwoshudu", "niwochencang" }
 
 local niwo__zhaoe = General:new(extension, "niwo__zhaoe", "qun", 3, 3, General.Female)
-niwo__zhaoe:addSkills { "niwotianmeng", "niwotianmeng_mark", "niwofuxue", "niwochenghen", "niwochoulu" }
+niwo__zhaoe:addSkills { "niwotianmeng", "niwofuxue", "niwochenghen", "niwochoulu" }
 
 
 

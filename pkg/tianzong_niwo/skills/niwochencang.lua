@@ -63,15 +63,27 @@ niwochencang:addEffect("viewas", {
     local target_player = chosen[1]
     
     if target_player then
-      target_player:addSkillDistance(player, -1)
+      room:addTableMarkIfNeed(player, "niwochencang_dist", target_player.id)
       room:addTableMark(player, ONCE_MARK, 1)
+    end
+  end,
+})
+
+-- 与被选中的角色相互距离-1
+niwochencang:addEffect("distance", {
+  correct_func = function(self, from, to)
+    if from:hasSkill(niwochencang.name) and table.contains(from:getTableMark("niwochencang_dist"), to.id) then
+      return -1
+    end
+    if to:hasSkill(niwochencang.name) and table.contains(to:getTableMark("niwochencang_dist"), from.id) then
+      return -1
     end
   end,
 })
 
 niwochencang:addEffect(fk.RoundStart, {
   can_refresh = function(self, event, target, player, data)
-    return target == player and player:hasSkill(niwochencang.name)
+    return player:hasSkill(niwochencang.name)
   end,
   on_refresh = function(self, event, target, player, data)
     player.room:setPlayerMark(player, ONCE_MARK, 0)

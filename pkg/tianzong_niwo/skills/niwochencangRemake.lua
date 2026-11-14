@@ -52,7 +52,7 @@ niwochencangRemake:addEffect("viewas", {
 
 niwochencangRemake:addEffect(fk.RoundStart, {
   can_refresh = function(self, event, target, player, data)
-    return target == player and player:hasSkill(niwochencangRemake.name)
+    return player:hasSkill(niwochencangRemake.name)
   end,
   on_refresh = function(self, event, target, player, data)
     player.room:setPlayerMark(player, ONCE_MARK, 0)
