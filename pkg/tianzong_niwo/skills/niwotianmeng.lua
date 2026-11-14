@@ -1,3 +1,11 @@
+-- 殄梦（赵娥）
+-- 出牌阶段限一次，或当你受到伤害后，你可以标记你与一名角色的一张牌为“殁”。
+-- 你可以将你的一张“殁”当任意单体伤害牌使用或打出。
+--
+-- 引擎限制：一个 skill 里只能有一个 active/viewas 类效果（SkillSkeleton:addEffect
+-- 会 qCritical）。所以“标记”与“当殁牌使用”必须分属两个技能：本文件是可见的
+-- 【殄梦】按钮（active + 受伤触发），viewas 在 niwotianmeng_use.lua 里，名字以
+-- “&” 结尾，由 addAcquireEffect 授予本人，不占武将牌技能栏。
 local niwotianmeng = fk.CreateSkill{
   name = "niwotianmeng",
 }
@@ -14,47 +22,19 @@ local function update_marks(room)
   end
 end
 
-local function my_mo(player)
-  return table.filter(player:getCardIds("hej"), function(id)
-    local card = Fk:getCardById(id)
-    return card:getMark(CARD_MARK) > 0 and card:getMark(OWNER_MARK) == player.id
-  end)
-end
+-- 授予“当殁牌使用”的副技能。
+-- 注意不能用 attached_skill_name：那个字段是把技能发给*其他*角色（黄天那种）。
+niwotianmeng:addAcquireEffect(function(self, player)
+  if player.room then
+    player.room:handleAddLoseSkills(player, "niwotianmeng_use&", nil, false, true)
+  end
+end)
 
-local function names(player)
-  local result = table.filter(Fk:getAllCardNames("bt"), function(name)
-    local card = Fk:cloneCard(name)
-    return card and card.is_damage_card and not card.multiple_targets and
-      card.skill:getMaxTargetNum(player) <= 1
-  end)
-  return player:getViewAsCardNames(niwotianmeng.name, result)
-end
-
-niwotianmeng:addEffect("viewas", {
-  pattern = ".",
-  prompt = "#niwotianmeng-use",
-  expand_pile = function(self, player) return my_mo(player) end,
-  interaction = function(self, player)
-    local choices = names(player)
-    if #choices > 0 then return UI.CardNameBox{ choices = choices, all_choices = choices } end
-  end,
-  card_filter = function(self, player, to_select, selected)
-    return #selected == 0 and table.contains(my_mo(player), to_select)
-  end,
-  view_as = function(self, player, cards)
-    if #cards ~= 1 or not self.interaction.data then return nil end
-    local card = Fk:cloneCard(self.interaction.data)
-    card:addSubcard(cards[1])
-    card.skillName = niwotianmeng.name
-    return card
-  end,
-  enabled_at_play = function(self, player)
-    return #my_mo(player) > 0 and #names(player) > 0
-  end,
-  enabled_at_response = function(self, player, response)
-    return #my_mo(player) > 0 and #names(player) > 0
-  end,
-})
+niwotianmeng:addLoseEffect(function(self, player)
+  if player.room then
+    player.room:handleAddLoseSkills(player, "-niwotianmeng_use&", nil, false, true)
+  end
+end)
 
 niwotianmeng:addEffect(fk.AfterCardsMove, {
   mute = true,
@@ -65,12 +45,6 @@ niwotianmeng:addEffect(fk.AfterCardsMove, {
     update_marks(player.room)
   end,
 })
-
--- ============================================================
--- “殄梦·标记”原本是独立技能文件，赵娥的 addSkills 里又直接加了一遍，
--- 于是武将牌上多出一栏、出牌阶段多出一个按钮。这里并回主技能：
--- 标记与“当殁牌使用”共用同一个【殄梦】按钮。
--- ============================================================
 
 local function valid_mark_targets(player)
   return table.filter(player.room:getOtherPlayers(player), function(p) return not p:isNude() end)
@@ -97,8 +71,8 @@ local function mark_cards(room, player, target)
   room:setCardMark(other_card, OWNER_MARK, target.id)
 end
 
--- 标记与“当殁牌使用”共用【殄梦】这个名字，usedSkillTimes 会把两者算在一起，
--- 所以“出牌阶段限一次”的账单独用阶段标记记。
+-- “出牌阶段限一次”的账单独用阶段标记记：viewas 副技能与本技能名字不同，
+-- usedSkillTimes 各算各的，合在一起判断会串味。
 local MARK_USED = "niwotianmeng_mark-phase"
 
 niwotianmeng:addEffect("active", {
