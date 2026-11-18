@@ -1,16 +1,19 @@
 local chifeishi = fk.CreateSkill{ name = "chifeishi" }
 
+-- 描述为“红色牌”，故把可展示/统计的红色牌由“仅手牌”放宽为“手牌+装备区”。
+local AREAS = "he"
+
 local spec = {
   anim_type = "control",
   can_trigger = function(self, event, target, player, data)
     return target == player and player:hasSkill(chifeishi.name)
       and #table.filter(player.room:getOtherPlayers(player), function(p)
-        return #table.filter(p:getCardIds("h"), function(id) return Fk:getCardById(id).color == Card.Red end) >= 2
+        return #table.filter(p:getCardIds(AREAS), function(id) return Fk:getCardById(id).color == Card.Red end) >= 2
       end) >= 2
   end,
   on_cost = function(self, event, target, player, data)
     local targets = table.filter(player.room:getOtherPlayers(player), function(p)
-      return #table.filter(p:getCardIds("h"), function(id) return Fk:getCardById(id).color == Card.Red end) >= 2
+      return #table.filter(p:getCardIds(AREAS), function(id) return Fk:getCardById(id).color == Card.Red end) >= 2
     end)
     local chosen = player.room:askToChoosePlayers(player, { targets = targets, min_num = 2, max_num = 2, skill_name = chifeishi.name, prompt = "#chifeishi-choose", cancelable = true })
     if #chosen == 2 then
@@ -21,7 +24,7 @@ local spec = {
   on_use = function(self, event, target, player, data)
     local room, shown = player.room, {}
     for _, p in ipairs(event:getCostData(self).tos) do
-      local cards = room:askToCards(p, { min_num = 2, max_num = 2, pattern = ".|red|.|h", skill_name = chifeishi.name, prompt = "#chifeishi-show", cancelable = false })
+      local cards = room:askToCards(p, { min_num = 2, max_num = 2, pattern = ".|.|red|" .. AREAS, skill_name = chifeishi.name, prompt = "#chifeishi-show", cancelable = false })
       p:showCards(cards)
       table.insertTable(shown, cards)
     end

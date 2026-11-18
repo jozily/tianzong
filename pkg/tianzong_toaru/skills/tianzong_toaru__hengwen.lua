@@ -1,5 +1,6 @@
 local hengwen = fk.CreateSkill {
   name = "tianzong_toaru__hengwen",
+  tags = { Skill.Limited },
 }
 
 hengwen:addEffect("active", {

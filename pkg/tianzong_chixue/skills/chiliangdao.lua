@@ -25,7 +25,8 @@ chiliangdao:addEffect(fk.CardEffecting, {
   on_cost = function(self, event, target, player, data)
     local choices = candidates(player, data.card)
     table.insert(choices, "Cancel")
-    local choice = player.room:askToChoice(player, { choices = choices, skill_name = chiliangdao.name, prompt = "#chiliangdao-choice::" .. target.id })
+    -- detailed 列表 UI：每个牌名一行并附其卡牌说明
+    local choice = player.room:askToChoice(player, { choices = choices, skill_name = chiliangdao.name, prompt = "#chiliangdao-choice::" .. target.id, detailed = true })
     if choice ~= "Cancel" then event:setCostData(self, { choice = choice }); return true end
   end,
   on_use = function(self, event, target, player, data)
@@ -33,8 +34,10 @@ chiliangdao:addEffect(fk.CardEffecting, {
     local replacement = Fk:cloneCard(event:getCostData(self).choice, original.suit, original.number)
     replacement.skillName = chiliangdao.name
     replacement:addSubcards(Card:getIdList(original))
+    -- 只替换效果层的牌（CardEffect:main 用 data.card 取 skill 结算新效果）。
+    -- 切勿改 data.use.card：use 层的 onAction 需继续用原牌，五谷丰登等牌的
+    -- closeAG 收尾才能执行，否则亮出的牌会一直留在桌面。
     data.card = replacement
-    if data.use then data.use.card = replacement end
     if player:getMark("chifushui_name_round") > 0 then player.room:setPlayerMark(player, ROUND_MARK, 1)
     else player.room:addTableMarkIfNeed(player, NAME_MARK, original.name) end
   end,

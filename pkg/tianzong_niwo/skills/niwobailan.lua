@@ -11,7 +11,11 @@ local function available_skills(player)
   return table.filter(Common.get_skill_names(player), function(skill_name)
     local skill = Fk.skills[skill_name]
     local skeleton = skill and skill:getSkeleton()
-    return skill and skill.visible and skeleton and not table.contains(skeleton.tags or {}, Skill.Limited)
+    -- 限定技、锁定技（含觉醒技/主公技）均不可被百览选为失去目标
+    if not (skill and skill.visible and skeleton) then return false end
+    return not skill:hasTag(Skill.Limited)
+      and not skill:hasTag(Skill.Compulsory)
+      and not skill:hasTag(Skill.Lord)
   end)
 end
 

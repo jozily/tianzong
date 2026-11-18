@@ -1,14 +1,16 @@
 local chifushui = fk.CreateSkill{
-   name = "chifushui" ,
+   name = "chifushui",
+   tags = { Skill.Compulsory },   -- 覆水：锁定技，自动触发
    related_skills = { "chiyidi" },
   }
 local STAGE = "chifushui_stage"
 
-chifushui:addEffect(fk.CardRespondFinished, {
+local spec = {
   can_trigger = function(self, event, target, player, data)
     return player:hasSkill(chifushui.name) and target ~= player and data.responseToEvent
       and data.responseToEvent.from == player and player:getMark(STAGE) < 3
   end,
+  -- 不写 on_cost：锁定技直接结算（TriggerSkill:cost 对锁定技恒返回 true）
   on_use = function(self, event, target, player, data)
     local room = player.room
     local stage = player:getMark(STAGE) + 1
@@ -23,7 +25,11 @@ chifushui:addEffect(fk.CardRespondFinished, {
       room:handleAddLoseSkills(player, "chiyidi", nil, true, false)
     end
   end,
-})
+}
+
+chifushui:addEffect(fk.CardRespondFinished, spec)
+-- 补监听“使用牌响应”：无懈响应锦囊、杀响应借刀等都走 CardUseFinished
+chifushui:addEffect(fk.CardUseFinished, spec)
 
 chifushui:addTest(function()
   for _, entry in ipairs(Fk.generals["chi__yuji"].all_skills) do

@@ -83,15 +83,20 @@ end
 function M.activate(room, player, skill_name, cancelable)
   local pairs = M.available_pairs(player)
   if #pairs == 0 then return false end
+  -- 每个选项附带两项的“当前数值”，客户端 ChoicesBox 会经
+  -- Ltk.processPrompt 把 ::: 后的数值代入翻译里的 %arg，形成带数值的可视化列表。
   local choices = table.map(pairs, function(pair)
-    return "chifusheng_pair" .. pair[1] .. pair[2]
+    local a, b = pair[1], pair[2]
+    return ("chifusheng_pair%d%d:::%d / %d"):format(a, b, M.value(player, a), M.value(player, b))
   end)
   local choice = room:askToChoice(player, {
     choices = choices, all_choices = choices, skill_name = skill_name,
     prompt = "#chifusheng-pair", cancelable = cancelable,
   })
   if not choice or choice == "Cancel" then return false end
-  local first, second = tonumber(string.sub(choice, -2, -2)), tonumber(string.sub(choice, -1))
+  local sa, sb = choice:match("chifusheng_pair(%d)(%d)")
+  if not sa then return false end
+  local first, second = tonumber(sa), tonumber(sb)
   local first_value, second_value = M.value(player, first), M.value(player, second)
   room:addTableMarkIfNeed(player, M.REMOVED_MARK, first)
   room:addTableMarkIfNeed(player, M.REMOVED_MARK, second)

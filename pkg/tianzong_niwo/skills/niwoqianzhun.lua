@@ -67,6 +67,7 @@ s:addEffect("active", {
     local use = room:askToUseVirtualCard(player, {
       name = name, skill_name = s.name, prompt = "#niwoqianzhun-use", cancelable = false,
       extra_data = { bypass_times = true },
+      skip = true,
     })
     if use then
       room:setPlayerMark(player, opt == "niwoqianzhun_opt1" and DM or TM, 1)

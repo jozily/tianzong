@@ -65,7 +65,7 @@ Fk:loadTranslationTable {
   ["designer:tianzong_toaru__uiharu"] = "公冶天纵",
   ["illustrator:tianzong_toaru__uiharu"] = "幻想收束",
   ["tianzong_toaru__hengwen"] = "恒温",
-  [":tianzong_toaru__hengwen"] = "出牌阶段，你可以令一名角色获得一枚“恒温”标记并记录其体力值。其体力值变化后，你可以令其恢复或失去体力至记录体力值，然后移除其“恒温”标记并重置“纵幻”。",
+  [":tianzong_toaru__hengwen"] = "限定技，出牌阶段，你可以令一名角色获得一枚“恒温”标记并记录其体力值。其体力值变化后，你可以令其恢复或失去体力至记录体力值，然后移除其“恒温”标记并重置“纵幻”。",
   ["tianzong_toaru__zonghuan"] = "纵幻",
   [":tianzong_toaru__zonghuan"] = "限定技，每当你成为其他角色牌的目标时，你可重置“恒温”并令此牌对你无效，然后你为此牌选择一个额外合法目标（若有，可为使用者自己）。",
 
