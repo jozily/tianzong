@@ -66,12 +66,22 @@ chiyuanque:addEffect(fk.EnterDying, {
     if player.hp < 1 then room:recover{ who = player, num = 1 - player.hp, skillName = chiyuanque.name } end
     room:changeMaxHp(player, -1)
     room:handleAddLoseSkills(player, "-chifenqing|-chisuhen", nil, true, false)
-    local others = room:getOtherPlayers(player)
-    if #others > 0 then
-      local chosen = room:askToChoosePlayers(player, { targets = others, min_num = 1, max_num = 1, skill_name = chiyuanque.name, prompt = "#chiyuanque-memory", cancelable = false })
-      local to = chosen[1]
-      to:drawCards(3, chiyuanque.name)
-      if to:isWounded() then room:recover{ who = to, num = 1, skillName = chiyuanque.name } end
+    -- 追思：获得一名已死亡角色武将牌上的所有技能
+    local dead = table.filter(room.players, function(p) return not p:isAlive() end)
+    if #dead > 0 then
+      local chosen = room:askToChoosePlayers(player, { targets = dead, min_num = 1, max_num = 1, skill_name = chiyuanque.name, prompt = "#chiyuanque-memory", cancelable = true })
+      if #chosen > 0 then
+        local to = chosen[1]
+        local skills = Fk.generals[to.general]:getSkillNameList()
+        if to.deputyGeneral and to.deputyGeneral ~= "" then
+          table.insertTableIfNeed(skills, Fk.generals[to.deputyGeneral]:getSkillNameList())
+        end
+        skills = table.filter(skills, function(skill_name)
+          local skill = Fk.skills[skill_name]
+          return skill ~= nil and not skill:hasTag(Skill.Lord)
+        end)
+        if #skills > 0 then room:handleAddLoseSkills(player, table.concat(skills, "|"), nil, true, false) end
+      end
     end
   end,
 })

@@ -7,7 +7,7 @@ local chiyouming = fk.CreateSkill{
 
 Fk:loadTranslationTable{
   ["chiyouming"] = "幽明",
-  [":chiyouming"] = "当你每轮首次：①成为一张牌的目标后，你可以观看来源两张手牌并将其中一张置于牌堆顶②进入濒死状态时，若你武将牌正面朝上，你翻面并将体力恢复至一点。",
+  [":chiyouming"] = "当你每轮首次：1.成为一张牌的目标后，你可以观看来源两张手牌并将其中一张置于牌堆顶；2.进入濒死状态时，若你武将牌正面朝上，你翻面并将体力恢复至一点。",
 }
 
 chiyouming:addEffect(fk.TargetSpecified, {
