@@ -114,7 +114,7 @@ Fk:loadTranslationTable{
   ["illustrator:niwo__xushu"] = "官方",
   ["cv:niwo__xushu"] = "暂无",
   ["niwozhuohun"] = "灼魂",
-  [":niwozhuohun"] = "每轮开始时，你将<a href=':tianzong_chixuanjian'>【炽·玄剑】</a>从场上或弃牌堆置入你的武器区。当你使用【杀】指定目标后，场上区域没有与此【杀】花色相同的牌的其他角色非锁定技失效直到回合结束。",
+  [":niwozhuohun"] = "锁定技，每轮开始时，你将<a href=':tianzong_chixuanjian'>【炽·玄剑】</a>从场上、牌堆或弃牌堆置入你的武器区。当你使用【杀】指定目标后，场上区域没有与此【杀】花色相同的牌的其他角色非锁定技失效直到回合结束。",
   ["niwosuchen"] = "肃尘",
   [":niwosuchen"] = "每轮限一次，当你成为其他角色【杀】或锦囊牌的目标时，你可以弃置一张【杀】，令此牌目标转移给使用者。然后若你体力值不大于其，你可以对其造成1点雷属性伤害。",
   ["$niwozhuohun1"] = "灼魂燃剑，所向披靡。",

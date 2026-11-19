@@ -4,6 +4,20 @@ local niwochoulu = fk.CreateSkill{
 
 local ONCE_MARK = "@@niwochoulu_done"
 
+-- 此刻确实能使用【杀】：手牌里有实体杀（且未被禁用/次数允许），
+-- 或有转化技能可转化出杀。cloneCard 出来的虚拟杀无子卡，
+-- player:canUse 只判禁用与次数、不查手牌，故须单独确认实体杀来源。
+local function can_use_slash(player)
+  local slash = Fk:cloneCard("slash")
+  if player:prohibitUse(slash) then return false end
+  for _, id in ipairs(player:getCardIds("h")) do
+    if Fk:getCardById(id).trueName == "slash" then return true end
+  end
+  if #player:getViewAsCardNames(niwochoulu.name, Fk:getAllCardNames("b"), nil, nil,
+      { bypass_distances = true, bypass_times = true }) > 0 then return true end
+  return false
+end
+
 niwochoulu:addEffect(fk.Damaged, {
   anim_type = "offensive",
   can_trigger = function(self, event, target, player, data)
@@ -12,12 +26,7 @@ niwochoulu:addEffect(fk.Damaged, {
     if not target or not target:isAlive() then return false end
     if not data.from or not data.from:isAlive() or data.from == player then return false end
     if player:distanceTo(target) > 1 then return false end
-    -- 需要此刻确实能使用【杀】（实体杀或转化杀技能均可）才触发
-    local slash = Fk:cloneCard("slash")
-    if not player:prohibitUse(slash) and player:canUse(slash, { bypass_distances = true, bypass_times = true }) then return true end
-    if #player:getViewAsCardNames(niwochoulu.name, Fk:getAllCardNames("b"), nil, nil,
-        { bypass_distances = true, bypass_times = true }) > 0 then return true end
-    return false
+    return can_use_slash(player)
   end,
   on_cost = function(self, event, target, player, data)
     return player.room:askToSkillInvoke(player, {
