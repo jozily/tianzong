@@ -2,10 +2,24 @@ local chilique = fk.CreateSkill{
   name = "chilique",
   tags = { Skill.Compulsory },
 }
-local PATH = "@chilique_path-turn"
+local PATH = "chilique_path-turn"
 local LAST = "chilique_last-turn"
 local COUNT = "chilique_count-turn"
 local INVALID = "chilique_invalid-turn"
+
+-- 离阙路径 mark：随当前选择显示「离阙 递增」/「离阙 递减」
+Fk:addQmlMark{
+  name = "chilique_path",
+  how_to_show = function(_, value, p)
+    if not p then return "" end
+    local path = p:getMark(PATH)
+    if path == "chilique_increase" then return "离阙 递增" end
+    if path == "chilique_decrease" then return "离阙 递减" end
+    return ""
+  end,
+  qml_data = function() return {} end,
+  qml_path = function() return "" end,
+}
 
 local function add_targets(room, player, data, number)
   local current = data.tos or {}
@@ -54,10 +68,22 @@ chilique:addEffect(fk.AfterCardUseDeclared, {
         return
       end
     end
+    -- 触发离阙路径 mark 界面重绘（how_to_show 读取 PATH）
+    room:setPlayerMark(player, "@[chilique_path]", 1)
     room:setPlayerMark(player, COUNT, count)
     room:setPlayerMark(player, LAST, data.card:getNameLength(true))
     apply_effect(room, player, data, path, count)
     if count == player.hp then apply_effect(room, player, data, path == "chilique_increase" and "chilique_decrease" or "chilique_increase", count) end
+  end,
+})
+
+-- 回合开始清除路径 mark 显示（PATH 由 -turn 后缀自动清，这里清显示触发 mark）
+chilique:addEffect(fk.TurnStart, {
+  can_refresh = function(self, event, target, player, data)
+    return target == player and player:getMark("@[chilique_path]") ~= 0
+  end,
+  on_refresh = function(self, event, target, player, data)
+    player.room:setPlayerMark(player, "@[chilique_path]", 0)
   end,
 })
 
