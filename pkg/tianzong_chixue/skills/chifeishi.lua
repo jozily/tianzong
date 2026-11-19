@@ -1,22 +1,29 @@
 local chifeishi = fk.CreateSkill{ name = "chifeishi" }
 
--- 描述为“红色牌”，故把可展示/统计的红色牌由“仅手牌”放宽为“手牌+装备区”。
-local AREAS = "he"
+-- 红色牌取手牌与装备区；展示至多两张，不足两张则全部展示
+local function getRedCards(p)
+  return table.filter(p:getCardIds("he"), function(id)
+    return Fk:getCardById(id).color == Card.Red
+  end)
+end
 
 local spec = {
   anim_type = "control",
   can_trigger = function(self, event, target, player, data)
     return target == player and player:hasSkill(chifeishi.name)
       and #table.filter(player.room:getOtherPlayers(player), function(p)
-        return #table.filter(p:getCardIds(AREAS), function(id) return Fk:getCardById(id).color == Card.Red end) >= 2
-      end) >= 2
+        return #getRedCards(p) > 0
+      end) > 0
   end,
   on_cost = function(self, event, target, player, data)
     local targets = table.filter(player.room:getOtherPlayers(player), function(p)
-      return #table.filter(p:getCardIds(AREAS), function(id) return Fk:getCardById(id).color == Card.Red end) >= 2
+      return #getRedCards(p) > 0
     end)
-    local chosen = player.room:askToChoosePlayers(player, { targets = targets, min_num = 2, max_num = 2, skill_name = chifeishi.name, prompt = "#chifeishi-choose", cancelable = true })
-    if #chosen == 2 then
+    local chosen = player.room:askToChoosePlayers(player, {
+      targets = targets, min_num = 1, max_num = 2,
+      skill_name = chifeishi.name, prompt = "#chifeishi-choose", cancelable = true,
+    })
+    if #chosen > 0 then
       event:setCostData(self, { tos = chosen })
       return true
     end
@@ -24,11 +31,22 @@ local spec = {
   on_use = function(self, event, target, player, data)
     local room, shown = player.room, {}
     for _, p in ipairs(event:getCostData(self).tos) do
-      local cards = room:askToCards(p, { min_num = 2, max_num = 2, pattern = ".|.|red|" .. AREAS, skill_name = chifeishi.name, prompt = "#chifeishi-show", cancelable = false })
-      p:showCards(cards)
-      table.insertTable(shown, cards)
+      local reds = getRedCards(p)
+      local cards = {}
+      for i = 1, math.min(2, #reds) do
+        table.insert(cards, reds[i])
+      end
+      if #cards > 0 then
+        p:showCards(cards)
+        table.insertTable(shown, cards)
+      end
     end
-    local chosen = room:askToCards(player, { min_num = 1, max_num = 1, pattern = tostring(Exppattern{ id = shown }), expand_pile = shown, skill_name = chifeishi.name, prompt = "#chifeishi-gain", cancelable = false })
+    if #shown == 0 then return end
+    local chosen = room:askToCards(player, {
+      min_num = 1, max_num = 1, pattern = tostring(Exppattern{ id = shown }),
+      expand_pile = shown, skill_name = chifeishi.name,
+      prompt = "#chifeishi-gain", cancelable = false,
+    })
     if #chosen > 0 then room:obtainCard(player, chosen, true, fk.ReasonPrey, player, chifeishi.name) end
   end,
 }

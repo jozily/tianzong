@@ -112,8 +112,7 @@ chixiege:addEffect(fk.TargetSpecified, {
     return player:hasSkill(chixiege.name)
       and target ~= nil
       and target:isAlive()
-      and target ~= player
-      and is_xiege_target(target)
+      and (target == player or is_xiege_target(target))
       and data.card ~= nil
       and data.card.is_damage_card
   end,
@@ -135,8 +134,7 @@ chixiege:addEffect(fk.TargetConfirming, {
     return player:hasSkill(chixiege.name)
       and target ~= nil
       and target:isAlive()
-      and target ~= player
-      and is_xiege_target(target)
+      and (target == player or is_xiege_target(target))
       and data.card ~= nil
       and data.card.is_damage_card
       and not data.cancelled

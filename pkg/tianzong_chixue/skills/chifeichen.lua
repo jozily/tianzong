@@ -4,7 +4,7 @@ chifeichen:addEffect(fk.TargetConfirmed, {
   anim_type = "control",
   can_trigger = function(self, event, target, player, data)
     return target == player and player:hasSkill(chifeichen.name)
-      and data.from and data.from:isAlive() and data.from ~= player
+      and data.from and data.from:isAlive()
       and data.card and data.card.color == Card.Red
       and player:usedSkillTimes(chifeichen.name, Player.HistoryTurn) == 0
   end,

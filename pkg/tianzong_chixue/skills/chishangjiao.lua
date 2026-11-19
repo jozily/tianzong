@@ -5,6 +5,20 @@ local chishangjiao = fk.CreateSkill{
 
 local HAND_EXCLUDE_MARK = "chishangjiao_hand-round"
 
+-- 清除本轮尚椒牌标记（牌上的可见标记 + 玩家手牌排除表）
+local function clear_shangjiao_marks(room, player)
+  local ids = player:getTableMark(HAND_EXCLUDE_MARK)
+  if type(ids) == "table" then
+    for _, id in ipairs(ids) do
+      local c = Fk:getCardById(id)
+      if c then
+        room:setCardMark(c, "@@chishangjiao_round", 0)
+      end
+    end
+  end
+  room:setPlayerMark(player, HAND_EXCLUDE_MARK, 0)
+end
+
 chishangjiao:addEffect(fk.TargetConfirming, {
   anim_type = "defensive",
   can_trigger = function(self, event, target, player, data)
@@ -95,18 +109,17 @@ chishangjiao:addEffect(fk.RoundStart, {
     return player:hasSkill(chishangjiao.name, true)
   end,
   on_refresh = function(self, event, target, player, data)
-    local room = player.room
-    -- 清可见牌标记
-    local ids = player:getTableMark(HAND_EXCLUDE_MARK)
-    if type(ids) == "table" then
-      for _, id in ipairs(ids) do
-        local c = Fk:getCardById(id)
-        if c then
-          room:setCardMark(c, "@@chishangjiao_round", 0)
-        end
-      end
-    end
-    room:setPlayerMark(player, HAND_EXCLUDE_MARK, 0)
+    clear_shangjiao_marks(player.room, player)
+  end,
+})
+
+-- 本轮结束时清除尚椒牌标记
+chishangjiao:addEffect(fk.RoundEnd, {
+  can_refresh = function(self, event, target, player, data)
+    return player:hasSkill(chishangjiao.name, true)
+  end,
+  on_refresh = function(self, event, target, player, data)
+    clear_shangjiao_marks(player.room, player)
   end,
 })
 
