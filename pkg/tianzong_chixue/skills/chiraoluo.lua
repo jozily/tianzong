@@ -157,7 +157,7 @@ chiraoluo:addEffect(fk.CardUseFinished, {
 
 Fk:loadTranslationTable{
   ["chiraoluo"] = "扰洛",
-  [":chiraoluo"] = "当你受到伤害后，或当你使用或打出牌响应其他牌后，你可以弃置一名角色区域内的一张牌，令其选择一项：1.发动一次【孤凫】；2.使用一张手牌或蓄谋牌；3.背水（依次执行前两项）：翻面。",
+  [":chiraoluo"] = "当你受到伤害后，或当你使用或打出牌响应其他牌后，你可以弃置一名角色区域内的一张牌，令其选择一项：1.发动一次【孤凫】；2.使用一张手牌或蓄谋牌；背水（依次执行前两项）：翻面。",
   ["#chiraoluo-choose"] = "扰洛：请选择一名角色",
   ["#chiraoluo-discard"] = "扰洛：弃置%dest区域内的一张牌",
   ["#chiraoluo-choice"] = "扰洛：请选择一项",
