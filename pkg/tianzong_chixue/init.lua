@@ -63,7 +63,7 @@ local chi__yuji = General:new(extension, "chi__yuji", "qun", 3, 3, General.Male)
 chi__yuji:addSkills { "chiliangdao", "chifushui" }
 
 -- 炽胡金定 013
-local chi__hujinding = General:new(extension, "chi__hujinding", "shu", 3, 3, General.Female)
+local chi__hujinding = General:new(extension, "chi__hujinding", "shu", 3, 6, General.Female)
 chi__hujinding:addSkills { "chiqianmeng", "chihuaiji" }
 
 -- 炽邹氏 014
@@ -948,7 +948,7 @@ Fk:loadTranslationTable{
   ["chiliaozhi"] = "燎志",
   [":chiliaozhi"] = "出牌阶段开始时或每轮结束时，你可以与至多X名角色同时拼点，拼点赢的角色视为对所有没赢的角色使用一张火【杀】，然后你摸此流程中受到伤害的角色数张牌（X为你已损失体力值+1）。",
   ["chizhenjie"] = "赈节",
-  [":chizhenjie"] = "其与你距离不大于1的角色造成或受到属性伤害后，你可以观看牌堆顶两张牌并令你或其使用其中可以使用的牌；你与其他角色的距离-X（X为你已损失体力值+1）。",
+  [":chizhenjie"] = "其与你距离不大于1的角色受到属性伤害后，你可以观看牌堆顶两张牌并令你或其使用其中可以使用的牌；你与其他角色的距离-X（X为你已损失体力值+1）。",
 
     -- 炽夏侯荣 033
   ["chi__xiahourong"] = "<font color='#FF2D2D'>炽</font>夏侯荣",
@@ -998,6 +998,7 @@ Fk:loadTranslationTable{
   ["chifenqing_turnover"] = "令对方翻面",
   ["chifenqing_backwater"] = "背水：若仅一人选择，交换双方效果",
   ["#chizhenjie-invoke"] = "赈节：是否观看牌堆顶两张牌，令你或 %dest 使用其中一张？",
+  ["#chizhenjie-view"] = "赈节：观看牌堆顶的两张牌",
   ["#chizhenjie-user"] = "赈节：选择使用牌的角色",
   ["#chizhenjie-use"] = "赈节：你可以使用其中一张牌",
   ["#chiliaozhi-choose"] = "燎志：选择至多X名角色同时拼点",

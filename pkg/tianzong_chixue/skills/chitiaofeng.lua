@@ -16,7 +16,7 @@ Fk:addQmlMark{
     if not p then return "" end
     local suits = p:getTableMark(SUIT_MARK)
     if type(suits) ~= "table" or #suits == 0 then return "" end
-    return table.concat(table.map(suits, suit_symbol), "/")
+    return "调风 " .. table.concat(table.map(suits, suit_symbol), "/")
   end,
   qml_data = function() return {} end,
   qml_path = function() return "" end,

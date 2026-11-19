@@ -20,6 +20,8 @@ chixuanjian:addEffect("viewas", {
   pattern = "slash",
   prompt = "#tianzong_chixuanjian",
   handly_pile = true,
+  -- 必须给出 filter_pattern，否则客户端不知道可选牌数，转化按钮无法展开
+  filter_pattern = { min_num = 1, max_num = math.huge, pattern = "." },
   interaction = function(self, player)
     local names = slash_names(player)
     if #names > 0 then return UI.TianzongCardNameBox{ choices = names, all_choices = names } end
