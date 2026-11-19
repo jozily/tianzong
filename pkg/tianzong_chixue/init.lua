@@ -115,9 +115,6 @@ chi__xiahoushi:addSkills { "chixinmai", "chiyusui" }
 local chi__xiahouhui = General:new(extension, "chi__xiahouhui", "jin", 3, 3, General.Female)
 chi__xiahouhui:addSkills { "chifeishi", "chifeichen" }
 
-local chi__liyu = General:new(extension, "chi__liyu", "qun", 3, 3, General.Male)
-chi__liyu:addSkills { "chilanhua", "chiyidai" }
-
 Fk:loadTranslationTable{
   ["chi"] = "炽血青魂",
     ["chixue"] = "炽血青魂",
@@ -981,36 +978,6 @@ Fk:loadTranslationTable{
   ["#chifeishi-show"] = "匪氏：展示的红色牌（至多两张）",
   ["#chifeishi-gain"] = "匪氏：选择获得其中一张展示牌",
 
-    -- 炽李煜 036
-  ["chi__liyu"] = "<font color='#FF2D2D'>炽</font>李煜",
-  ["#chi__liyu"] = "南唐后主",
-  ["~chi__liyu"] = "问君能有几多愁，恰似一江春水向东流。",
-  ["designer:chi__liyu"] = "公冶天纵",
-  ["illustrator:chi__liyu"] = "官方",
-  ["cv:chi__liyu"] = "暂无",
-  ["chilanhua"] = "览华",
-  [":chilanhua"] = "锁定技，当你使用♥/♠/♦/♣花色的牌结算完毕后，你令一名角色选择一项：1.弃置一张花色相同的牌；2.受到一点来自你的火焰伤害。背水：永久移除一个【览华】花色。",
-  ["chiyidai"] = "遗代",
-  [":chiyidai"] = "当你受到伤害后，你可以从♠♥♦♣中任选花色重新构成【览华】花色，然后摸X张牌（X为新【览华】花色数）。",
-  ["@[chilanhua]"] = "览华",
-  ["#chilanhua-choose"] = "览华：选择一名角色，令其选择一项",
-  ["#chilanhua-choice"] = "览华：请选择一项",
-  ["#chilanhua-discard"] = "览华：弃置一张花色相同的牌",
-  ["#chilanhua-rm-suit"] = "览华·背水：永久移除一个【览华】花色",
-  ["chilanhua_discard"] = "弃置一张相同花色的牌",
-  ["chilanhua_damage"] = "受到一点来自炽李煜的火焰伤害",
-  ["chilanhua_backwater"] = "背水：炽李煜永久移除一个【览华】花色，你依次执行前两项",
-  ["chilanhua_rm_1"] = "♠",
-  ["chilanhua_rm_2"] = "♣",
-  ["chilanhua_rm_3"] = "♥",
-  ["chilanhua_rm_4"] = "♦",
-  ["#chiyidai-invoke"] = "遗代：是否重新选择【览华】花色并摸牌？",
-  ["#chiyidai-choose-suit"] = "遗代：依次选择要纳入【览华】的花色，选满或点“完成”结束",
-  ["chiyidai_done"] = "完成",
-  ["chiyidai_spade"] = "♠",
-  ["chiyidai_club"] = "♣",
-  ["chiyidai_heart"] = "♥",
-  ["chiyidai_diamond"] = "♦",
   ["#chimaoqi-put"] = "榫棋：你可以将本次获得的任意张牌置于武将牌上，称为“棋”",
   ["#chimaoqi-gain"] = "榫棋：选择任意张“棋”获得",
   ["@@chisusu_extra_effect-turn"] = "肃肃·额外结算",
