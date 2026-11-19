@@ -11,10 +11,8 @@ local INVALID = "chilique_invalid-turn"
 Fk:addQmlMark{
   name = "chilique_path",
   how_to_show = function(_, value, p)
-    if not p then return "" end
-    local path = p:getMark(PATH)
-    if path == "chilique_increase" then return "离阙 递增" end
-    if path == "chilique_decrease" then return "离阙 递减" end
+    -- value 本身就是显示文本（服务端 setPlayerMark 写入），避免依赖内部 mark 的客户端同步
+    if type(value) == "string" and value ~= "" then return value end
     return ""
   end,
   qml_data = function() return {} end,
@@ -68,8 +66,8 @@ chilique:addEffect(fk.AfterCardUseDeclared, {
         return
       end
     end
-    -- 触发离阙路径 mark 界面重绘（how_to_show 读取 PATH）
-    room:setPlayerMark(player, "@[chilique_path]", 1)
+    -- 触发离阙路径 mark 界面重绘：value 直接写入显示文本
+    room:setPlayerMark(player, "@[chilique_path]", path == "chilique_increase" and "离阙 递增" or "离阙 递减")
     room:setPlayerMark(player, COUNT, count)
     room:setPlayerMark(player, LAST, data.card:getNameLength(true))
     apply_effect(room, player, data, path, count)

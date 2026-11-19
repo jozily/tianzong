@@ -69,12 +69,12 @@ local function process_opt2(room, player)
     else
       -- 不能使用则立刻中止，并置于牌堆顶
       if room:getCardArea(id) == Card.Processing then
+        -- 省略 drawPilePosition：引擎默认 putIndex=1（置顶），日志显示「牌堆顶」
         room:moveCards({
           ids = { id },
           toArea = Card.DrawPile,
           moveReason = fk.ReasonPut,
           skillName = chifeimeng.name,
-          drawPilePosition = 1,
         })
       end
       return

@@ -40,13 +40,13 @@ niwochoulu:addEffect(fk.Damaged, {
     })
     
     if use then
-      -- 限定技发动特效
-      room:doSuperLightBox(nil, {
-        text = "#niwochoulu-animate",
-        bgColor = "transparent",
-        contentAreaColor = "gray",
-        contentAreaSize = 0.3,
+      -- 官方限定技发动特效（InvokeUltSkill 大招动画）
+      room:doAnimate("InvokeUltSkill", {
+        name = niwochoulu.name,
+        player = player.id,
+        deputy = false,
       })
+      room:delay(2000)
       player:broadcastSkillInvoke(niwochoulu.name)
       room:useCard(use)
       room:setPlayerMark(player, ONCE_MARK, 1)

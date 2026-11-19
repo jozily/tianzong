@@ -139,9 +139,9 @@ local chiyanzu_use_spec = {
 
     if #valid == 0 then return false end
 
-    local chosen = room:askToChooseCards(player, {
-      target = player, flag = { card_data = { { self.name, valid } } },
-      min = 0, max = 1, skill_name = self.name, prompt = "#chiyanzu_choose_use", cancelable = true,
+    local chosen = room:askToCards(player, {
+      min_num = 0, max_num = 1, pattern = tostring(Exppattern{ id = valid }),
+      skill_name = self.name, prompt = "#chiyanzu_choose_use", cancelable = true,
     })
     if #chosen > 0 then
       event:setCostData(self, chosen[1])
@@ -196,9 +196,9 @@ chiyanzu:addEffect(fk.Damaged, {
 
     if #valid == 0 then return false end
 
-    local chosen = room:askToChooseCards(player, {
-      target = player, flag = { card_data = { { self.name, valid } } },
-      min = 0, max = 1, skill_name = self.name, prompt = "#chiyanzu_choose_damaged", cancelable = true,
+    local chosen = room:askToCards(player, {
+      min_num = 0, max_num = 1, pattern = tostring(Exppattern{ id = valid }),
+      skill_name = self.name, prompt = "#chiyanzu_choose_damaged", cancelable = true,
     })
     if #chosen > 0 then
       event:setCostData(self, chosen[1])

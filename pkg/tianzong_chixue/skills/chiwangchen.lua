@@ -64,10 +64,12 @@ chiwangchen:addEffect(fk.AfterCardsMove, {
   can_trigger = function(self, event, target, player, data)
     if not player:hasSkill(chiwangchen.name) then return false end
 
+    -- 其他角色的连接牌因弃置进入弃牌堆后，你获得之
     for _, move in ipairs(data) do
-      if move.toArea == Card.DiscardPile then
+      if move.from ~= player.id and move.toArea == Card.DiscardPile
+        and move.moveReason == fk.ReasonDiscard then
         for _, info in ipairs(move.moveInfo) do
-          if U.isConnectedCard(info.cardId) then
+          if (info.extra_data or {}).isConnectedCard or U.isConnectedCard(info.cardId) then
             return true
           end
         end
@@ -80,9 +82,10 @@ chiwangchen:addEffect(fk.AfterCardsMove, {
     local obtain = {}
 
     for _, move in ipairs(data) do
-      if move.toArea == Card.DiscardPile then
+      if move.from ~= player.id and move.toArea == Card.DiscardPile
+        and move.moveReason == fk.ReasonDiscard then
         for _, info in ipairs(move.moveInfo) do
-          if U.isConnectedCard(info.cardId) then
+          if (info.extra_data or {}).isConnectedCard or U.isConnectedCard(info.cardId) then
             table.insertIfNeed(obtain, info.cardId)
           end
         end

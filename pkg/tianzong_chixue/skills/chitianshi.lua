@@ -40,8 +40,7 @@ chitianshi:addEffect(fk.CardEffecting, {
 chitianshi:addEffect(fk.CardEffectFinished, {
   anim_type = "support",
   can_trigger = function(self, event, target, player, data)
-    return data.from and data.from ~= player and data.from:hasSkill(self.name) and
-      player:hasSkill(self.name) and
+    return data.from and data.from ~= player and player:hasSkill(self.name) and
       player:usedSkillTimes("chitianshi_use_" .. data.from.id, Player.HistoryPhase) == 0
   end,
   on_use = function(self, event, target, player, data)
@@ -49,7 +48,8 @@ chitianshi:addEffect(fk.CardEffectFinished, {
     local skillName = self.name
     local nameLength = data.card:getNameLength(true)
     
-    if nameLength >= (12 - data.from.hp) then
+    -- X 为你的体力值（与静态/动态描述一致）
+    if nameLength >= player.hp then
       room:askToUseVirtualCard(
         player,
         {

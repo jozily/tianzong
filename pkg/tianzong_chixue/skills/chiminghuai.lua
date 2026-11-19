@@ -74,8 +74,9 @@ chiminghuai:addEffect(fk.EventPhaseEnd, {
     
     local choice = validCombinations[math.random(1, #validCombinations)]
     
-    local card = Fk:cloneCard("random_responce")
+    local card = Fk:cloneCard("adaptation")
     card.skillName = skillName
+    if choice then card:addSubcards(choice) end
     
     room:useCard({
       from = player,

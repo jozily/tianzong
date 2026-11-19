@@ -23,13 +23,13 @@ local spec = {
     elseif stage == 2 then
       room:setPlayerMark(player, "chifushui_color_round", 1)
     else
-      -- 选项3达成：触发类似限定技的全屏动画
-      room:doSuperLightBox(nil, {
-        text = "#chifushui-final",
-        bgColor = "transparent",
-        contentAreaColor = "gray",
-        contentAreaSize = 0.3,
+      -- 选项3达成：官方限定技发动特效（InvokeUltSkill 大招动画）
+      room:doAnimate("InvokeUltSkill", {
+        name = chifushui.name,
+        player = player.id,
+        deputy = false,
       })
+      room:delay(2000)
       player:broadcastSkillInvoke(chifushui.name)
       if player:isWounded() then room:recover{ who = player, num = player.maxHp - player.hp, skillName = chifushui.name } end
       room:handleAddLoseSkills(player, "chiyidi", nil, true, false)

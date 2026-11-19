@@ -3,6 +3,17 @@ local chirenfu = fk.CreateSkill{
   tags = { Skill.Compulsory },
 }
 
+-- 荏腹使用牌数 mark：实时显示本回合已使用的基本牌数
+Fk:addQmlMark{
+  name = "chirenfu_used",
+  how_to_show = function(_, value, p)
+    if type(value) == "string" and value ~= "" then return value end
+    return ""
+  end,
+  qml_data = function() return {} end,
+  qml_path = function() return "" end,
+}
+
 local function used_basic_count(player)
   local count = 0
   player.room.logic:getEventsOfScope(GameEvent.UseCard, 999, function(event)
@@ -38,6 +49,29 @@ local function transfer_hand_card(room, first, second)
     room:obtainCard(less, id, false, fk.ReasonPrey, less, chirenfu.name)
   end
 end
+
+-- 每使用一张牌后刷新「荏腹 N」显示（N=本回合已用基本牌数）
+chirenfu:addEffect(fk.CardUseFinished, {
+  can_refresh = function(self, event, target, player, data)
+    return player:hasSkill(chirenfu.name) and data.card and data.card.type == Card.TypeBasic
+  end,
+  on_refresh = function(self, event, target, player, data)
+    local n = used_basic_count(player)
+    if n > 0 then
+      player.room:setPlayerMark(player, "@[chirenfu_used]", "荏腹 " .. n)
+    end
+  end,
+})
+
+-- 回合开始重置显示（基本牌计数按回合统计）
+chirenfu:addEffect(fk.TurnStart, {
+  can_refresh = function(self, event, target, player, data)
+    return target == player and player:getMark("@[chirenfu_used]") ~= 0
+  end,
+  on_refresh = function(self, event, target, player, data)
+    player.room:setPlayerMark(player, "@[chirenfu_used]", 0)
+  end,
+})
 
 chirenfu:addEffect(fk.CardUsing, {
   anim_type = "negative",

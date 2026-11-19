@@ -21,11 +21,12 @@ end
 
 local function do_fuxue(room, player, data, target)
   if player.hp <= 0 then return end
-  room:loseHp(player, 1, niwofuxue.name)
-  if player.dead then return end
-
+  -- X 为受伤角色身上“殁”的数量；无“殁”则无后续效果，先判断再扣血，避免白失去体力
   local x = count_target_mo(target)
   if x <= 0 then return end
+
+  room:loseHp(player, 1, niwofuxue.name)
+  if player.dead then return end
 
   local choice = room:askToChoice(player, {
     choices = { "niwofuxue_add", "niwofuxue_recover" },

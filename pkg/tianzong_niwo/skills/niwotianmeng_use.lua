@@ -47,8 +47,10 @@ niwotianmeng_use:addEffect("viewas", {
     card.skillName = niwotianmeng_use.name
     return card
   end,
+  -- 出牌阶段不单独占一个转化按钮：转化统一走【殄梦】active 按钮里的二选一选项。
+  -- 这里只保留回合外的响应（打出殁牌）。askToUseVirtualCard 显式指定本技能名，不受此开关影响。
   enabled_at_play = function(self, player)
-    return #my_mo(player) > 0 and #names(player) > 0
+    return false
   end,
   enabled_at_response = function(self, player, response)
     return #my_mo(player) > 0 and #names(player) > 0

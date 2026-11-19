@@ -70,6 +70,8 @@ Fk:loadTranslationTable{
   ["@niwo_mo"] = "殁",
   ["@@niwo_mo"] = "殁",
   ["#niwotianmeng-choice"] = "殄梦：选择标记“殁”或使用一张“殁”",
+  ["niwotianmeng_mark"] = "标记“殁”：选择一名角色与你各标记一张“殁”",
+  ["niwotianmeng_transform"] = "转化：将一张“殁”当任意单体伤害牌使用",
   ["#niwotianmeng-target"] = "殄梦：选择一名角色与你各标记一张“殁”",
   ["#niwotianmeng-selfcard"] = "殄梦：选择你的一张牌标记为“殁”",
   ["#niwotianmeng-targetcard"] = "殄梦：选择目标角色的一张牌标记为“殁”",

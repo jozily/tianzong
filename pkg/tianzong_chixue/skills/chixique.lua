@@ -66,6 +66,26 @@ local function choose_targets_for_virtual(room, player, card_name)
   return tos
 end
 
+-- 辅助技能：用与地刃相同的 TianzongCardNameBox（图形化牌名框）选牌名。
+-- 可选牌名由 player 的 chi_xique_remain mark 动态决定（在 on_use 循环里先写入）。
+chixique:addAuxActiveSkill("#chixique_pick", {
+  card_num = 0,
+  target_num = 0,
+  interaction = function(self, player)
+    local remain = player:getMark("chi_xique_remain")
+    if type(remain) ~= "number" or remain <= 0 then return end
+    local all_names = Fk:getAllCardNames("bt")
+    local names = player:getViewAsCardNames("chidieren", get_names_leq(remain))
+    if #names == 0 then return end
+    return UI.TianzongCardNameBox {
+      choices = names,
+      all_choices = all_names,
+    }
+  end,
+  card_filter = Util.FalseFunc,
+  target_filter = Util.FalseFunc,
+})
+
 chixique:addEffect("active", {
   anim_type = "offensive",
   prompt = "#chixique",
@@ -76,18 +96,6 @@ chixique:addEffect("active", {
   can_use = function(self, player)
     return player.phase == Player.Play
       and player:usedSkillTimes(chixique.name, Player.HistoryPhase) == 0
-  end,
-
-  interaction = function(self, player)
-    local remain = player:getMark("chi_xique_remain")
-    if type(remain) ~= "number" or remain <= 0 then return end
-    local all_names = get_names_leq(remain)
-    local names = player:getViewAsCardNames("chidieren", all_names)
-    if #names == 0 then return end
-    return UI.TianzongCardNameBox {
-      choices = names,
-      all_choices = all_names,
-    }
   end,
 
   card_filter = function(self, player, to_select, selected)
@@ -107,16 +115,19 @@ chixique:addEffect("active", {
     while remain > 0 and not player.dead do
       room:setPlayerMark(player, "chi_xique_remain", remain)
 
-      local all_names = get_names_leq(remain)
-      local names = player:getViewAsCardNames("chidieren", all_names)
+      local all_names = Fk:getAllCardNames("bt")
+      local names = player:getViewAsCardNames("chidieren", get_names_leq(remain))
       if #names == 0 then break end
 
-      local choice = room:askToChoice(player, {
-        choices = names,
-        skill_name = chixique.name,
+      -- 用牌名框（同地刃）选择，而非文字选项列表
+      local success, dat = room:askToUseActiveSkill(player, {
+        skill_name = "#chixique_pick",
         prompt = "#chi_xique_choose:::" .. remain,
+        cancelable = true,
       })
-
+      if not success or not dat or not dat.interaction then break end
+      local choice = dat.interaction
+      if type(choice) == "table" then choice = choice.name end
       if not choice or choice == "" then break end
 
       local len = get_name_len(choice)
