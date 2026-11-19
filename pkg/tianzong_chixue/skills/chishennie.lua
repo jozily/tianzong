@@ -5,28 +5,6 @@ local chishennie = fk.CreateSkill{
 local U = require "packages.utility.utility"
 local LENGTH_MARK = "chishennie_lengths-turn"
 
-chishennie:addEffect(fk.AfterCardsMove, {
-  mute = true,
-  can_refresh = function(self, event, target, player, data)
-    if not player:hasSkill(chishennie.name, true) then return false end
-    return table.find(data, function(move)
-      return move.to == player and move.toArea == Card.PlayerHand and table.find(move.moveInfo, function(info)
-        return Fk:getCardById(info.cardId).type == Card.TypeTrick and not U.isConnectedCard(info.cardId)
-      end)
-    end)
-  end,
-  on_refresh = function(self, event, target, player, data)
-    for _, move in ipairs(data) do
-      if move.to == player and move.toArea == Card.PlayerHand then
-        for _, info in ipairs(move.moveInfo) do
-          local card = Fk:getCardById(info.cardId)
-          if card.type == Card.TypeTrick and not U.isConnectedCard(card) then U.connectCards(player.room, info.cardId) end
-        end
-      end
-    end
-  end,
-})
-
 local damage_spec = {
   can_trigger = function(self, event, target, player, data)
     if target ~= player or not player:hasSkill(chishennie.name) then return false end
@@ -71,9 +49,6 @@ chishennie:addEffect("prohibit", {
   end,
   prohibit_response = function(self, player, card)
     return table.contains(player:getTableMark(LENGTH_MARK), card:getNameLength(true))
-  end,
-  prohibit_discard = function(self, player, card)
-    return U.isConnectedCard(card)
   end,
 })
 
