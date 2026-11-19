@@ -2,7 +2,9 @@ local niwoshucai = fk.CreateSkill{
   name = "niwoshucai",
 }
 
-local ROUND_MARK = "@$niwoshucai-round"
+-- 已用花色 mark 改为隐藏（去掉 @$ 显示前缀）：机制仍在内部按花色去重，
+-- 但不再在武将牌上单独显示"殊彩·已用花色"，界面只需看 SHOW_MARK 的简易花色显示
+local ROUND_MARK = "niwoshucai-round"
 local SHOW_MARK = "@[niwoshucai]"
 
 local function suit_symbol(s)

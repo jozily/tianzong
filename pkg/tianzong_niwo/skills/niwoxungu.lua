@@ -51,6 +51,8 @@ niwoxungu:addEffect(fk.RoundStart, {
     end
     if #rest > 0 and player:isAlive() then
       player:addToPile(WIND, rest, true, niwoxungu.name, player)
+      -- 给每张“风”打标记，供衔望识别其进入弃牌堆的事件
+      for _, id in ipairs(rest) do room:setCardMark(Fk:getCardById(id), "@@niwo_wind", 1) end
     end
   end,
 })
@@ -87,7 +89,7 @@ niwoxungu:addEffect("viewas", {
 
 Fk:loadTranslationTable{
   [WIND] = "风",
-  ["#niwoxungu-use"] = "寻古：视为使用或打出一张“风”",
+  ["#niwoxungu-use"] = "寻古：使用或打出一张“风”",
 }
 
 return niwoxungu

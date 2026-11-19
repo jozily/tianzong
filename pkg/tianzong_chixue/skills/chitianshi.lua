@@ -5,15 +5,18 @@ local chitianshi = fk.CreateSkill{
   description = ":chitianshi",
   anim_type = "support",
   dynamic_desc = function(self, player, lang)
-    if not player then return "" end
-    local myHp = player.hp
-    return "恬适：体力" .. myHp .. "，牌名字数≥" .. myHp .. "的牌无效"
+    -- 无 player / 无房间（选将、技能一览、观战）时返回空串，
+    -- 引擎会自动回退到静态描述 :chitianshi，避免显示"该房间不可用"等错误文本
+    if not player or not player.room or not player.hp then return "" end
+    return "chitianshi_dyn:" .. tostring(player.hp)
   end,
 }
 
 Fk:loadTranslationTable{
   ["chitianshi"] = "恬适",
   [":chitianshi"] = "锁定技，其他角色于回合内对你使用的首张牌名字数不小于你体力值的牌对你无效。其他角色于回合内使用的首张牌名字数不小于X的牌结算后，你视为使用之。",
+  -- {1} = 当前体力值。英文冒号分段是引擎 descFormatter 的约定。
+  [":chitianshi_dyn"] = "锁定技，其他角色于回合内对你使用的首张牌名字数不小于{1}的牌对你无效（你当前体力{1}）。其他角色于回合内使用的首张牌名字数不小于X的牌结算后，你视为使用之。",
 }
 
 chitianshi:addEffect(fk.CardEffecting, {

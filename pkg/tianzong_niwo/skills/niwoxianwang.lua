@@ -18,7 +18,10 @@ end
 local function consume_wind(player, id)
   local room = player.room
   local suit = Fk:getCardById(id).suit
+  -- 打标记：本次弃置的摸牌在这里完成，避免 AfterCardsMove 监听重复摸
+  room:setCardMark(Fk:getCardById(id), "@@niwoxianwang_consumed", 1)
   room:throwCard(id, niwoxianwang.name, player, player)
+  -- 弃置后该“风”已离开私人牌堆，统计剩余同花色“风”数
   local n = #table.filter(player:getPile(WIND), function(wind_id)
     return Fk:getCardById(wind_id).suit == suit
   end)
@@ -52,6 +55,50 @@ niwoxianwang:addEffect(fk.CardResponding, {
   end,
   on_use = function(self, event, target, player, data)
     on_trigger(player, data.card)
+  end,
+})
+
+-- “风”进入弃牌堆后摸牌：覆盖非主动消耗途径（如寻古回合开始弃置全部“风”、被外力弃置）。
+-- 主动 consume_wind 弃置的牌已打 @@niwoxianwang_consumed 标记，这里跳过，避免重复摸。
+niwoxianwang:addEffect(fk.AfterCardsMove, {
+  anim_type = "drawcard",
+  can_trigger = function(self, event, target, player, data)
+    if not player:hasSkill(niwoxianwang.name) or player.dead then return false end
+    for _, move in ipairs(data) do
+      if move.toArea == Card.DiscardPile then
+        for _, info in ipairs(move.moveInfo) do
+          local card = Fk:getCardById(info.cardId, true)
+          if card and card:getMark("@@niwo_wind") > 0 and
+            card:getMark("@@niwoxianwang_consumed") == 0 then
+            return true
+          end
+        end
+      end
+    end
+    return false
+  end,
+  on_use = function(self, event, target, player, data)
+    local room = player.room
+    -- 统计本次进入弃牌堆的“风”，按各自花色摸牌
+    local entered = {}
+    for _, move in ipairs(data) do
+      if move.toArea == Card.DiscardPile then
+        for _, info in ipairs(move.moveInfo) do
+          local card = Fk:getCardById(info.cardId, true)
+          if card and card:getMark("@@niwo_wind") > 0 and
+            card:getMark("@@niwoxianwang_consumed") == 0 then
+            table.insertIfNeed(entered, info.cardId)
+          end
+        end
+      end
+    end
+    for _, id in ipairs(entered) do
+      local suit = Fk:getCardById(id).suit
+      local n = #table.filter(player:getPile(WIND), function(wind_id)
+        return Fk:getCardById(wind_id).suit == suit
+      end)
+      if n > 0 then player:drawCards(n, niwoxianwang.name) end
+    end
   end,
 })
 

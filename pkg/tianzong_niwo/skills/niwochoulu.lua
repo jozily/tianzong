@@ -2,7 +2,7 @@ local niwochoulu = fk.CreateSkill{
   name = "niwochoulu",
 }
 
-local ONCE_MARK = "@$niwochoulu"
+local ONCE_MARK = "@@niwochoulu_done"
 
 niwochoulu:addEffect(fk.Damaged, {
   anim_type = "offensive",
@@ -12,7 +12,12 @@ niwochoulu:addEffect(fk.Damaged, {
     if not target or not target:isAlive() then return false end
     if not data.from or not data.from:isAlive() or data.from == player then return false end
     if player:distanceTo(target) > 1 then return false end
-    return true
+    -- 需要此刻确实能使用【杀】（实体杀或转化杀技能均可）才触发
+    local slash = Fk:cloneCard("slash")
+    if not player:prohibitUse(slash) and player:canUse(slash, { bypass_distances = true, bypass_times = true }) then return true end
+    if #player:getViewAsCardNames(niwochoulu.name, Fk:getAllCardNames("b"), nil, nil,
+        { bypass_distances = true, bypass_times = true }) > 0 then return true end
+    return false
   end,
   on_cost = function(self, event, target, player, data)
     return player.room:askToSkillInvoke(player, {
@@ -35,9 +40,17 @@ niwochoulu:addEffect(fk.Damaged, {
     })
     
     if use then
+      -- 限定技发动特效
+      room:doSuperLightBox(nil, {
+        text = "#niwochoulu-animate",
+        bgColor = "transparent",
+        contentAreaColor = "gray",
+        contentAreaSize = 0.3,
+      })
+      player:broadcastSkillInvoke(niwochoulu.name)
       room:useCard(use)
-      room:addTableMark(player, ONCE_MARK, 1)
-      
+      room:setPlayerMark(player, ONCE_MARK, 1)
+
       if next(use.damageDealt or {}) ~= nil then
         -- End only the current turn; shutting down the Turn event directly
         -- can propagate to the room and incorrectly end the whole game.

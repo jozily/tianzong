@@ -7,10 +7,14 @@ local function execute_greater(room, current, card)
   room:askToUseVirtualCard(current, { name = choice, skill_name = chidangliao.name, prompt = "#chidangliao-target", extra_data = { bypass_times = true }, cancelable = true })
 end
 
+-- 额外阶段提示 mark：1=摸牌阶段，2=出牌阶段，3=弃牌阶段
 local function execute_lesser(current, x)
   if not current or current.dead then return end
   local phases = { Player.Draw, Player.Play, Player.Discard }
-  current:gainAnExtraPhase(phases[math.min(math.max(x, 1), 3)], chidangliao.name)
+  local idx = math.min(math.max(x, 1), 3)
+  local phaseNames = { "摸牌阶段", "出牌阶段", "弃牌阶段" }
+  current.room:setPlayerMark(current, "@chidangliao_phase", phaseNames[idx])
+  current:gainAnExtraPhase(phases[idx], chidangliao.name)
 end
 
 local function resolve(player, card)
@@ -38,6 +42,20 @@ chidangliao:addEffect(fk.TargetConfirmed, {
   end,
   on_use = function(self, event, target, player, data) resolve(player, data.card) end,
 })
+
+-- 回合结束时清除额外阶段提示 mark
+chidangliao:addEffect(fk.TurnEnd, {
+  can_refresh = function(self, event, target, player, data)
+    return target == player and player:getMark("@chidangliao_phase") ~= 0
+  end,
+  on_refresh = function(self, event, target, player, data)
+    player.room:setPlayerMark(player, "@chidangliao_phase", 0)
+  end,
+})
+
+Fk:loadTranslationTable{
+  ["@chidangliao_phase"] = "荡燎",
+}
 
 chidangliao:addEffect(fk.AfterCardsMove, {
   can_trigger = function(self, event, target, player, data)

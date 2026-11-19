@@ -1,6 +1,24 @@
-local chiliangdao = fk.CreateSkill{ name = "chiliangdao" }
+local chiliangdao = fk.CreateSkill{
+  name = "chiliangdao",
+  dynamic_desc = function(self, player, lang)
+    -- 无房间/无体力（选将、技能一览）时回退静态描述
+    if not player or not player.room then return "" end
+    local nameBoost = player:getMark("chifushui_name_round") > 0
+    local colorBoost = player:getMark("chifushui_color_round") > 0
+    local s1 = nameBoost and "chiliangdao_dyn_name" or ""
+    local s2 = colorBoost and "chiliangdao_dyn_color" or ""
+    return "chiliangdao_dyn:" .. s1 .. ":" .. s2
+  end,
+}
 local NAME_MARK = "chiliangdao_names"
 local ROUND_MARK = "chiliangdao_used-round"
+
+-- 动态描述：{1}=覆水选项1（每轮限一次），{2}=覆水选项2（替换条件增加颜色相同）
+Fk:loadTranslationTable{
+  [":chiliangdao_dyn"] = "每种牌名限一次。当你使用的牌即将生效，且此牌不为响应而使用或打出时，你可以在本次结算中将此牌牌面描述上的任意牌名替换为与其字数相等的其他牌名。{1}{2}",
+  ["chiliangdao_dyn_name"] = "（覆水已强化：改为每轮限一次。）",
+  ["chiliangdao_dyn_color"] = "（覆水已强化：替换条件增加颜色相同。）",
+}
 
 local function candidates(player, source)
   local result = {}

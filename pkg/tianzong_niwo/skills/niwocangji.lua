@@ -60,7 +60,20 @@ niwocangji:addEffect(fk.EventPhaseStart, {
     end
     remove_distance_skills(room)
     room:handleAddLoseSkills(player, "-niwochencang|niwochencangRemake|niwochoulu|weimu", nil, true, false)
+    -- 苍祭觉醒：切换到觉醒原画皮肤"疏渡者"
+    room:doSuperLightBox(nil, {
+      text = "#niwocangji-animate",
+      bgColor = "transparent",
+      contentAreaColor = "gray",
+      contentAreaSize = 0.3,
+    })
+    player:broadcastSkillInvoke(niwocangji.name)
+    room:handleChangeSkin(player.id, { player.id, "changeskin", "niwo__jiaxu_shudu.jpg", "-" })
   end,
 })
+
+Fk:loadTranslationTable{
+  ["#niwocangji-animate"] = "苍祭",
+}
 
 return niwocangji

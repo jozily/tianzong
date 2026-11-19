@@ -15,12 +15,22 @@ local spec = {
     local room = player.room
     local stage = player:getMark(STAGE) + 1
     room:setPlayerMark(player, STAGE, stage)
+    -- 提示 mark：直观显示覆水进度（0/3 → 3/3）
+    room:setPlayerMark(player, "@chifushui_progress", stage)
     player:drawCards(4 - stage, chifushui.name)
     if stage == 1 then
       room:setPlayerMark(player, "chifushui_name_round", 1)
     elseif stage == 2 then
       room:setPlayerMark(player, "chifushui_color_round", 1)
     else
+      -- 选项3达成：触发类似限定技的全屏动画
+      room:doSuperLightBox(nil, {
+        text = "#chifushui-final",
+        bgColor = "transparent",
+        contentAreaColor = "gray",
+        contentAreaSize = 0.3,
+      })
+      player:broadcastSkillInvoke(chifushui.name)
       if player:isWounded() then room:recover{ who = player, num = player.maxHp - player.hp, skillName = chifushui.name } end
       room:handleAddLoseSkills(player, "chiyidi", nil, true, false)
     end
@@ -28,8 +38,13 @@ local spec = {
 }
 
 chifushui:addEffect(fk.CardRespondFinished, spec)
--- 补监听“使用牌响应”：无懈响应锦囊、杀响应借刀等都走 CardUseFinished
+-- 补监听"使用牌响应"：无懈响应锦囊、杀响应借刀等都走 CardUseFinished
 chifushui:addEffect(fk.CardUseFinished, spec)
+
+Fk:loadTranslationTable{
+  ["@chifushui_progress"] = "覆水",
+  ["#chifushui-final"] = "覆水",
+}
 
 chifushui:addTest(function()
   for _, entry in ipairs(Fk.generals["chi__yuji"].all_skills) do

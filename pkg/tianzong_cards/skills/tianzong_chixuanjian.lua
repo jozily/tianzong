@@ -9,9 +9,11 @@ local TOTAL_MARK = "@@tianzong_chixuanjian_total"
 local NEXT_MARK = "tianzong_chixuanjian_next"
 
 local function slash_names(player)
+  -- 传 bypass_distances/bypass_times：转化杀不受距离与出杀次数限制（与武器"当任意杀使用或打出"一致）
+  local extra = { bypass_distances = true, bypass_times = true }
   return player:getViewAsCardNames(chixuanjian.name, table.filter(Fk:getAllCardNames("b"), function(name)
     return Fk:cloneCard(name).trueName == "slash"
-  end))
+  end), nil, nil, extra, "slash")
 end
 
 chixuanjian:addEffect("viewas", {
@@ -37,12 +39,19 @@ chixuanjian:addEffect("viewas", {
     card:addSubcards(cards)
     return card
   end,
+  enabled_at_play = function(self, player)
+    return player:hasSkill(chixuanjian.name) and #slash_names(player) > 0
+  end,
+  enabled_at_response = function(self, player, response)
+    return player:hasSkill(chixuanjian.name) and #slash_names(player) > 0
+  end,
 })
 
 chixuanjian:addEffect(fk.CardUsing, {
   can_refresh = function(self, event, target, player, data)
     return target == player and player:hasSkill(chixuanjian.name)
-      and data.card.trueName == "slash" and table.contains(data.card.skillNames, chixuanjian.name)
+      and data.card.trueName == "slash"
+      and (data.card.skillName == chixuanjian.name or table.contains(data.card.skillNames, chixuanjian.name))
   end,
   on_refresh = function(self, event, target, player, data)
     local ids = data.card.subcards

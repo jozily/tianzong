@@ -1,6 +1,27 @@
 local chitiaofeng = fk.CreateSkill{ name = "chitiaofeng" }
 local SUIT_MARK = "chitiaofeng_suits-phase"
 
+-- 花色 mark 显示：把已用花色（数字）转成扑克花色符号，直观提示本阶段用过哪些花色
+local function suit_symbol(s)
+  if s == Card.Spade then return "♠" end
+  if s == Card.Heart then return "♥" end
+  if s == Card.Club then return "♣" end
+  if s == Card.Diamond then return "♦" end
+  return ""
+end
+
+Fk:addQmlMark{
+  name = "chitiaofeng",
+  how_to_show = function(_, value, p)
+    if not p then return "" end
+    local suits = p:getTableMark(SUIT_MARK)
+    if type(suits) ~= "table" or #suits == 0 then return "" end
+    return table.concat(table.map(suits, suit_symbol), "/")
+  end,
+  qml_data = function() return {} end,
+  qml_path = function() return "" end,
+}
+
 local function suit_count(player)
   local suits = {}
   for _, id in ipairs(player:getCardIds("h")) do
@@ -31,6 +52,8 @@ chitiaofeng:addEffect("viewas", {
     player:showCards(player:getCardIds("hej"))
     local card = Fk:getCardById(use.card.subcards[1])
     player.room:addTableMark(player, SUIT_MARK, card.suit)
+    -- 触发花色 mark 界面重绘（how_to_show 读取 SUIT_MARK）
+    player.room:setPlayerMark(player, "@[chitiaofeng]", 1)
     use.extra_data = use.extra_data or {}
     use.extra_data.chitiaofeng_x = suit_count(player)
   end,
@@ -44,6 +67,16 @@ chitiaofeng:addEffect("viewas", {
       return card.suit ~= Card.NoSuit and not table.contains(player:getTableMark(SUIT_MARK), card.suit)
         and card:getNameLength(true) >= suit_count(player)
     end)
+  end,
+})
+
+-- 回合开始清除花色 mark 显示（SUIT_MARK 由 -phase 后缀自动清，这里清显示触发 mark）
+chitiaofeng:addEffect(fk.TurnStart, {
+  can_refresh = function(self, event, target, player, data)
+    return target == player and player:getMark("@[chitiaofeng]") ~= 0
+  end,
+  on_refresh = function(self, event, target, player, data)
+    player.room:setPlayerMark(player, "@[chitiaofeng]", 0)
   end,
 })
 

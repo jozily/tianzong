@@ -1,5 +1,4 @@
 local chitiaomu = fk.CreateSkill{ name = "chitiaomu" }
-local BONUS_MARK = "chitiaomu_bonus-turn"
 
 local function target_num(player, card)
   if player:prohibitUse(card) or not player:canUse(card, { bypass_times = true }) then return 0 end
@@ -51,18 +50,25 @@ chitiaomu:addEffect("viewas", {
     -- 随机拿到的是哪张要摆出来，否则玩家只看到牌直接没了
     room:showCards({ id }, player, player)
     use.card:addSubcard(id)
-    if same_name then room:addPlayerMark(player, BONUS_MARK, 1) end
+    -- 记录是否同名，真正的"刷新"放到 after_use（技能使用计数在之后才写入）
+    if same_name then player.room:setPlayerMark(player, "chitiaomu_refresh_flag", 1) end
   end,
-  -- 按钮左下角：本回合还剩几次（同名额外次数算进去）
+  after_use = function(self, player, use)
+    if player:getMark("chitiaomu_refresh_flag") > 0 then
+      player:setSkillUseHistory(chitiaomu.name, 0, Player.HistoryRound)
+      player.room:setPlayerMark(player, "chitiaomu_refresh_flag", 0)
+    end
+  end,
+  -- 按钮左下角：本轮还剩几次
   times = function(self, player)
-    local left = 1 + player:getMark(BONUS_MARK) - player:usedSkillTimes(chitiaomu.name, Player.HistoryTurn)
+    local left = 1 - player:usedSkillTimes(chitiaomu.name, Player.HistoryRound)
     return left > 0 and left or -1
   end,
   enabled_at_play = function(self, player)
-    return player:usedSkillTimes(chitiaomu.name, Player.HistoryTurn) < 1 + player:getMark(BONUS_MARK) and #names(player) > 0
+    return player:usedSkillTimes(chitiaomu.name, Player.HistoryRound) < 1 and #names(player) > 0
   end,
   enabled_at_response = function(self, player, response)
-    return player:usedSkillTimes(chitiaomu.name, Player.HistoryTurn) < 1 + player:getMark(BONUS_MARK) and #names(player) > 0
+    return player:usedSkillTimes(chitiaomu.name, Player.HistoryRound) < 1 and #names(player) > 0
   end,
 })
 

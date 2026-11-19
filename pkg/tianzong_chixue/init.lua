@@ -105,7 +105,8 @@ chi__xiahoudun:addSkills { "chiliaozhi", "chizhenjie" }
 local chi__xiahouxuan = General:new(extension, "chi__xiahouxuan", "wei", 3, 3, General.Male)
 chi__xiahouxuan:addSkills { "chicixuan", "chiqihai" }
 
-local chi__xiahourong = General:new(extension, "chi__xiahourong", "wei", 3, 3, General.Female)
+local chi__xiahourong = General:new(extension, "chi__xiahourong", "wei", 3, 4, General.Female)
+chi__xiahourong.shield = 2  -- 4 体力上限 / 3 体力 / 2 护甲
 chi__xiahourong:addSkills { "chidulie", "chijiaotan" }
 
 local chi__xiahoushi = General:new(extension, "chi__xiahoushi", "shu", 3, 3, General.Female)
@@ -122,7 +123,7 @@ Fk:loadTranslationTable{
   ["tianzong_niwo"] = "逆涡之流",
   ["tianzong"] = "天纵燎世",
 
-  ["chi__zhenji"] = "甄宓",
+  ["chi__zhenji"] = "<font color='#FF2D2D'>炽</font>甄宓",
   ["#chi__zhenji"] = "薄尘几粟",
   ["~chi__zhenji"] = "戚雨凋落尽，红芍怨西风。",
   ["designer:chi__zhenji"] = "公冶天纵",
@@ -133,7 +134,7 @@ Fk:loadTranslationTable{
   ["chigufu"] = "孤凫",
   [":chigufu"] = "出牌阶段限一次，你可以重铸任意张牌（至多“惊鸿”未移除牌名张），然后蓄谋牌堆顶或牌堆底的等量张牌。",
   ["chiraoluo"] = "扰洛",
-  [":chiraoluo"] = "当你受到伤害后或响应牌后，你可以弃置一名角色区域内的一张牌，令其选择一项：①发动一次“孤凫”；②使用一张手牌或蓄谋牌；背水：依次执行前两项，然后其翻面。",
+  [":chiraoluo"] = "当你受到伤害后或响应牌后，你可以弃置一名角色区域内的一张牌，令其选择一项：1.发动一次“孤凫”；2.使用一张手牌或蓄谋牌；3.背水：依次执行前两项，然后其翻面。",
   ["@$chijinghong"] = "惊鸿已移除",
   ["#chijinghong"] = "惊鸿：展示当前回合角色区域内的一张牌并将之置于牌堆顶或牌堆底，视为使用或打出一张基本牌",
   ["#chijinghong-choose"] = "惊鸿：选择当前回合角色区域内的一张牌",
@@ -161,7 +162,7 @@ Fk:loadTranslationTable{
   ["$chiraoluo3"] = "戴群星之璀桑，妆百花之盛颜，可为悦已者容。",
   ["$chiraoluo4"] = "撷首阳之野芳，缀沧海之鲛珠，独善此世之白。",
 
-  ["chi__caiwenji"] = "蔡琰",
+  ["chi__caiwenji"] = "<font color='#FF2D2D'>炽</font>蔡琰",
   ["#chi__caiwenji"] = "罔漠不归汉",
   ["~chi__caiwenji"] = "鸿雁南归，而我归乡何年？",
   ["designer:chi__caiwenji"] = "公冶天纵",
@@ -223,16 +224,16 @@ Fk:loadTranslationTable{
   ["@$chijuanxiang_names-turn"] = "眷乡牌名",
   ["chijuanxiang_block-turn"] = "眷乡阻断",
 
-  ["chi__xiahoulingnv"] = "夏侯令女",
+  ["chi__xiahoulingnv"] = "<font color='#FF2D2D'>炽</font>夏侯令女",
   ["#chi__xiahoulingnv"] = "寒梦透骨",
   ["~chi__xiahoulingnv"] = "父亲无须多言，女儿宁死不从！",
   ["designer:chi__xiahoulingnv"] = "公冶天纵",
   ["illustrator:chi__xiahoulingnv"] = "官方",
   ["cv:chi__xiahoulingnv"] = "暂无",
   ["chicangsui"] = "沧遂",
-  [":chicangsui"] = "每回合限一次，你可以废除一个装备栏并选择一项：①视为使用或打出一张牌名字数为X的牌；②摸X张牌。若没有符合条件的牌，你不能选择①（X为你已废除装备栏数量且至少为1，下同）。",
+  [":chicangsui"] = "每回合限一次，你可以废除一个装备栏并选择一项：1.视为使用或打出一张牌名字数为X的牌；2.摸X张牌。（X为你已废除装备栏数量且至少为1，下同）",
   ["chihantang"] = "寒塘",
-  [":chihantang"] = "出牌阶段限一次，或当你于回合内首次造成或受到伤害后，你可以选择一项：①弃置牌名字数之和为X的任意张牌，对一名角色造成1点伤害；若该角色本轮受到你造成的伤害/为你，你恢复一个装备栏/摸X张牌。②摸X张牌并重置【沧遂】。",
+  [":chihantang"] = "出牌阶段限一次，或当你于回合内首次造成或受到伤害后，你可以选择一项：1.弃置牌名字数之和为X的任意张牌，对一名角色造成1点伤害；若该角色本轮受到你造成的伤害/为你，你恢复一个装备栏/摸X张牌。2.摸X张牌并重置【沧遂】。",
   ["#chicangsui"] = "沧遂：废除一个装备栏，视为使用或打出一张牌名字数为X的牌",
   ["#chicangsui-mode"] = "沧遂：请选择视为使用牌或摸%arg张牌",
   ["#chicangsui-use"] = "沧遂：请视为使用一张牌名字数为%arg的牌",
@@ -253,7 +254,7 @@ Fk:loadTranslationTable{
   ["$chihantang1"] = "匪石心难转，如山诺竟酬。",
   ["$chihantang2"] = "去后故人双别泪，春深逐客一浮萍。",
 
-  ["chi__xiahouqingyi"] = "夏侯轻衣",
+  ["chi__xiahouqingyi"] = "<font color='#FF2D2D'>炽</font>夏侯轻衣",
   ["#chi__xiahouqingyi"] = "危崖寄君",
   ["~chi__xiahouqingyi"] = "桥畔霜重，尘梦成空……",
   ["designer:chi__xiahouqingyi"] = "公冶天纵",
@@ -272,7 +273,7 @@ Fk:loadTranslationTable{
   ["$chiwangchen1"] = "望尘逐影，意在先机。",
   ["$chiwangchen2"] = "轻衣临风，望尽来尘。",
 
-  ["chi__xuelingyun"] = "薛灵芸",
+  ["chi__xuelingyun"] = "<font color='#FF2D2D'>炽</font>薛灵芸",
   ["#chi__xuelingyun"] = "思闺默泣",
   ["~chi__xuelingyun"] = "绯梦易散,伊人难留……",
   ["designer:chi__xuelingyun"] = "公冶天纵",
@@ -315,14 +316,14 @@ Fk:loadTranslationTable{
 
 
   
-  ["chi__guozhao"] = "郭照",
+  ["chi__guozhao"] = "<font color='#FF2D2D'>炽</font>郭照",
   ["#chi__guozhao"] = "众星拥后",
   ["~chi__guozhao"] = "红袖揾烟雨，泪尽垂青花。",
   ["designer:chi__guozhao"] = "公冶天纵",
   ["illustrator:chi__guozhao"] = "官方",
   ["cv:chi__guozhao"] = "暂无",
   ["chixiege"] = "携阁",
-  [":chixiege"] = "每轮开始时，你可以选择一名角色，令其与上家：①出牌阶段使用【杀】次数为[1]；②摸牌阶段摸牌数为[1]；③受到或造成伤害后摸[1]张牌。当【携阁】目标使用伤害类卡牌指定目标后，或成为伤害类卡牌的目标后，你可以令任一括号内数值于本轮内+1。",
+  [":chixiege"] = "每轮开始时，你可以选择一名角色，令其与上家：1.出牌阶段使用【杀】次数为[1]；2.摸牌阶段摸牌数为[1]；3.受到或造成伤害后摸[1]张牌。当【携阁】目标使用伤害类卡牌指定目标后，或成为伤害类卡牌的目标后，你可以令任一括号内数值于本轮内+1。",
   ["chishangjiao"] = "尚椒",
   [":chishangjiao"] = "锁定技，①当你每回合首次成为一张牌名字数小于/大于当前回合角色体力值的牌的目标后，所有目标摸/弃差值张牌。②你于摸牌阶段外获得的牌不计入本轮手牌上限。",
   ["#chixiege-choose"] = "携阁：选择一名角色，其与上家本轮获得数值效果",
@@ -343,7 +344,7 @@ Fk:loadTranslationTable{
   ["$chishangjiao3"] = "后宫有佳丽三千，然陛下独宠我一人。",
   ["$chishangjiao4"] = "尊位椒房、垂立九五，君之恩也、妾之幸也。",
 
-  ["chi__zhanghuai"] = "张怀",
+  ["chi__zhanghuai"] = "<font color='#FF2D2D'>炽</font>张怀",
   ["#chi__zhanghuai"] = "空谷之麋",
   ["~chi__zhanghuai"] = "你我皆为浮萍，命不由己。",
   ["designer:chi__zhanghuai"] = "公冶天纵",
@@ -364,14 +365,14 @@ Fk:loadTranslationTable{
   ["chimiling"] = "麋灵",
   ["@&chimiling"] = "麋",
   ["@[chimiling]chimiling"] = "麋",
-  [":chimiling"] = "<b>锁定技，</b>当你成为一张牌的目标后，若此牌牌名字数你未以此法记录过，你记录之并将等量张武将牌置于你的武将牌上，称为“麋”；每轮开始时，你清除所有记录和“麋”。",
+  [":chimiling"] = "锁定技，当你成为一张牌的目标后，若此牌牌名字数你未以此法记录过，你记录之并将等量张武将牌置于你的武将牌上，称为“麋”；你的手牌上限+X（X为“麋”数）；每轮开始时，你清除所有记录和“麋”。",
   ["#chimiling_log"] = "%from 发动【麋灵】，获得了%arg张“麋”",
   ["$chimiling1"] = "鹿鸣呦呦，莺戏疃瞳，云中锦字欠西风。",
   ["$chimiling2"] = "兰舟破烟波，鹿涉沙洲扯裙罗。",
 
   -- 苍生
   ["chicangsheng"] = "苍生",
-  [":chicangsheng"] = "<b>转换技，</b>你可以弃置X张“麋”视为使用或打出一张：①（阳）牌名字数为X的基本牌或普通锦囊牌；②（阴）合法目标数为X的基本牌或普通锦囊牌。",
+  [":chicangsheng"] = "转换技，你可以弃置X张“麋”视为使用或打出一张：①牌名字数为X的基本牌或普通锦囊牌；②合法目标数为X的基本牌或普通锦囊牌。",
   ["#chicangsheng-yang"] = "苍生-阳：弃置等同于【牌名字数】的“麋”，视为使用/打出此牌",
   ["#chicangsheng-yin"] = "苍生-阴：弃置等同于【目标数量】的“麋”，视为使用/打出此牌",
   ["#chicangsheng-discard"] = "苍生：请选择弃置一张“麋”（剩余 %arg 张）",
@@ -417,7 +418,7 @@ Fk:loadTranslationTable{
   ["chimingzhi_suits-turn"] = "酩志隐藏记录",
   ["chiyongtang_suits-turn"] = "雍赯隐藏记录",
 
-  ["chi__mifuren"] = "糜贞",
+  ["chi__mifuren"] = "<font color='#FF2D2D'>炽</font>糜贞",
   ["#chi__mifuren"] = "乱世洄临",
   ["~chi__mifuren"] = "一跃清波尽，竟无归处……",
   ["designer:chi__mifuren"] = "公冶天纵",
@@ -485,7 +486,7 @@ Fk:loadTranslationTable{
   ["#chijianian"] = "佳年：选择要视为使用或打出的牌，然后发动一次“浮生”",
 
 
-  ["chi__mifuren2"] = "糜贞",
+  ["chi__mifuren2"] = "<font color='#FF2D2D'>炽</font>糜贞",
   ["#chi__mifuren2"] = "渡尽前尘",
   ["~chi__mifuren2"] = "一跃清波尽，竟无归处……",
   ["designer:chi__mifuren2"] = "公冶天纵",
@@ -496,7 +497,7 @@ Fk:loadTranslationTable{
   [":chiyanzu"] = "每回合限一次，当你需要使用或打出一张基本牌或普通锦囊牌时，或当你受到伤害后，你可以使用本回合进入弃牌堆的一张可使用的基本牌或普通锦囊牌。若此牌牌名字数大于场上角色数，你刷新此技能且摸场上角色数张牌。",
   ["#chiyanzu_choose_use"] = "衍族：选择本回合进入弃牌堆的一张可使用或打出的基本牌或普通锦囊牌",
   ["#chiyanzu_choose_damaged"] = "衍族：选择本回合进入弃牌堆的一张基本牌或普通锦囊牌使用",
-  ["chi__xiahoumao"] = "夏侯楙",
+  ["chi__xiahoumao"] = "<font color='#FF2D2D'>炽</font>夏侯楙",
   ["#chi__xiahoumao"] = "浮华宗子",
   ["~chi__xiahoumao"] = "一将无能，徒累死三军。",
   ["designer:chi__xiahoumao"] = "公冶天纵",
@@ -515,7 +516,7 @@ Fk:loadTranslationTable{
 
 
     -- 荀勖
-  ["chi__xunxu"] = "荀勖",
+  ["chi__xunxu"] = "<font color='#FF2D2D'>炽</font>荀勖",
   ["#chi__xunxu"] = "调律者",
   ["~chi__xunxu"] = "律法既定，奈何人心难测……",
   ["designer:chi__xunxu"] = "公冶天纵",
@@ -540,7 +541,7 @@ Fk:loadTranslationTable{
 
 
   -- 炽杨众
-  ["chi__yangzhong"] = "杨众",
+  ["chi__yangzhong"] = "<font color='#FF2D2D'>炽</font>杨众",
   ["chi__yangzhong_prefix"] = "炽",
   ["~chi__yangzhong"] = "荡燎已熄，余烬难续……",
   ["designer:chi__yangzhong"] = "公冶天纵",
@@ -553,7 +554,7 @@ Fk:loadTranslationTable{
 
 
     -- 炽王倩
-  ["chi__wangqian"] = "王倩",
+  ["chi__wangqian"] = "<font color='#FF2D2D'>炽</font>王倩",
   ["chi__wangqian_prefix"] = "炽",
   ["~chi__wangqian"] = "擢息已止，遐容难留……",
   ["designer:chi__wangqian"] = "公冶天纵",
@@ -574,7 +575,7 @@ Fk:loadTranslationTable{
   ["$chizhongliu2"] = "砥柱中流，岿然不动。",
 
   -- 胡金定
-  ["chi__hujinding"] = "胡金定",
+  ["chi__hujinding"] = "<font color='#FF2D2D'>炽</font>胡金定",
   ["#chi__hujinding"] = "赤子眷天涯",
   ["~chi__hujinding"] = "望君归，妄君归，忘君归。",
   ["designer:chi__hujinding"] = "公冶天纵",
@@ -594,7 +595,7 @@ Fk:loadTranslationTable{
   ["$chihuaiji2"] = "妾身腹怀六甲，兰梦赤子何辜？",
 
   -- 朱佩兰
-  ["chi__zhupeilan"] = "朱佩兰",
+  ["chi__zhupeilan"] = "<font color='#FF2D2D'>炽</font>朱佩兰",
   ["#chi__zhupeilan"] = "南方有佳人",
   ["~chi__zhupeilan"] = "佳人薄命，红颜丧于虎狼之口。",
   ["designer:chi__zhupeilan"] = "公冶天纵",
@@ -608,7 +609,7 @@ Fk:loadTranslationTable{
   ["#chikuili-show"] = "暌离：展示任意张符合所选条件的手牌",
   ["#chikuili-target"] = "暌离：为此牌增加至多%arg个合法目标",
   ["chitiaomu"] = "迢目",
-  [":chitiaomu"] = "每回合限一次，当你需要使用或打出一张基本牌或普通锦囊牌时，你可以从弃牌堆随机获得一张牌名字数或合法目标相同的牌视为使用或打出之。若两张牌牌名相同，本技能使用次数+1。",
+  [":chitiaomu"] = "每轮限一次，当你需要使用或打出一张基本牌或普通锦囊牌时，你可以从弃牌堆随机获得一张牌名字数或合法目标相同的牌视为使用或打出之。若两张牌牌名相同，你刷新此技能。",
   ["#chitiaomu"] = "迢目：选择要视为使用或打出的牌，随机获得弃牌堆中符合条件的一张牌",
  ["$chikuili1"] = "妾提不得刀兵、聚不起人马，于汝何害之有？",
   ["$chikuili2"] = "诸公明鉴，我何罪之有？",
@@ -620,7 +621,7 @@ Fk:loadTranslationTable{
   ["$chitiaomu4"] = "诸公皆国之柱石，居后宫者鄙，不必以事咨我。",
 
   -- 邹氏
-  ["chi__zoushi"] = "邹氏",
+  ["chi__zoushi"] = "<font color='#FF2D2D'>炽</font>邹氏",
   ["#chi__zoushi"] = "靡靡醉乡里",
   ["~chi__zoushi"] = "生逢乱世，身何由己？",
   ["designer:chi__zoushi"] = "公冶天纵",
@@ -659,7 +660,7 @@ Fk:loadTranslationTable{
 
 
   -- 董予安
-  ["chi__dongguiren"] = "董予安",
+  ["chi__dongguiren"] = "<font color='#FF2D2D'>炽</font>董予安",
   ["#chi__dongguiren"] = "挚梦归鸾离",
   ["~chi__dongguiren"] = "奈何生为女儿身，不能提剑清君侧。",
   ["designer:chi__dongguiren"] = "公冶天纵",
@@ -677,7 +678,7 @@ Fk:loadTranslationTable{
   ["$chisimi2"] = "千罪万罪，皆妾之过，与陛下毫无干系。",
 
   -- 炽陆逊 001
-  ["chi__luxun"] = "陆逊",
+  ["chi__luxun"] = "<font color='#FF2D2D'>炽</font>陆逊",
   ["#chi__luxun"] = "谋定白里",
   ["~chi__luxun"] = "风冷，无归……",
   ["designer:chi__luxun"] = "公冶天纵",
@@ -691,24 +692,24 @@ Fk:loadTranslationTable{
   [":chimaoqi"] = "当你于非摸牌阶段获得牌时，你可以将其中任意张置于你的武将牌上，称为“棋”。出牌阶段限一次，你可以获得任意张“棋”。每个回合结束时，若“棋”的数量大于场上人数，你失去一点体力值。",
 
   -- 炽张春华 002
-  ["chi__zhangchunhua"] = "张春华",
+  ["chi__zhangchunhua"] = "<font color='#FF2D2D'>炽</font>张春华",
   ["#chi__zhangchunhua"] = "残烛归殁",
   ["~chi__zhangchunhua"] = "焚尽旧梦，方知此心……",
   ["designer:chi__zhangchunhua"] = "公冶天纵",
   ["illustrator:chi__zhangchunhua"] = "官方",
   ["cv:chi__zhangchunhua"] = "暂无",
   ["chifenqing"] = "焚情",
-  [":chifenqing"] = "出牌阶段限一次，你可以选择一名其他角色，你与其横置并分别选择一项：①令对方受到来自你的一点火属性伤害②令对方翻面③背水：若只有一名角色选择该选项则交换双方效果。若你与其选择相同选择则均不执行且你与其各恢复一点体力值。",
+  [":chifenqing"] = "出牌阶段限一次，你可以选择一名其他角色，你与其横置并分别选择一项：1.令对方受到来自你的一点火属性伤害；2.令对方翻面；3.背水：若只有一名角色选择该选项则交换双方效果。若你与其选择相同选择则均不执行且你与其各恢复一点体力值。",
   ["chisuhen"] = "夙痕",
   [":chisuhen"] = "锁定技，每回合限一次，当你受到或造成属性伤害后，伤害来源重置其武将牌，然后你视为对伤害来源或目标发动一次“焚情”。每个回合结束时，若当前回合角色于本回合内受到或造成过属性伤害，你可以观看牌堆顶两张牌并使用其中可以使用的牌。",
   ["chiyuanque"] = "缘阙",
-  [":chiyuanque"] = "使命技，当你累计造成或受到不小于3点属性伤害时，<br>成功：你将体力值恢复至体力上限，失去“焚情”和“夙痕”，然后随机获得两个技能。若此时为你的回合外，你额外获得一个技能。<br>失败：若你进入濒死状态，你将体力值恢复至1，失去一点体力上限和“焚情”和“夙痕”，并追忆一名角色。",
+  [":chiyuanque"] = "使命技，当你累计造成或受到不小于3点属性伤害时，<br>成功：你将体力值恢复至体力上限，失去“焚情”和“夙痕”，然后随机获得两个技能。若此时为你的回合外，你额外获得一个技能。<br>失败：若你进入濒死状态，你将体力值恢复至1，失去一点体力上限和“焚情”和“夙痕”，并<a href=':chiyuanque'>追忆</a>一名角色。",
   ["chiejue"] = "扼绝",
   [":chiejue"] = "锁定技，当你/攻击范围不包含你的角色使用【杀】或【决斗】即将对攻击范围不包含你的角色/你造成伤害时，此伤害+1。",
 
 
   -- 炽庞凤衣 007
-  ["chi__pangfengyi"] = "庞凤衣",
+  ["chi__pangfengyi"] = "<font color='#FF2D2D'>炽</font>庞凤衣",
   ["#chi__pangfengyi"] = "有酿一斛",
   ["~chi__pangfengyi"] = "有酿醇醇，醒魂犹寒……",
   ["designer:chi__pangfengyi"] = "公冶天纵",
@@ -720,7 +721,7 @@ Fk:loadTranslationTable{
   [":chiyongtang"] = "锁定技，当你成为单体基本牌或普通锦囊牌的目标后，你需判定，若判定牌花色与此牌花色不同/相同，则额外其指定下家/上家为目标，然后本回合与判定牌相同花色的牌无使用次数限制。",
 
   -- 炽诸葛果 008
-  ["chi__zhugeguo"] = "诸葛果",
+  ["chi__zhugeguo"] = "<font color='#FF2D2D'>炽</font>诸葛果",
   ["#chi__zhugeguo"] = "煌煌明寂",
   ["~chi__zhugeguo"] = "篁竹摇落，簌肃成音……",
   ["designer:chi__zhugeguo"] = "公冶天纵",
@@ -732,7 +733,7 @@ Fk:loadTranslationTable{
   [":chisusu"] = "锁定技，当你于每回合首次使用非基本牌后，你于本回合使用的下一张牌可额外指定一个目标。当你于每回合首次使用基本牌后，你于本回合使用的下一张牌可额外结算一次。",
 
   -- 炽黄月英 009
-  ["chi__huangyueying"] = "黄月英",
+  ["chi__huangyueying"] = "<font color='#FF2D2D'>炽</font>黄月英",
   ["#chi__huangyueying"] = "点睛人",
   ["~chi__huangyueying"] = "映山如画，神臬成谋……",
   ["designer:chi__huangyueying"] = "公冶天纵",
@@ -745,7 +746,7 @@ Fk:loadTranslationTable{
 
 
   -- 炽于吉 011
-  ["chi__yuji"] = "于吉",
+  ["chi__yuji"] = "<font color='#FF2D2D'>炽</font>于吉",
   ["#chi__yuji"] = "索求者",
   ["~chi__yuji"] = "倞道既成，诣谛何求……",
   ["designer:chi__yuji"] = "公冶天纵",
@@ -760,7 +761,7 @@ Fk:loadTranslationTable{
 
 
   -- 炽任婉 017
-  ["chi__renwan"] = "任婉",
+  ["chi__renwan"] = "<font color='#FF2D2D'>炽</font>任婉",
   ["#chi__renwan"] = "破离之凫",
   ["~chi__renwan"] = "此身若梦，终将离阙……",
   ["designer:chi__renwan"] = "公冶天纵",
@@ -772,7 +773,7 @@ Fk:loadTranslationTable{
   [":chilique"] = "锁定技，你于每回合使用的第一张牌即将生效时，按该牌及其后三张牌的牌名字数，选择一条路径执行效果：递增：①不计入次数②执行两次③目标＋1④执行X次；递减：①执行两次②目标＋1③不计入次数④目标＋X；若你使用的牌不符合所选路径，你弃置X张牌且本回合技能失效。若此时X等于你体力值，该牌仍执行下个路径效果（X为本流程已使用牌数）。",
 
   -- 炽杨众 019
-  ["chi__yangzhong"] = "杨众",
+  ["chi__yangzhong"] = "<font color='#FF2D2D'>炽</font>杨众",
   ["#chi__yangzhong"] = "歧路也汤汤",
   ["~chi__yangzhong"] = "荡燎既熄，余烬难续……",
   ["designer:chi__yangzhong"] = "公冶天纵",
@@ -782,7 +783,7 @@ Fk:loadTranslationTable{
   [":chidangliao"] = "当你成为红色牌的目标后，或你的红色牌因弃置而进入弃牌堆后，你可令当前回合角色按照此牌牌名字数与X的大小执行：①大于：其将此牌视为【火攻】或火【杀】（不计入次数）使用；②小于：其于此回合结束后执行一个等于X的阶段（摸牌/出牌/弃牌）；③等于：背水，然后你翻面。（X为本回合“荡燎”发动次数）",
 
     -- 炽荀粲 020
-  ["chi__xuncan"] = "荀粲",
+  ["chi__xuncan"] = "<font color='#FF2D2D'>炽</font>荀粲",
   ["#chi__xuncan"] = "如锥刺髓",
   ["~chi__xuncan"] = "刺骨入心，幽明自现……",
   ["designer:chi__xuncan"] = "公冶天纵",
@@ -791,18 +792,18 @@ Fk:loadTranslationTable{
   ["chicigu"] = "刺骨",
   [":chicigu"] = "出牌阶段或当你受到伤害后，你可以将一名角色的一张牌置于你的武将牌上，称为“刺”（至多体力值张），若此牌的点数与你体力值的余数大于1，你受到的一点此牌来源的冰属性伤害。回合结束阶段，你选择一项：1.弃置所有“刺”视为对一名角色使用一张冰【杀】；2.获得体力值张“刺”。",
   ["chiyouming"] = "幽明",
-  [":chiyouming"] = "当你每轮首次：①成为一张牌的目标后，你可以观看来源两张手牌并将其中一张置于牌堆顶；②进入濒死状态时，若你武将牌正面朝上，你翻面并将体力恢复至一点，然后你将牌堆顶的牌当做【出其不意】对伤害来源使用，若此牌造成伤害，你重置武将牌。",
+  [":chiyouming"] = "当你每轮首次：①成为一张牌的目标后，你可以观看来源两张手牌并将其中一张置于牌堆顶；②进入濒死状态时，若你武将牌正面朝上，你翻面并将体力恢复至一点，然后你将牌堆顶的牌当做<a href=':unexpectation'>出其不意</a>对伤害来源使用，若此牌造成伤害，你重置武将牌。",
 
   -- 炽荀采 021
-  ["chi__xuncai"] = "荀采",
+  ["chi__xuncai"] = "<font color='#FF2D2D'>炽</font>荀采",
   ["#chi__xuncai"] = "炙心之华",
   ["~chi__xuncai"] = "炬泪成火，炙心成灰……",
   ["designer:chi__xuncai"] = "公冶天纵",
   ["illustrator:chi__xuncai"] = "官方",
   ["cv:chi__xuncai"] = "暂无",
   ["chijulei"] = "炬泪",
-  [":chijulei"] = "你可以横置视为使用或打出一张火【杀】/【火攻】或翻面使用或打出一张【酒】/【逐近弃远】，若当前回合角色或此牌目标角色拥有“尘”标记，你弃置其“尘”标记然后选择一项：①此牌不计入使用次数；②重置你的武将牌。",
-  ["#chijulei"] = "炬泪：横置使用火【杀】或【火攻】，或翻面使用【酒】或【逐近弃远】",
+  [":chijulei"] = "你可以横置视为使用或打出一张火【杀】/【火攻】或翻面使用或打出一张【酒】/<a href=':chasing_near'>逐近弃远</a>，若当前回合角色或此牌目标角色拥有“尘”标记，你弃置其“尘”标记然后选择一项：①此牌不计入使用次数；②重置你的武将牌。",
+  ["#chijulei"] = "炬泪：横置使用火【杀】或【火攻】，或翻面使用【酒】或<a href=':chasing_near'>逐近弃远</a>",
   ["#chijulei-dust"] = "炬泪：选择当前回合角色或此牌目标中的一名角色移去其“尘”",
   ["#chijulei-choice"] = "炬泪：选择移去“尘”后的效果",
   ["chijulei_extra"] = "此牌不计入使用次数",
@@ -811,7 +812,7 @@ Fk:loadTranslationTable{
   [":chizhichen"] = "锁定技，每轮开始时，你的上家和下家获得“尘”标记。当你受到/造成伤害后，你令伤害来源/目标横置并获得“尘”标记，若当前回合角色横置或翻面，你重铸手牌中花色最多的所有牌。",
 
   -- 炽王沦 022
-  ["chi__wanglun"] = "王沦",
+  ["chi__wanglun"] = "<font color='#FF2D2D'>炽</font>王沦",
   ["#chi__wanglun"] = "经年弼世",
   ["~chi__wanglun"] = "恬适心安，铭怀世事……",
   ["designer:chi__wanglun"] = "公冶天纵",
@@ -820,31 +821,31 @@ Fk:loadTranslationTable{
   ["chitianshi"] = "恬适",
   [":chitianshi"] = "锁定技，其他角色于回合内对你使用的首张牌名字数不小于你体力值的牌对你无效。其他角色于回合内使用的首张牌名字数不小于X的牌结算后，你视为使用之。",
   ["chiminghuai"] = "铭怀",
-  [":chiminghuai"] = "每名角色的回合结束阶段，你可以将牌名字数之和等于四的任意张牌当做【随机应变】使用，然后你摸X张牌。（X为全场技能描述拥有“限一次”的角色数且不大于你的体力值）",
+  [":chiminghuai"] = "每名角色的回合结束阶段，你可以将牌名字数之和等于四的任意张牌当做<a href=':adaptation'>随机应变</a>使用，然后你摸X张牌。（X为全场技能描述拥有“限一次”的角色数且不大于你的体力值）",
 
   -- 炽王沈 023
-  ["chi__wangshen"] = "王沈",
+  ["chi__wangshen"] = "<font color='#FF2D2D'>炽</font>王沈",
   ["#chi__wangshen"] = "高悬之屋脊",
   ["~chi__wangshen"] = "调风成舞，脊望如剑……",
   ["designer:chi__wangshen"] = "公冶天纵",
   ["illustrator:chi__wangshen"] = "官方",
   ["cv:chi__wangshen"] = "暂无",
   ["chitiaofeng"] = "调风",
-  [":chitiaofeng"] = "出牌阶段每种花色限一次，你可以展示所有牌，并将一张牌名字数不小于X的牌当作【调剂盐梅】使用，然后你摸X张牌。（X为你手牌花色数）",
+  [":chitiaofeng"] = "出牌阶段每种花色限一次，你可以展示所有牌，并将一张牌名字数不小于X的牌当作<a href=':redistribute'>调剂盐梅</a>使用，然后你摸X张牌。（X为你手牌花色数）",
   ["chijiwang"] = "脊望",
   [":chijiwang"] = "锁定技，当你的牌不因使用或打出而离开手牌区时，你展示之且你、当前回合角色和牌堆中所有与此牌花色相同的牌均视为【杀】直到回合本结束。当你成为一张多目标牌的目标后，若此牌其他目标已损失体力值均不大于你，当前回合角色使用的下一张牌你作为目标额外执行一次。",
 
   -- 炽陆凯 024
-  ["chi__lukai"] = "陆凯",
+  ["chi__lukai"] = "<font color='#FF2D2D'>炽</font>陆凯",
   ["#chi__lukai"] = "迷途之骛",
   ["~chi__lukai"] = "蹇途已尽，笃谒成空……",
   ["designer:chi__lukai"] = "公冶天纵",
   ["illustrator:chi__lukai"] = "官方",
   ["cv:chi__lukai"] = "暂无",
   ["chijiantu"] = "蹇途",
-  [":chijiantu"] = "转换技，锁定技，当你于回合内首次使用一种花色的单体目标牌指定手牌数不大于你的角色时，此牌视为：①闪电；②过河拆桥；对其使用。",
+  [":chijiantu"] = "转换技，锁定技，当你于回合内首次使用一种花色的单体目标牌指定手牌数不大于你的角色时，此牌视为：1.闪电；2.过河拆桥；对其使用。",
   ["chiduye"] = "笃谒",
-  [":chiduye"] = "出牌阶段限一次，你可以依次展示场上至多四张牌，归属者依次选择一项并移除：①摸X张牌；②X个回合内获得【謇谔】；③本回合结束后执行一个第X个阶段（逆序）；④使用此牌，然后置于牌堆顶。（X为已选选项数+1）",
+  [":chiduye"] = "出牌阶段限一次，你可以依次展示场上至多四张牌，归属者依次选择一项并移除：1.摸X张牌；2.X个回合内获得【謇谔】；3.本回合结束后执行一个第X个阶段（逆序）；4.使用此牌，然后置于牌堆顶。（X为已选选项数+1）",
   ["chizelie"] = "泽烈",
   [":chizelie"] = "当你失去任意区域的所有牌后，你可令一名角色本回合下一次摸牌/弃牌后，其再摸一张牌/弃一张牌。",
   ["#chizelie-target"] = "泽烈：选择一名角色",
@@ -861,7 +862,7 @@ Fk:loadTranslationTable{
   ["$chizelie2"] = "烈而有泽，刚柔并济。",
 
   -- 炽荀悦 026
-  ["chi__xunyue"] = "荀悦",
+  ["chi__xunyue"] = "<font color='#FF2D2D'>炽</font>荀悦",
   ["#chi__xunyue"] = "整经者",
   ["~chi__xunyue"] = "借笈而思，疏纪成律……",
   ["designer:chi__xunyue"] = "公冶天纵",
@@ -882,7 +883,7 @@ Fk:loadTranslationTable{
 
 
   -- 炽夏侯玄 031
-  ["chi__xiahouxuan"] = "夏侯玄",
+  ["chi__xiahouxuan"] = "<font color='#FF2D2D'>炽</font>夏侯玄",
   ["#chi__xiahouxuan"] = "玄海漫漫",
   ["~chi__xiahouxuan"] = "吾欲伴白鹤鸣焦琴，岂可得乎?",
   ["designer:chi__xiahouxuan"] = "公冶天纵",
@@ -899,7 +900,7 @@ Fk:loadTranslationTable{
 
 
   -- 炽夏侯杰 032
-  ["chi__xiahoujie"] = "夏侯杰",
+  ["chi__xiahoujie"] = "<font color='#FF2D2D'>炽</font>夏侯杰",
   ["#chi__xiahoujie"] = "胆战行之",
   ["~chi__xiahoujie"] = "匹夫，匹夫好大口气!",
   ["designer:chi__xiahoujie"] = "公冶天纵",
@@ -926,7 +927,7 @@ Fk:loadTranslationTable{
   ["$chidangdan2"] = "天下北高南低，向来征南者胜、北伐者败！",
 
   -- 炽夏侯涓 034
-  ["chi__xiahoushi"] = "夏侯涓",
+  ["chi__xiahoushi"] = "<font color='#FF2D2D'>炽</font>夏侯涓",
   ["#chi__xiahoushi"] = "茹情脉脉",
   ["~chi__xiahoushi"] = "薪脉如火，毓髓成诗……",
   ["designer:chi__xiahoushi"] = "公冶天纵",
@@ -938,7 +939,7 @@ Fk:loadTranslationTable{
   [":chiyusui"] = "当有角色受到属性伤害后，你可以与其各摸一张牌；当有角色跳过任意阶段后，你可以弃置所有手牌令其于本回合结束后执行一个额外的被跳过的此阶段。",
 
     -- 炽夏侯惇 030
-  ["chi__xiahoudun"] = "夏侯惇",
+  ["chi__xiahoudun"] = "<font color='#FF2D2D'>炽</font>夏侯惇",
   ["#chi__xiahoudun"] = "炽胆懑梦",
   ["~chi__xiahoudun"] = "燎志如火，赈节如海……",
   ["designer:chi__xiahoudun"] = "公冶天纵",
@@ -950,7 +951,7 @@ Fk:loadTranslationTable{
   [":chizhenjie"] = "其与你距离不大于1的角色造成或受到属性伤害后，你可以观看牌堆顶两张牌并令你或其使用其中可以使用的牌；你与其他角色的距离-X（X为你已损失体力值+1）。",
 
     -- 炽夏侯荣 033
-  ["chi__xiahourong"] = "夏侯荣",
+  ["chi__xiahourong"] = "<font color='#FF2D2D'>炽</font>夏侯荣",
   ["#chi__xiahourong"] = "初生虎犊",
   ["~chi__xiahourong"] = "犊烈初心，皦谈成诺……",
   ["designer:chi__xiahourong"] = "公冶天纵",
@@ -962,7 +963,7 @@ Fk:loadTranslationTable{
   [":chijiaotan"] = "出牌阶段限一次，你可以令任意技能数大于你的角色议事，你可为本次议事增加一张上次“皦谈”结果的牌。议事结束后你可以观看一名异议角色的手牌并使用其议事牌，若其手牌中有与本次议事结果颜色不同的牌，你摸两张牌。",
 
     -- 炽夏侯徽 035
-  ["chi__xiahouhui"] = "夏侯徽",
+  ["chi__xiahouhui"] = "<font color='#FF2D2D'>炽</font>夏侯徽",
   ["#chi__xiahouhui"] = "吾之所向",
   ["~chi__xiahouhui"] = "匪氏之心，斐谌成诗……",
   ["designer:chi__xiahouhui"] = "公冶天纵",
@@ -990,8 +991,8 @@ Fk:loadTranslationTable{
   ["chishennie_lengths-turn"] = "神臬禁用字数",
   ["@@chixieque_no_cancel-turn"] = "翕阙·不能抵消",
   ["@@chixieque_no_target-turn"] = "翕阙·不能成为目标",
-  ["#chitiaofeng"] = "调锋：将一张牌名字数不小于X且本阶段未使用过该花色的牌当【调剂盐梅】使用",
-  ["chitiaofeng_suits-phase"] = "调锋已用花色",
+  ["#chitiaofeng"] = "调锋：将一张牌名字数不小于X且本阶段未使用过该花色的牌当<a href=':redistribute'>调剂盐梅</a>使用",
+  ["@[chitiaofeng]"] = "调锋已用花色",
   ["#chifenqing-choice"] = "焚情：选择对 %dest 执行的效果",
   ["chifenqing_damage"] = "令对方受到你造成的1点火焰伤害",
   ["chifenqing_turnover"] = "令对方翻面",

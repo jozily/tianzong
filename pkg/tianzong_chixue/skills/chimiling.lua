@@ -35,11 +35,21 @@ Fk:loadTranslationTable{
   ["chimiling"] = "麋灵",
   ["@&chimiling"] = "麋",
   ["@[chimiling]chimiling"] = "麋",
-  [":chimiling"] = "<b>锁定技，</b>当你成为一张牌的目标后，若此牌牌名字数你未以此法记录过，你记录之并将等量张武将牌置于你的武将牌上，称为“麋”；每轮开始时，你清除所有记录和“麋”。",
+  [":chimiling"] = "锁定技，当你成为一张牌的目标后，若此牌牌名字数你未以此法记录过，你记录之并将等量张武将牌置于你的武将牌上，称为“麋”；你的手牌上限+X（X为“麋”数）；每轮开始时，你清除所有记录和“麋”。",
   ["#chimiling_log"] = "%from 发动【麋灵】，获得了%arg张“麋”",
   ["$chimiling1"] = "鹿鸣呦呦，莺戏疃瞳，云中锦字欠西风。",
   ["$chimiling2"] = "兰舟破烟波，鹿涉沙洲扯裙罗。",
 }
+
+-- 手牌上限 +“麋”数（“麋”以武将牌形式置于武将牌上，数量即 GENERAL_MARK 表长）
+chimiling:addEffect("maxcards", {
+  correct_func = function(self, player)
+    if player:hasSkill(chimiling.name, true) then
+      return #player:getTableMark(GENERAL_MARK)
+    end
+    return 0
+  end,
+})
 
 chimiling:addEffect(fk.TargetConfirmed, {
   can_trigger = function(self, event, target, player, data)

@@ -42,7 +42,7 @@ end
 
 Fk:loadTranslationTable{
   ["chicangsheng"] = "苍生",
-  [":chicangsheng"] = "<b>转换技，</b>你可以弃置X张“麋”视为使用或打出一张：①（阳）牌名字数为X的基本牌或普通锦囊牌；②（阴）合法目标数为X的基本牌或普通锦囊牌。",
+  [":chicangsheng"] = "转换技，你可以弃置X张“麋”视为使用或打出一张：①牌名字数为X的基本牌或普通锦囊牌；②合法目标数为X的基本牌或普通锦囊牌。",
   ["#chicangsheng-yang"] = "苍生-阳：选择一张牌，弃置等同于其牌名字数的“麋”",
   ["#chicangsheng-yin"] = "苍生-阴：选择一张牌，弃置等同于其合法目标数的“麋”",
   ["#chicangsheng-discard"] = "苍生：请选择弃置 %arg 张“麋”",

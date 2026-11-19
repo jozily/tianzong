@@ -51,6 +51,8 @@ local function markOf(player)
     pids = m.pids or {},
     generals = m.generals or {},
     suits = m.suits or {},
+    -- 永久去重：记录过的角色 id 永不移除，即使该条记录被消耗
+    allPids = m.allPids or {},
   }
 end
 
@@ -117,7 +119,10 @@ end
 local function record(room, player)
   local m = markOf(player)
   local names = table.filter(Fk:getAllCardNames("bt"), function(n) return not table.contains(m.names, n) end)
-  local people = table.filter(room.alive_players, function(p) return not table.contains(m.pids, p.id) end)
+  -- 已记录过的角色（含被消耗过的）不能再被记录
+  local people = table.filter(room.alive_players, function(p)
+    return not table.contains(m.pids, p.id) and not table.contains(m.allPids, p.id)
+  end)
   local suit_names = table.filter({ "log_spade", "log_heart", "log_club", "log_diamond" }, function(s)
     return not table.contains(m.suits, suits[s])
   end)
@@ -128,8 +133,9 @@ local function record(room, player)
   if #people > 0 then
     local who = room:askToChoosePlayers(player, { targets = people, min_num = 1, max_num = 1,
       skill_name = juben.name, prompt = "#tianzong_toaru__juben-player", cancelable = false })[1]
-    if who and not table.contains(m.pids, who.id) then
+    if who and not table.contains(m.pids, who.id) and not table.contains(m.allPids, who.id) then
       m.pids = push(m.pids, who.id)
+      m.allPids = push(m.allPids, who.id)
       m.generals = push(m.generals, generalOf(who))
     end
   end

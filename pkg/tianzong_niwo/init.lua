@@ -52,7 +52,8 @@ Fk:loadTranslationTable{
   ["#niwochoulu-invoke"] = "仇戮：你可以对伤害来源使用一张无距离限制的【杀】",
   ["#niwoqianzhun-invoke"] = "谦准：你可以发动此技能",
   ["#niwochoulu-use"] = "仇戮：请对 %dest 使用一张无距离限制的【杀】",
-  ["@$niwochoulu"] = "仇戮",
+  ["@@niwochoulu_done"] = "仇戮 已发动",
+  ["#niwochoulu-animate"] = "仇戮",
   ["@$niwochencang"] = "沉沧",
   ["@$niwochencangRemake"] = "沉沧",
   ["#niwoxiangming-invoke"] = "飨名：是否亮出牌堆顶和底各 %arg 张牌？",
@@ -63,7 +64,6 @@ Fk:loadTranslationTable{
   ["#niwoyinbing-acquire"] = "饮冰：选择一名角色获得【饮冰】",
   ["#niwochencang"] = "沉沧：选择要视为使用或打出的牌",
   ["#niwochencangRemake"] = "沉沧：选择要视为使用或打出的牌",
-  ["@$niwoshucai-round"] = "殊彩·已用花色",
   ["@[niwoshucai]"] = "殊彩·展示手牌",
   ["#niwoshucai"] = "殊彩：展示所有手牌，弃置一种本轮未选择过的花色，视为使用或打出火【杀】或【闪】",
   ["#niwoshucai-suit"] = "殊彩：选择弃置一种花色的所有手牌",
@@ -105,14 +105,14 @@ Fk:loadTranslationTable{
   ["tianzong"] = "天纵燎世",
 
   -- 逆徐庶
-  ["niwo__xushu"] = "逆徐庶",
+  ["niwo__xushu"] = "<font color='#5AB0FF'>逆</font>徐庶",
   ["#niwo__xushu"] = "侠戮者",
   ["~niwo__xushu"] = "此志未竟，恨难瞑目……",
   ["designer:niwo__xushu"] = "公冶天纵",
   ["illustrator:niwo__xushu"] = "官方",
   ["cv:niwo__xushu"] = "暂无",
   ["niwozhuohun"] = "灼魂",
-  [":niwozhuohun"] = "每轮开始时，你将【炽·玄剑】从场上或弃牌堆置入你的武器区。当你使用【杀】指定目标后，场上区域没有与此【杀】花色相同的牌的其他角色非锁定技失效直到回合结束。",
+  [":niwozhuohun"] = "每轮开始时，你将<a href=':tianzong_chixuanjian'>炽·玄剑</a>从场上或弃牌堆置入你的武器区。当你使用【杀】指定目标后，场上区域没有与此【杀】花色相同的牌的其他角色非锁定技失效直到回合结束。",
   ["niwosuchen"] = "肃尘",
   [":niwosuchen"] = "每轮限一次，当你成为其他角色【杀】或锦囊牌的目标时，你可以弃置一张【杀】，令此牌目标转移给使用者。然后若你体力值不大于其，你可以对其造成1点雷属性伤害。",
   ["$niwozhuohun1"] = "灼魂燃剑，所向披靡。",
@@ -121,7 +121,7 @@ Fk:loadTranslationTable{
   ["$niwosuchen2"] = "肃清寰宇，还我清明。",
 
   -- 逆徐氏
-  ["niwo__xushi"] = "逆徐氏",
+  ["niwo__xushi"] = "<font color='#5AB0FF'>逆</font>徐氏",
   ["#niwo__xushi"] = "飨殪者",
   ["~niwo__xushi"] = "名与刃俱尽，余声沉江……",
   ["designer:niwo__xushi"] = "公冶天纵",
@@ -137,7 +137,7 @@ Fk:loadTranslationTable{
   ["$niwoxiangming2"] = "名动于外，尽归我手。",
 
   -- 逆徐荣
-  ["niwo__xurong"] = "逆徐荣",
+  ["niwo__xurong"] = "<font color='#5AB0FF'>逆</font>徐荣",
   ["#niwo__xurong"] = "殚怒者",
   ["~niwo__xurong"] = "裂痕已深，无可弥合……",
   ["designer:niwo__xurong"] = "公冶天纵",
@@ -153,7 +153,7 @@ Fk:loadTranslationTable{
   ["$niwoshulie2"] = "裂隙之中，自有乾坤。",
 
   -- 逆王异
-  ["niwo__wangyi"] = "逆王异",
+  ["niwo__wangyi"] = "<font color='#5AB0FF'>逆</font>王异",
   ["#niwo__wangyi"] = "疏梦者",
   ["~niwo__wangyi"] = "去年花开君还在，今年花落复谁在。",
   ["designer:niwo__wangyi"] = "公冶天纵",
@@ -171,7 +171,7 @@ Fk:loadTranslationTable{
   ["$niwochoulu_niwo__wangyi2"] = "我执三尺剑，敌若犯，必杀之！",
 
   -- 逆韩龙
-  ["niwo__hanlong"] = "逆韩龙",
+  ["niwo__hanlong"] = "<font color='#5AB0FF'>逆</font>韩龙",
   ["#niwo__hanlong"] = "孤歼者",
   ["~niwo__hanlong"] = "铮铮铁骨，折于此处……",
   ["designer:niwo__hanlong"] = "公冶天纵",
@@ -187,14 +187,14 @@ Fk:loadTranslationTable{
   ["$niwonilin2"] = "鳞甲之下，自有锋芒。",
 
   -- 逆周处
-  ["niwo__zhouchu"] = "逆周处",
+  ["niwo__zhouchu"] = "<font color='#5AB0FF'>逆</font>周处",
   ["#niwo__zhouchu"] = "殒风者",
   ["~niwo__zhouchu"] = "风已止，古难寻……",
   ["designer:niwo__zhouchu"] = "公冶天纵",
   ["illustrator:niwo__zhouchu"] = "官方",
   ["cv:niwo__zhouchu"] = "暂无",
   ["niwoxungu"] = "寻古",
-  [":niwoxungu"] = "每轮开始时，你弃置所有“风”并进行判定直至出现相同牌名，然后你获得所有装备牌和二次出现的牌，并将其余所有判定牌置于武将牌旁，称为“风”。每回合限一次，你可以视为使用或打出一张“风”，然后你弃置之。",
+  [":niwoxungu"] = "每轮开始时，你弃置所有“风”并进行判定直至出现相同牌名，然后你获得所有装备牌和二次出现的牌，并将其余所有判定牌置于武将牌旁，称为“风”。每回合限一次，你可以使用或打出一张“风”。",
   ["niwoxianwang"] = "衔望",
   [":niwoxianwang"] = "锁定技，当你首次使用或打出“风”已记录牌名的实体牌时，你弃置对应“风”令此牌额外执行一次。当你的“风”进入弃牌堆后，你摸X张牌（X为与此“风”花色相同的“风”数）。",
   ["$niwoxungu1"] = "寻古问今，风从何处。",
@@ -203,7 +203,7 @@ Fk:loadTranslationTable{
   ["$niwoxianwang2"] = "望断天涯，衔恨而归。",
 
   -- 逆张华
-  ["niwo__zhanghua"] = "逆张华",
+  ["niwo__zhanghua"] = "<font color='#5AB0FF'>逆</font>张华",
   ["#niwo__zhanghua"] = "觱途者",
   ["~niwo__zhanghua"] = "千谆百览，终成泡影……",
   ["designer:niwo__zhanghua"] = "公冶天纵",
@@ -225,7 +225,7 @@ Fk:loadTranslationTable{
   ["@[niwobailan_detail]"] = "",
 
   -- 逆赵云
-  ["niwo__zhaoyun"] = "逆赵云",
+  ["niwo__zhaoyun"] = "<font color='#5AB0FF'>逆</font>赵云",
   ["#niwo__zhaoyun"] = "弑澜者",
   ["~niwo__zhaoyun"] = "澜已踏尽，壑难逾越……",
   ["designer:niwo__zhaoyun"] = "公冶天纵",
@@ -241,23 +241,23 @@ Fk:loadTranslationTable{
   ["$niwoyuhe2"] = "逾越山壑，志在必得。",
 
   -- 逆文钦
-  ["niwo__wenqin"] = "逆文钦",
+  ["niwo__wenqin"] = "<font color='#5AB0FF'>逆</font>文钦",
   ["#niwo__wenqin"] = "虓殛者",
   ["~niwo__wenqin"] = "忖断沉沧，皆成虚妄……",
   ["designer:niwo__wenqin"] = "公冶天纵",
   ["illustrator:niwo__wenqin"] = "官方",
   ["cv:niwo__wenqin"] = "暂无",
   ["niwocunduan"] = "忖断",
-  [":niwocunduan"] = "当你需要使用或打出一张基本牌时，若当前回合角色与你有相同的空置副装备栏/空置副装备栏，你可以将一张对应空置装备牌置入之/择其中一个弃置之视为使用或打出之，此牌不计入使用次数。",
+  [":niwocunduan"] = "当你需要使用或打出一张基本牌时，若当前回合角色与你有相同的空置副装备栏/空置副装备栏，你可以将一张对应空置装备牌置入之/选择其中一个弃置之视为使用或打出之，此牌不计入使用次数。",
   ["niwoqiangge"] = "戗戈",
-  [":niwoqiangge"] = "当你受到或造成伤害后，你可以选择一项：①弃置对方装备区里与你对应副装备栏相同的一张牌；②随机获得牌堆里的一张装备牌或【折戟】【女装】【驽马】中的一张。",
+  [":niwoqiangge"] = "当你受到或造成伤害后，你可以选择一项：①弃置对方装备区里与你对应副装备栏相同的一张牌；②随机获得牌堆或<a href=':broken_halberd'>折戟</a><a href=':women_dress'>女装</a><a href=':inferior_horse'>驽马</a>中的一张装备牌，然后你可以使用或赠与之。",
   ["$niwocunduan1"] = "忖度断绝，自有主张。",
   ["$niwocunduan2"] = "断而后立，忖而后行。",
   ["$niwoqiangge1"] = "戗然交戈，势不两立。",
   ["$niwoqiangge2"] = "戈矛相向，谁主沉浮。",
 
   -- 逆贾诩
-  ["niwo__jiaxu"] = "逆贾诩",
+  ["niwo__jiaxu"] = "<font color='#5AB0FF'>逆</font>贾诩",
   ["#niwo__jiaxu"] = "苍祭者",
   ["~niwo__jiaxu"] = "疏渡沉沧，算尽天下……",
   ["designer:niwo__jiaxu"] = "公冶天纵",
@@ -286,7 +286,7 @@ Fk:loadTranslationTable{
 
 
   -- 逆赵娥
-  ["niwo__zhaoe"] = "逆赵娥",
+  ["niwo__zhaoe"] = "<font color='#5AB0FF'>逆</font>赵娥",
   ["#niwo__zhaoe"] = "衅殄者",
   ["~niwo__zhaoe"] = "血梦难醒，旧恨未休……",
   ["designer:niwo__zhaoe"] = "公冶天纵",
