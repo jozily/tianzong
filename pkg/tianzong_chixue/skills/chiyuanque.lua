@@ -53,7 +53,7 @@ chiyuanque:addEffect(fk.GameStart, {
   end,
 })
 
-chiyuanque:addEffect(fk.AcquireSkill, {
+chiyuanque:addEffect(fk.EventAcquireSkill, {
   can_trigger = function(self, event, target, player, data)
     return target == player and player:hasSkill(chiyuanque.name) and player:getMark(DAMAGE_MARK) == 0
   end,
