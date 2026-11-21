@@ -44,10 +44,16 @@ local spec = {
     if #shown == 0 then return end
     local chosen = room:askToCards(player, {
       min_num = 1, max_num = 1, pattern = tostring(Exppattern{ id = shown }),
-      expand_pile = shown, skill_name = chifeishi.name,
+      expand_pile = shown,
+      -- 关键修复：choose_cards_skill 对处于装备区的牌，只有 include_equip 为真时才允许选中。
+      -- 展示牌里含红色装备时，原先未设此项导致“展示了却拿不到”。
+      include_equip = true,
+      skill_name = chifeishi.name,
       prompt = "#chifeishi-gain", cancelable = false,
     })
-    if #chosen > 0 then room:obtainCard(player, chosen, true, fk.ReasonPrey, player, chifeishi.name) end
+    if #chosen > 0 and room:getCardArea(chosen[1]) ~= Card.Void then
+      room:obtainCard(player, chosen[1], true, fk.ReasonPrey, player, chifeishi.name)
+    end
   end,
 }
 chifeishi:addEffect(fk.DamageCaused, spec)

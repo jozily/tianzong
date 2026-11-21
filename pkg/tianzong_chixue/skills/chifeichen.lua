@@ -19,6 +19,11 @@ chifeichen:addEffect(fk.TargetConfirmed, {
       return card.color == Card.Red and card.type == data.card.type
     end)
     if not same_type_red then
+      -- 引擎结算时读取的是 useCardData.additionalEffect（见 server/events/usecard.lua），
+      -- 之前写在 AimData 的 data.additionalEffect 上不会生效，锦囊因此不会二次结算。
+      if data.use then
+        data.use.additionalEffect = (data.use.additionalEffect or 0) + 1
+      end
       data.additionalEffect = (data.additionalEffect or 0) + 1
     end
   end,

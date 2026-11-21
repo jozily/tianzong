@@ -31,7 +31,7 @@ local function do_fuxue(room, player, data, target)
   local choice = room:askToChoice(player, {
     choices = { "niwofuxue_add", "niwofuxue_recover" },
     skill_name = niwofuxue.name,
-    prompt = "#niwofuxue",
+    prompt = "#niwofuxue-choice",
     cancelable = false,
   })
 
@@ -58,12 +58,13 @@ niwofuxue:addEffect(fk.DamageCaused, {
     return target == player
       and player:hasSkill(niwofuxue.name)
       and data.to ~= nil
+      and count_target_mo(data.to) > 0   -- 受伤角色身上须有“殁”，否则技能无效果，不弹询问
       and data.damage > 0
   end,
   on_cost = function(self, event, target, player, data)
     return player.room:askToSkillInvoke(player, {
       skill_name = niwofuxue.name,
-      prompt = "#niwofuxue",
+      prompt = "#niwofuxue:::" .. count_target_mo(data.to),
     })
   end,
   on_use = function(self, event, target, player, data)
@@ -76,12 +77,13 @@ niwofuxue:addEffect(fk.DamageInflicted, {
   can_trigger = function(self, event, target, player, data)
     return target == player
       and player:hasSkill(niwofuxue.name)
+      and count_target_mo(player) > 0    -- 受伤的是自己，须自己身上有“殁”
       and data.damage > 0
   end,
   on_cost = function(self, event, target, player, data)
     return player.room:askToSkillInvoke(player, {
       skill_name = niwofuxue.name,
-      prompt = "#niwofuxue",
+      prompt = "#niwofuxue:::" .. count_target_mo(player),
     })
   end,
   on_use = function(self, event, target, player, data)

@@ -9,7 +9,8 @@ local chiyuanque = fk.CreateSkill{
   related_skills = RANDOM_POOL,
   tags = { Skill.Quest },
 }
-local DAMAGE_MARK = "@chiyuanque_damage"
+local COUNT_MARK = "chiyuanque_damage_count"  -- 隐藏计数，仍是数字
+local DAMAGE_MARK = "@chiyuanque_damage"       -- 显示用，"X/3"
 local FINISHED = "chiyuanque_finished"
 local THRESHOLD = 3
 
@@ -34,11 +35,32 @@ local function success(room, player)
   acquire_random(room, player, room.current ~= player and 3 or 2)
 end
 
+-- 累计值用隐藏数字标记维护，显示标记写成 "X/3"（封顶 3），与官方 shilue 的 X/3 写法一致
 local function add_damage(player, amount)
   local room = player.room
-  room:addPlayerMark(player, DAMAGE_MARK, amount)
-  if player:getMark(DAMAGE_MARK) >= THRESHOLD and player:getMark(FINISHED) == 0 then success(room, player) end
+  room:addPlayerMark(player, COUNT_MARK, amount)
+  local n = player:getMark(COUNT_MARK)
+  room:setPlayerMark(player, DAMAGE_MARK, math.min(n, THRESHOLD) .. "/" .. THRESHOLD)
+  if n >= THRESHOLD and player:getMark(FINISHED) == 0 then success(room, player) end
 end
+
+chiyuanque:addEffect(fk.GameStart, {
+  can_trigger = function(self, event, target, player, data)
+    return player:hasSkill(chiyuanque.name)
+  end,
+  on_use = function(self, event, target, player, data)
+    player.room:setPlayerMark(player, DAMAGE_MARK, "0/" .. THRESHOLD)
+  end,
+})
+
+chiyuanque:addEffect(fk.AcquireSkill, {
+  can_trigger = function(self, event, target, player, data)
+    return target == player and player:hasSkill(chiyuanque.name) and player:getMark(DAMAGE_MARK) == 0
+  end,
+  on_use = function(self, event, target, player, data)
+    player.room:setPlayerMark(player, DAMAGE_MARK, math.min(player:getMark(COUNT_MARK), THRESHOLD) .. "/" .. THRESHOLD)
+  end,
+})
 
 chiyuanque:addEffect(fk.Damage, {
   can_trigger = function(self, event, target, player, data)

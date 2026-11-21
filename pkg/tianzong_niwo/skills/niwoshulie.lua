@@ -8,7 +8,7 @@ local function all_lies(player)
 end
 
 niwoshulie:addEffect("viewas", {
-  pattern = "slash,nullification",
+  pattern = "thunder__slash,nullification",
   prompt = "#niwoshulie",
   max_turn_use_time = 1,
   expand_pile = function(self, player) return all_lies(player) end,
@@ -19,7 +19,8 @@ niwoshulie:addEffect("viewas", {
   view_as = function(self, player, cards)
     if #cards ~= 1 then return end
     local source = Fk:getCardById(cards[1])
-    local card = Fk:cloneCard(source.color == Card.Red and "slash" or "nullification")
+    -- 红色“裂”当雷【杀】，黑色仍当【无懈可击】
+    local card = Fk:cloneCard(source.color == Card.Red and "thunder__slash" or "nullification")
     card.skillName = niwoshulie.name
     card:addSubcard(cards[1])
     return card
@@ -36,5 +37,5 @@ niwoshulie:addEffect("viewas", {
   end,
 })
 
-Fk:loadTranslationTable{ ["#niwoshulie"] = "疏裂：选择一张红色/黑色“裂”当【杀】/【无懈可击】使用或打出" }
+Fk:loadTranslationTable{ ["#niwoshulie"] = "疏裂：选择一张红色/黑色“裂”当雷【杀】/【无懈可击】使用或打出" }
 return niwoshulie

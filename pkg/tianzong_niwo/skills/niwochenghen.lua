@@ -2,6 +2,19 @@ local niwochenghen = fk.CreateSkill{
   name = "niwochenghen",
 }
 
+-- 承痕①的转化入口（niwotianmeng_use&）由本技能授予：名字以 & 结尾不占技能栏。
+-- 之前挂在殄梦上，按新文案移到这里。
+niwochenghen:addAcquireEffect(function(self, player)
+  if player.room then
+    player.room:handleAddLoseSkills(player, "niwotianmeng_use&", nil, false, true)
+  end
+end)
+niwochenghen:addLoseEffect(function(self, player)
+  if player.room then
+    player.room:handleAddLoseSkills(player, "-niwotianmeng_use&", nil, false, true)
+  end
+end)
+
 local function get_all_field_mo(room)
   local ids = {}
   for _, p in ipairs(room.alive_players) do
@@ -18,10 +31,15 @@ local function get_all_field_mo(room)
 end
 
 local function choose_skill_to_give(room, player, to)
+  -- 新文案：令一名角色获得你武将牌上“发动过”的一个技能
+  local skillNames = player:getSkillNameList()
   local skills = {}
-  for _, s in ipairs({"niwotianmeng", "niwofuxue", "niwochoulu"}) do
-    if player:hasSkill(s, true) and not to:hasSkill(s, true) then
-      table.insert(skills, s)
+  for _, s in ipairs(skillNames) do
+    local sk = Fk.skills[s]
+    if sk and not sk:hasTag(Skill.Compulsory) and
+      player:usedSkillTimes(s, Player.HistoryGame) > 0 and
+      not to:hasSkill(s, true) then
+      table.insertIfNeed(skills, s)
     end
   end
   if #skills == 0 then return nil end
@@ -46,7 +64,7 @@ niwochenghen:addEffect(fk.AfterCardsMove, {
           local c = Fk:getCardById(info.cardId, true)
           if c
             and c:getMark("@@niwo_mo") > 0
-            and (move.moveReason == fk.ReasonUse or move.moveReason == fk.ReasonResponse)
+            and move.moveReason == fk.ReasonUse   -- 新文案：仅“因使用”进入弃牌堆
           then
             table.insertIfNeed(cards, info.cardId)
           end

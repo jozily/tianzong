@@ -1,13 +1,13 @@
--- 殄梦·殁：把一张“殁”当任意单体伤害牌使用或打出。
--- 名字以 “&” 结尾：不占武将牌技能栏，由【殄梦】的 addAcquireEffect 授予本人。
+-- 承痕·殁：把一张“殁”当任意单体伤害牌使用或打出（承痕①）。
+-- 名字以 “&” 结尾：不占武将牌技能栏，由【承痕】的 addAcquireEffect 授予本人。
 local niwotianmeng_use = fk.CreateSkill{
   name = "niwotianmeng_use&",
 }
 
 Fk:loadTranslationTable{
-  ["niwotianmeng_use&"] = "殄梦·殁",
-  [":niwotianmeng_use&"] = "你可以将你的一张“殁”当任意单体伤害牌使用或打出。",
-  ["#niwotianmeng_use&"] = "殄梦：选择一张“殁”和要视为使用的单体伤害牌",
+  ["niwotianmeng_use&"] = "承痕·殁",
+  [":niwotianmeng_use&"] = "每回合限一次，你可以将你的一张“殁”当任意单体伤害类卡牌使用。",
+  ["#niwotianmeng_use&"] = "承痕：选择一张“殁”和要视为使用的单体伤害牌",
 }
 
 local CARD_MARK = "@@niwo_mo"
@@ -32,6 +32,7 @@ end
 niwotianmeng_use:addEffect("viewas", {
   pattern = ".",
   prompt = "#niwotianmeng_use&",
+  max_turn_use_time = 1,   -- 承痕①：每回合限一次
   expand_pile = function(self, player) return my_mo(player) end,
   interaction = function(self, player)
     local choices = names(player)
@@ -47,10 +48,8 @@ niwotianmeng_use:addEffect("viewas", {
     card.skillName = niwotianmeng_use.name
     return card
   end,
-  -- 出牌阶段不单独占一个转化按钮：转化统一走【殄梦】active 按钮里的二选一选项。
-  -- 这里只保留回合外的响应（打出殁牌）。askToUseVirtualCard 显式指定本技能名，不受此开关影响。
   enabled_at_play = function(self, player)
-    return false
+    return #my_mo(player) > 0 and #names(player) > 0
   end,
   enabled_at_response = function(self, player, response)
     return #my_mo(player) > 0 and #names(player) > 0

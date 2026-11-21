@@ -1057,7 +1057,8 @@ Fk:loadTranslationTable{
   ["#chiyidi-name"] = "诣谛：选择牌名",
   ["@chiyidi_name"] = "诣谛牌名",
   ["@chiyidi_color"] = "诣谛颜色",
-  ["@chiyuanque_damage"] = "缘阙·属性伤害",
+  ["@chiyuanque_damage"] = "缘阙·累计属性伤害",
+  ["chiyuanque_damage_count"] = "缘阙·累计属性伤害",
   ["#chiyuanque-memory"] = "缘阙：选择一名已死亡角色追思",
 
   -- 王倩（王夫人，卫玠之母）
