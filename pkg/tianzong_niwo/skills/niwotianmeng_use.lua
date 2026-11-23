@@ -36,7 +36,7 @@ niwotianmeng_use:addEffect("viewas", {
   expand_pile = function(self, player) return my_mo(player) end,
   interaction = function(self, player)
     local choices = names(player)
-    if #choices > 0 then return UI.CardNameBox{ choices = choices, all_choices = choices } end
+    if #choices > 0 then return UI.TianzongCardNameBox{ choices = choices, all_choices = choices } end
   end,
   card_filter = function(self, player, to_select, selected)
     return #selected == 0 and table.contains(my_mo(player), to_select)

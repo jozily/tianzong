@@ -1,39 +1,40 @@
 -- chitianshi.lua (恬适)
+-- 锁定技，其他角色于回合内对你使用的首张牌名字数不小于X的牌对你无效；
+-- 该牌结算后，你视为使用之。X 为你当前的体力值。
 local chitianshi = fk.CreateSkill{
   name = "chitianshi",
   tags = { Skill.Compulsory },
   description = ":chitianshi",
   anim_type = "support",
-  dynamic_desc = function(self, player, lang)
-    -- 无 player / 无房间（选将、技能一览、观战）时返回空串，
-    -- 引擎会自动回退到静态描述 :chitianshi，避免显示"该房间不可用"等错误文本
-    if not player or not player.room or not player.hp then return "" end
-    return "chitianshi_dyn:" .. tostring(player.hp)
-  end,
 }
 
 Fk:loadTranslationTable{
   ["chitianshi"] = "恬适",
-  [":chitianshi"] = "锁定技，其他角色于回合内对你使用的首张牌名字数不小于你体力值的牌对你无效。其他角色于回合内使用的首张牌名字数不小于X的牌结算后，你视为使用之。",
-  -- {1} = 当前体力值。英文冒号分段是引擎 descFormatter 的约定。
-  [":chitianshi_dyn"] = "锁定技，其他角色于回合内对你使用的首张牌名字数不小于{1}的牌对你无效（你当前体力{1}）。其他角色于回合内使用的首张牌名字数不小于X的牌结算后，你视为使用之。",
+  [":chitianshi"] = "锁定技，其他角色于回合内对你使用的首张牌名字数不小于X的牌对你无效，然后你视为使用之。（X为你当前的体力值）",
+  ["#chitianshi-use"] = "恬适：视为使用结算后的牌",
 }
+
+-- “每名其他角色每回合首张符合的牌”用 mark 记录，mark 名带 -turn 由引擎每回合自动清空。
+-- 无效化在 CardEffecting（结算前），视为使用在 CardEffectFinished（结算后）。
+local function first_card_mark(from)
+  return "chitianshi_first-" .. tostring(from.id) .. "-turn"
+end
 
 chitianshi:addEffect(fk.CardEffecting, {
   anim_type = "support",
   can_trigger = function(self, event, target, player, data)
     return target == player and player:hasSkill(self.name) and
       data.from and data.from ~= player and
-      player:usedSkillTimes(self.name .. "_" .. data.from.id, Player.HistoryPhase) == 0
+      data.card and
+      player:getMark(first_card_mark(data.from)) == 0 and
+      data.card:getNameLength(true) >= player.hp
   end,
   on_use = function(self, event, target, player, data)
-    local skillName = self.name
-    local nameLength = data.card:getNameLength(true)
-    
-    if nameLength >= player.hp then
-      data.nullified = true
-      player.room:setPlayerMark(player, skillName .. "_" .. data.from.id, 1)
-    end
+    local room = player.room
+    data.nullified = true
+    -- 记录该来源本回合的首张符合牌；结算后 effect 据此“视为使用”
+    room:setPlayerMark(player, first_card_mark(data.from), 1)
+    room:setPlayerMark(player, "chitianshi_pending-" .. tostring(data.from.id) .. "-turn", data.card.name)
   end,
 })
 
@@ -41,23 +42,21 @@ chitianshi:addEffect(fk.CardEffectFinished, {
   anim_type = "support",
   can_trigger = function(self, event, target, player, data)
     return data.from and data.from ~= player and player:hasSkill(self.name) and
-      player:usedSkillTimes("chitianshi_use_" .. data.from.id, Player.HistoryPhase) == 0
+      data.card and
+      player:getMark("chitianshi_pending-" .. tostring(data.from.id) .. "-turn") ~= 0
   end,
   on_use = function(self, event, target, player, data)
     local room = player.room
-    local skillName = self.name
-    local nameLength = data.card:getNameLength(true)
-    
-    -- X 为你的体力值（与静态/动态描述一致）
-    if nameLength >= player.hp then
-      room:askToUseVirtualCard(
-        player,
-        {
-          name = data.card.name,
-          skill_name = skillName,
-        }
-      )
-      player.room:setPlayerMark(player, "chitianshi_use_" .. data.from.id, 1)
+    local pending_mark = "chitianshi_pending-" .. tostring(data.from.id) .. "-turn"
+    local card_name = player:getMark(pending_mark)
+    room:setPlayerMark(player, pending_mark, 0)
+    if card_name and card_name ~= 0 then
+      room:askToUseVirtualCard(player, {
+        name = card_name,
+        skill_name = self.name,
+        prompt = "#chitianshi-use",
+        cancelable = true,
+      })
     end
   end,
 })

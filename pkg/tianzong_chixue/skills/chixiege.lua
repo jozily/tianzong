@@ -5,6 +5,8 @@ local chixiege = fk.CreateSkill{
 local SLASH_MARK = "@chixiege_slash-round"
 local DRAW_MARK = "@chixiege_draw-round"
 local DAMAGE_MARK = "@chixiege_damage-round"
+local PLUS_TIMES_MARK = "chixiege_plus-turn"  -- 每回合自动清零
+local MAX_NUM = 5
 
 local function clear_xiege_marks(room, p)
   room:setPlayerMark(p, SLASH_MARK, 0)
@@ -30,9 +32,12 @@ local function draw_after_damage(room, p, num)
   end
 end
 
+local NUM_CHOICES = { "chixiege_slash", "chixiege_draw", "chixiege_damage" }
+local NUM_MARKS = { SLASH_MARK, DRAW_MARK, DAMAGE_MARK }
+
 local function ask_plus_one(room, guozhao)
   local targets = get_all_xiege_targets(room)
-  if #targets == 0 then return end
+  if #targets == 0 then return false end
 
   local tos = room:askToChoosePlayers(guozhao, {
     min_num = 1,
@@ -42,11 +47,19 @@ local function ask_plus_one(room, guozhao)
     prompt = "#chixiege-plus",
     cancelable = true,
   })
-  if #tos == 0 then return end
+  if #tos == 0 then return false end
   local target = tos[1]
 
+  local choices = {}
+  for i, mark in ipairs(NUM_MARKS) do
+    local v = target:getMark(mark)
+    if type(v) ~= "number" then v = 0 end
+    if v < MAX_NUM then table.insert(choices, NUM_CHOICES[i]) end
+  end
+  if #choices == 0 then return false end
+
   local choice = room:askToChoice(guozhao, {
-    choices = { "chixiege_slash", "chixiege_draw", "chixiege_damage" },
+    choices = choices,
     skill_name = chixiege.name,
     cancelable = false,
   })
@@ -63,6 +76,7 @@ local function ask_plus_one(room, guozhao)
   local value = target:getMark(mark_name)
   if type(value) ~= "number" then value = 0 end
   room:setPlayerMark(target, mark_name, value + 1)
+  return true
 end
 
 -- 每轮开始时：场上每个有携阁的角色都可以发动一次
@@ -110,6 +124,7 @@ chixiege:addEffect(fk.TargetSpecified, {
   anim_type = "support",
   can_trigger = function(self, event, target, player, data)
     return player:hasSkill(chixiege.name)
+      and (player:getMark(PLUS_TIMES_MARK) or 0) < 2
       and target ~= nil
       and target:isAlive()
       and (target == player or is_xiege_target(target))
@@ -123,7 +138,9 @@ chixiege:addEffect(fk.TargetSpecified, {
     })
   end,
   on_use = function(self, event, target, player, data)
-    ask_plus_one(player.room, player)
+    if ask_plus_one(player.room, player) then
+      player.room:addPlayerMark(player, PLUS_TIMES_MARK)
+    end
   end,
 })
 
@@ -132,6 +149,7 @@ chixiege:addEffect(fk.TargetConfirming, {
   anim_type = "support",
   can_trigger = function(self, event, target, player, data)
     return player:hasSkill(chixiege.name)
+      and (player:getMark(PLUS_TIMES_MARK) or 0) < 2
       and target ~= nil
       and target:isAlive()
       and (target == player or is_xiege_target(target))
@@ -146,7 +164,9 @@ chixiege:addEffect(fk.TargetConfirming, {
     })
   end,
   on_use = function(self, event, target, player, data)
-    ask_plus_one(player.room, player)
+    if ask_plus_one(player.room, player) then
+      player.room:addPlayerMark(player, PLUS_TIMES_MARK)
+    end
   end,
 })
 

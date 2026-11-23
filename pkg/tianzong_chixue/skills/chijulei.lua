@@ -1,5 +1,5 @@
 local chijulei = fk.CreateSkill{ name = "chijulei" }
-local DUST_MARK = "chizhichen_dust"
+local DUST_MARK = "@@chizhichen_dust"
 local FIRE_NAMES = { "fire__slash", "fire_attack" }
 local TURNOVER_NAMES = { "analeptic", "chasing_near" }
 

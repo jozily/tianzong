@@ -2,18 +2,56 @@ local niwochenghen = fk.CreateSkill{
   name = "niwochenghen",
 }
 
--- 承痕①的转化入口（niwotianmeng_use&）由本技能授予：名字以 & 结尾不占技能栏。
--- 之前挂在殄梦上，按新文案移到这里。
-niwochenghen:addAcquireEffect(function(self, player)
-  if player.room then
-    player.room:handleAddLoseSkills(player, "niwotianmeng_use&", nil, false, true)
-  end
-end)
-niwochenghen:addLoseEffect(function(self, player)
-  if player.room then
-    player.room:handleAddLoseSkills(player, "-niwotianmeng_use&", nil, false, true)
-  end
-end)
+-- 承痕①的转化入口原先挂在单独的 niwotianmeng_use& 技能上（多出一个按钮）。
+-- 按"三效果收进一个按钮"的要求，把 viewas 效果直接并入本技能，
+-- 不再用 addAcquireEffect 授予 niwotianmeng_use&。
+
+local CARD_MARK = "@@niwo_mo"
+local OWNER_MARK = "niwo_mo_owner"
+
+local function my_mo(player)
+  return table.filter(player:getCardIds("hej"), function(id)
+    local card = Fk:getCardById(id)
+    return card:getMark(CARD_MARK) > 0 and card:getMark(OWNER_MARK) == player.id
+  end)
+end
+
+local function viewas_names(player)
+  local result = table.filter(Fk:getAllCardNames("bt"), function(name)
+    local card = Fk:cloneCard(name)
+    return card and card.is_damage_card and not card.multiple_targets and
+      card.skill:getMaxTargetNum(player) <= 1
+  end)
+  return player:getViewAsCardNames(niwochenghen.name, result)
+end
+
+-- ①每回合限一次，将一张"殁"当任意单体伤害类卡牌使用
+niwochenghen:addEffect("viewas", {
+  pattern = ".",
+  prompt = "#niwotianmeng-use",
+  max_turn_use_time = 1,
+  expand_pile = function(self, player) return my_mo(player) end,
+  interaction = function(self, player)
+    local choices = viewas_names(player)
+    if #choices > 0 then return UI.TianzongCardNameBox{ choices = choices, all_choices = choices } end
+  end,
+  card_filter = function(self, player, to_select, selected)
+    return #selected == 0 and table.contains(my_mo(player), to_select)
+  end,
+  view_as = function(self, player, cards)
+    if #cards ~= 1 or not self.interaction.data then return nil end
+    local card = Fk:cloneCard(self.interaction.data)
+    card:addSubcard(cards[1])
+    card.skillName = niwochenghen.name
+    return card
+  end,
+  enabled_at_play = function(self, player)
+    return #my_mo(player) > 0 and #viewas_names(player) > 0
+  end,
+  enabled_at_response = function(self, player, response)
+    return #my_mo(player) > 0 and #viewas_names(player) > 0
+  end,
+})
 
 local function get_all_field_mo(room)
   local ids = {}

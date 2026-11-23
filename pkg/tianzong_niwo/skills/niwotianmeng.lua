@@ -2,8 +2,7 @@
 -- 出牌阶段开始时或当你受到伤害后，你可以明置你与一名角色的一张手牌成为“殁”。
 --
 -- 转化（原在本技能的 active 二选一里）按新文案归入【承痕】①，
--- 故本技能只负责“明置手牌成为殁”。viewas 仍在 niwotianmeng_use.lua，
--- 由【承痕】通过 addAcquireEffect 授予本人（名字以 & 结尾，不占技能栏）。
+-- 本技能只负责“明置手牌成为殁”。viewas 已并入 niwochenghen.lua（三效果一个按钮）。
 local niwotianmeng = fk.CreateSkill{
   name = "niwotianmeng",
 }
@@ -27,6 +26,24 @@ niwotianmeng:addEffect(fk.AfterCardsMove, {
   end,
   on_refresh = function(self, event, target, player, data)
     update_marks(player.room)
+  end,
+})
+
+-- 照【连接】的写法：带"殁"标记的手牌对所有角色明置可见（只做可见性，
+-- 不接 connected_cards_rule 的连锁弃置规则）。
+-- 关键：card_visible 若返回 false 会被引擎当成"明确不可见"并立即截断后续
+-- 默认明置判断（装备区/判定区），导致赵娥一出场全场明置牌变暗。
+-- 因此只有"确认是殁牌且在手牌"才返回 true，其余情况一律返回 nil（不表态）。
+niwotianmeng:addEffect("visibility", {
+  card_visible = function(self, player, card, toChoose)
+    if card:getMark(CARD_MARK) <= 0 then return nil end
+    local room = Fk:currentRoom()
+    if not room then return nil end
+    local owner = room:getCardOwner(card)
+    if not owner then return nil end
+    if room:getCardArea(card) == Card.PlayerHand then
+      return true
+    end
   end,
 })
 

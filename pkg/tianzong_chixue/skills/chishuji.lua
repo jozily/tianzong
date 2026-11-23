@@ -1,12 +1,12 @@
 local chishuji = fk.CreateSkill{
   name = "chishuji",
-  tags = { Skill.Compulsory },
+  tags = { Skill.Contract },
 }
 
 local USED_MARK = "chishuji_seen-turn"
 
 local function is_contracted(player)
-  return true
+  return table.contains(player:getTableMark("contracted_skills"), chishuji.name)
 end
 
 local function legal_targets(from, card)

@@ -3,13 +3,35 @@ local chixunfu = fk.CreateSkill{
   tags = { Skill.Compulsory },
 }
 
-local RECORD_MARK = "@@chixunfu_names-round"
+local RECORD_MARK = "@[chixunfu_names]xunxu-round"
+
+-- 徇覆"已记录"mark：注册可点开的展开面板（复用剧本的记录列表框）
+Fk:addQmlMark {
+  name = "chixunfu_names",
+  how_to_show = function(_, value)
+    if type(value) ~= "table" then return "" end
+    return #value > 0 and tostring(#value) or ""
+  end,
+  qml = function(mark, value)
+    local items = {}
+    if type(value) == "table" then
+      table.insert(items, "【已记录牌名】")
+      for _, name in ipairs(value) do
+        table.insert(items, Fk:translate(name))
+      end
+    end
+    return {
+      url = "packages/tianzong/qml/JubenMarkBox.qml",
+      prop = { name = mark, value = items },
+    }
+  end,
+}
 
 Fk:loadTranslationTable{
   ["chixunfu"] = "徇覆",
   [":chixunfu"] = "锁定技，当你成为一张本轮未以此法记录过的非装备牌的目标时，来源需展示另一种颜色的一张手牌，否则此牌对你无效，然后你记录此牌牌名。",
   ["#chixunfu-show"] = "徇覆：展示一张与此牌颜色不同的手牌，否则此牌对 %dest 无效",
-  ["@@chixunfu_names-round"] = "徇覆·已记录",
+  ["@[chixunfu_names]xunxu-round"] = "徇覆·已记录",
 }
 
 chixunfu:addEffect(fk.TargetConfirmed, {

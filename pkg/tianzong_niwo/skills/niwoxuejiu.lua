@@ -62,5 +62,5 @@ niwoxuejiu:addEffect(fk.AfterCardsMove, {
   on_use = function(self, event, target, player, data) player:drawCards(2, niwoxuejiu.name) end,
 })
 
-Fk:loadTranslationTable{ [PILE] = "裂" }
+Fk:loadTranslationTable{ [PILE] = "裂", [LIE_MARK] = "裂" }
 return niwoxuejiu

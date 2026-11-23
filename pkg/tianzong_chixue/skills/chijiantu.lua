@@ -20,7 +20,8 @@ Fk:addQmlMark{
     if not p then return "" end
     local suits = p:getTableMark(SUITS_MARK)
     if type(suits) ~= "table" or #suits == 0 then return "" end
-    return "蹇途 " .. table.concat(table.map(suits, suit_symbol), "/")
+    -- 名字前缀由翻译键 ["@[chijiantu]"] 提供，此处只返回花色，避免重复
+    return table.concat(table.map(suits, suit_symbol), "/")
   end,
   qml_data = function() return {} end,
   qml_path = function() return "" end,

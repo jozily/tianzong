@@ -4,18 +4,14 @@ chihuaiji:addEffect(fk.CardUsing, {
   anim_type = "control",
   can_trigger = function(self, event, target, player, data)
     return target == player and player:hasSkill(chihuaiji.name) and
-      player:getSwitchSkillState(chihuaiji.name) == fk.SwitchYin and #data.tos > 0 and player.maxHp > #data.tos and
-      (data.card.type == Card.TypeBasic or data.card:isCommonTrick())
+      player:getSwitchSkillState(chihuaiji.name) == fk.SwitchYin and #data.tos > 0 and player.maxHp > #data.tos
   end,
   on_cost = function(self, event, target, player, data)
     local room = player.room
     if not room:askToSkillInvoke(player, { skill_name = chihuaiji.name, prompt = "#chihuaiji-yin:::" .. #data.tos }) then return false end
-    -- 原目标含自己时放宽距离，允许重新指定给任意合法目标
-    local toSelf = table.contains(data.tos, player)
     local use = room:askToUseVirtualCard(player, {
       name = data.card.name, skill_name = chihuaiji.name, prompt = "#chihuaiji-reassign",
-      cancelable = true, skip = true,
-      extra_data = { bypass_times = true, bypass_distances = toSelf },
+      cancelable = true, skip = true, extra_data = { bypass_times = true, bypass_distances = false },
     })
     if use then event:setCostData(self, { use = use, x = #data.tos }); return true end
   end,

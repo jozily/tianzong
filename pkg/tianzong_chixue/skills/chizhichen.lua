@@ -4,7 +4,7 @@ local chizhichen = fk.CreateSkill{
   description = ":chizhichen",
 }
 
-local DUST_MARK = "chizhichen_dust"
+local DUST_MARK = "@@chizhichen_dust"
 
 local function add_dust(player)
   if player and player:isAlive() then

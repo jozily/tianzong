@@ -65,7 +65,8 @@ niwoxungu:addEffect("viewas", {
   filter_pattern = {
     min_num = 1,
     max_num = 1,
-    pattern = ".",
+    -- 排除装备牌：避免装备区被自动展开后，装备牌混进“风”的选牌范围
+    pattern = ".|.|.|^equip",
   },
   view_as = function(self, player, cards)
     if #cards ~= 1 then return nil end

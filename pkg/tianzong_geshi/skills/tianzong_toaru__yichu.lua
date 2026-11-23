@@ -54,7 +54,7 @@ yichu:addEffect(fk.GameStart, {
 })
 yichu:addEffect(fk.RoundStart, {
   can_trigger = function(self, event, target, player)
-    return target == player and player:hasSkill(yichu.name) and
+    return player:hasSkill(yichu.name) and
       table.find(player.room.draw_pile, function(id) return Fk:getCardById(id).type == Card.TypeEquip end)
   end,
   on_cost = Util.TrueFunc,

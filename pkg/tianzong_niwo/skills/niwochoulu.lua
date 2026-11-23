@@ -4,17 +4,25 @@ local niwochoulu = fk.CreateSkill{
 
 local ONCE_MARK = "@@niwochoulu_done"
 
--- 此刻确实能使用【杀】：手牌里有实体杀（且未被禁用/次数允许），
--- 或有转化技能可转化出杀。cloneCard 出来的虚拟杀无子卡，
--- player:canUse 只判禁用与次数、不查手牌，故须单独确认实体杀来源。
+-- 此刻确实能使用【杀】：手牌里有实体杀，或玩家持有的转化技能能把牌转成杀。
+-- 与客户端 ReqUseCard 的枚举逻辑一致：先查实体杀，再遍历玩家所有 ViewAsSkill
+-- （pattern 匹配 slash 且 enabledAtResponse），用 getViewAsCardNames 确认能转出杀。
+local slash_extra = { bypass_distances = true, bypass_times = true }
 local function can_use_slash(player)
-  local slash = Fk:cloneCard("slash")
-  if player:prohibitUse(slash) then return false end
+  if player:prohibitUse(Fk:cloneCard("slash")) then return false end
   for _, id in ipairs(player:getCardIds("h")) do
     if Fk:getCardById(id).trueName == "slash" then return true end
   end
-  if #player:getViewAsCardNames(niwochoulu.name, Fk:getAllCardNames("b"), nil, nil,
-      { bypass_distances = true, bypass_times = true }) > 0 then return true end
+  local exp = Exppattern:Parse("slash")
+  for _, skill in ipairs(player:getAllSkills()) do
+    if skill:isInstanceOf(ViewAsSkill) and skill.pattern and skill.pattern ~= "" and
+        exp:matchExp(skill.pattern) and
+        (skill:enabledAtPlay(player) or skill:enabledAtResponse(player, false)) then
+      if #player:getViewAsCardNames(skill.name, { "slash" }, nil, nil, slash_extra) > 0 then
+        return true
+      end
+    end
+  end
   return false
 end
 
@@ -37,7 +45,7 @@ niwochoulu:addEffect(fk.Damaged, {
   on_use = function(self, event, target, player, data)
     local room = player.room
     local use = room:askToUseCard(player, {
-      skill_name = niwochoulu.name,
+      skill_name = "slash",
       prompt = "#niwochoulu-use::" .. data.from.id,
       pattern = "slash",
       extra_data = {

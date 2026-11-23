@@ -2,8 +2,9 @@ local chijieji = fk.CreateSkill{ name = "chijieji" }
 local Common = require "packages.tianzong.pkg.tianzong_chixue.lib.common"
 local COUNT_MARK = "@chijieji_count-turn"
 
-local function target_num(player, card)
-  if not card or player:prohibitUse(card) or not player:canUse(card) then return 0 end
+local function target_num(player, card, check_usable)
+  if not card then return 0 end
+  if check_usable and (player:prohibitUse(card) or not player:canUse(card)) then return 0 end
   if card.skill:getMinTargetNum() == 0 and not card.multiple_targets then return 1 end
   local n = 0
   for _, p in ipairs(Fk:currentRoom().alive_players) do
@@ -15,13 +16,13 @@ local function target_num(player, card)
 end
 
 local function card_names(player, id)
-  local wanted = target_num(player, Fk:getCardById(id))
+  local wanted = target_num(player, Fk:getCardById(id), false)
   if wanted == 0 then return {}, 0 end
   local names = table.filter(Fk:getAllCardNames("bt"), function(name)
     local card = Fk:cloneCard(name)
     card:addSubcard(id)
     card.skillName = chijieji.name
-    return (card.type == Card.TypeBasic or card:isCommonTrick()) and target_num(player, card) == wanted
+    return (card.type == Card.TypeBasic or card:isCommonTrick()) and target_num(player, card, true) == wanted
   end)
   return names, wanted
 end

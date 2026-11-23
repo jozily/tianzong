@@ -67,7 +67,8 @@ chilique:addEffect(fk.AfterCardUseDeclared, {
       end
     end
     -- 触发离阙路径 mark 界面重绘：value 直接写入显示文本
-    room:setPlayerMark(player, "@[chilique_path]", path == "chilique_increase" and "离阙 递增" or "离阙 递减")
+    -- 名字前缀由翻译键 ["@[chilique_path]"] 提供，此处只写状态，避免显示成 @[chilique_path] 原文
+    room:setPlayerMark(player, "@[chilique_path]", path == "chilique_increase" and "递增" or "递减")
     room:setPlayerMark(player, COUNT, count)
     room:setPlayerMark(player, LAST, data.card:getNameLength(true))
     apply_effect(room, player, data, path, count)
