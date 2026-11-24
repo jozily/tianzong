@@ -1,18 +1,18 @@
-local UPGRADE_MARK = "tianzong_geshi__canbei_upgrade"
+local MODIFY_MARK = "tianzong_geshi__canbei_modified"
 local INVALID_MARK = "tianzong_geshi__canbei_invalid"
 -- 失效状态的可见文字 mark（@[...] 前缀才会显示在武将牌旁）
 local INVALID_SHOW = "@[tianzong_geshi__canbei_invalid]"
 
 local canbei = fk.CreateSkill{
   name = "tianzong_geshi__canbei",
-  -- 仿官方绝谋：升级后切换描述（增加"未处于濒死状态"的额外时机）
+  -- 自己进入濒死使参北恢复时，参北被修改；dynamic_desc 切换到带濒死前置的版本
   dynamic_desc = function(self, player)
-    return player:getMark(UPGRADE_MARK) > 0
+    return player:getMark(MODIFY_MARK) > 0
       and "tianzong_geshi__canbei_up" or "tianzong_geshi__canbei"
   end,
 }
 
--- 参北的消耗与结算，基础时机与升级后的额外时机共用
+-- 参北的消耗与结算，基础与修改后共用
 local canbeiOnCost = function(self, event, target, player, data)
   return player.room:askToSkillInvoke(player, {
     skill_name = canbei.name,
@@ -46,50 +46,28 @@ local canbeiOnUse = function(self, event, target, player, data)
   end
 end
 
--- 基础时机：体力值变化后，交换体力值与已损失体力值并摸差值张牌，
+-- 体力值变化后，交换体力值与已损失体力值并摸差值张牌，
 -- 然后此技能失效直至有角色进入濒死状态。
+-- 参北被修改后，额外要求「你未处于濒死状态」才能发动。
 canbei:addEffect(fk.HpChanged, {
   anim_type = "special",
   can_trigger = function(self, event, target, player, data)
     return target == player and player:hasSkill(canbei.name)
       and player:getMark(INVALID_MARK) == 0
       and player.hp >= 0 and player.hp <= player.maxHp
+      and (player:getMark(MODIFY_MARK) == 0 or not player.dying)
   end,
   on_cost = canbeiOnCost,
   on_use = canbeiOnUse,
 })
 
--- 升级后的额外时机：你未处于濒死状态时，体力值变化后可再发动一次参北。
--- 用 hasSkill(name, true) 忽略失效标记（这是新增的独立时机，不受原失效窗口限制）。
-canbei:addEffect(fk.HpChanged, {
-  anim_type = "special",
-  can_trigger = function(self, event, target, player, data)
-    return target == player and player:hasSkill(canbei.name, true)
-      and player:getMark(UPGRADE_MARK) > 0
-      and not player.dying
-      and player.hp >= 0 and player.hp <= player.maxHp
-  end,
-  on_cost = canbeiOnCost,
-  on_use = canbeiOnUse,
-})
-
--- 你第一次脱离濒死状态后，参北升级（增加上述额外时机）。
--- 用 refresh 通道（对所有在场 player 调用），确保技能失效时仍能触发升级。
-canbei:addEffect(fk.AfterDying, {
-  mute = true,
-  can_refresh = function(self, event, target, player, data)
-    return target == player and not player.dead
-      and player:getMark(UPGRADE_MARK) == 0
-  end,
-  on_refresh = function(self, event, target, player, data)
-    player.room:setPlayerMark(player, UPGRADE_MARK, 1)
-  end,
-})
-
--- 有角色进入濒死状态时，参北恢复。
+-- 此技能失效直至有角色进入濒死状态：任意角色濒死都令参北恢复。
+-- 若该（令参北恢复的濒死）角色为你，则同时修改「参北」——
+-- 此后发动参北需满足「你未处于濒死状态」。
 -- 注意：此前已 invalidateSkill，player:hasSkill(canbei.name) 会返回 false，
 -- 故此处不能依赖 hasSkill，改用 INVALID_MARK 判断。
--- 用 refresh 通道（对所有在场 player 调用），确保技能失效时仍能触发恢复。
+-- 用 refresh 通道（对所有在场 player 调用），确保技能失效时仍能触发。
+-- 恢复与修改合在同一 effect：须在清 INVALID_MARK 之前判断"该角色是否为你"。
 canbei:addEffect(fk.EnterDying, {
   mute = true,
   can_refresh = function(self, event, target, player, data)
@@ -98,6 +76,10 @@ canbei:addEffect(fk.EnterDying, {
   end,
   on_refresh = function(self, event, target, player, data)
     local room = player.room
+    if target == player then
+      -- 该角色为你：修改参北（只设一次）
+      room:setPlayerMark(player, MODIFY_MARK, 1)
+    end
     -- 解除技能图标锁
     room:validateSkill(player, canbei.name)
     -- 清除失效文字 mark
