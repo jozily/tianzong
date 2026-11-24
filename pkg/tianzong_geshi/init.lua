@@ -159,7 +159,7 @@ Fk:loadTranslationTable {
   ["#tianzong_geshi__anmeng_anxing"] = "黯星：概率偷取（其失去，你恢复）对方体力值，你的体力值越高，概率越大。",
   ["#tianzong_geshi__anmeng-choose"] = "黯梦：选择“黯星”攻击的目标",
   ["tianzong_geshi__canbei"] = "参北",
-  [":tianzong_geshi__canbei"] = "当你的体力值变化后，你可以交换你的体力值与已损失体力值并摸差值张牌（至少为1），此技能失效直至有角色进入濒死状态。若你因此脱离濒死状态，此技能增加“若你未进入濒死状态”时机。",
+  [":tianzong_geshi__canbei"] = "当你未处于濒死状态时，体力值变化后你可以交换你的体力值与已损失体力值并摸差值张牌（至少为1），此技能失效直至有角色进入濒死状态。",
   ["#tianzong_geshi__canbei-invoke"] = "参北：交换体力值与已损失体力值并摸牌？",
 
   -- 恍若隔世 · 奇亚娜（套用炽李煜 览华/遗代）
