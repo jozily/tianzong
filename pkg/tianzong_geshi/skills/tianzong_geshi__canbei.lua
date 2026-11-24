@@ -4,13 +4,14 @@ local INVALID_MARK = "tianzong_geshi__canbei_invalid"
 -- 失效状态的可见文字 mark（@[...] 前缀才会显示在武将牌旁）
 local INVALID_SHOW = "@[tianzong_geshi__canbei_invalid]"
 
--- 参北：体力值变化后，交换你的体力值与已损失体力值并摸差值张牌，
+-- 参北：你未处于濒死状态时，体力值变化后交换你的体力值与已损失体力值并摸差值张牌，
 -- 然后此技能失效（技能图标加锁）直至有角色进入濒死状态。
 canbei:addEffect(fk.HpChanged, {
   anim_type = "special",
   can_trigger = function(self, event, target, player, data)
     return target == player and player:hasSkill(canbei.name)
       and player:getMark(INVALID_MARK) == 0
+      and not player.dying
       and player.hp >= 0 and player.hp <= player.maxHp
   end,
   on_cost = function(self, event, target, player, data)
