@@ -1,13 +1,15 @@
-local MODIFY_MARK = "tianzong_geshi__canbei_modified"
 local INVALID_MARK = "tianzong_geshi__canbei_invalid"
 -- 失效状态的可见文字 mark（@[...] 前缀才会显示在武将牌旁）
 local INVALID_SHOW = "@[tianzong_geshi__canbei_invalid]"
 
 local canbei = fk.CreateSkill{
   name = "tianzong_geshi__canbei",
-  -- 修改后的描述不再作为主描述切换，改为基础描述里的重定向链接指向
-  -- （<a href=':tianzong_geshi__canbei_up'>参北</a>，衍生技样式展示）。
+  -- 被修改后不再保留本技能：自己濒死时失去参北、获得独立的升级技能 canbei_up
+  -- （带 Skill.Limited 限定技图标特效，但不限制每局次数）。
 }
+
+-- 升级技能名
+local UPGRADE_SKILL = "tianzong_geshi__canbei_up"
 
 -- 参北的消耗与结算，基础与修改后共用
 local canbeiOnCost = function(self, event, target, player, data)
@@ -45,14 +47,12 @@ end
 
 -- 体力值变化后，交换体力值与已损失体力值并摸差值张牌，
 -- 然后此技能失效直至有角色进入濒死状态。
--- 参北被修改后，额外要求「你未处于濒死状态」才能发动。
 canbei:addEffect(fk.HpChanged, {
   anim_type = "special",
   can_trigger = function(self, event, target, player, data)
     return target == player and player:hasSkill(canbei.name)
       and player:getMark(INVALID_MARK) == 0
       and player.hp >= 0 and player.hp <= player.maxHp
-      and (player:getMark(MODIFY_MARK) == 0 or not player.dying)
   end,
   on_cost = canbeiOnCost,
   on_use = canbeiOnUse,
@@ -78,20 +78,23 @@ canbei:addEffect(fk.EnterDying, {
   end,
 })
 
--- 若进入濒死的角色为你，你修改「参北」——
--- 此后发动参北需满足「你未处于濒死状态」。
--- 修改独立于失效恢复：任何时候你自己进入濒死都会修改，
--- 不要求参北正处于失效状态。
+-- 若进入濒死的角色为你，你修改「参北」——失去本技能，获得独立的升级技能 canbei_up。
+-- 任何时候你自己进入濒死都会修改，不要求参北正处于失效状态。
 -- 用 hasSkill(name, true) 忽略失效，确保参北失效期间自己濒死也能识别到技能。
 canbei:addEffect(fk.EnterDying, {
   mute = true,
   can_refresh = function(self, event, target, player, data)
     return target == player and not target.dead
       and player:hasSkill(canbei.name, true)
-      and player:getMark(MODIFY_MARK) == 0
   end,
   on_refresh = function(self, event, target, player, data)
-    player.room:setPlayerMark(player, MODIFY_MARK, 1)
+    local room = player.room
+    -- 先解除本技能的失效状态，避免升级技能继承失效锁
+    room:validateSkill(player, canbei.name)
+    room:setPlayerMark(player, INVALID_SHOW, 0)
+    room:setPlayerMark(player, INVALID_MARK, 0)
+    -- 失去基础参北、获得升级参北（限定技图标特效，不限次数）
+    room:handleAddLoseSkills(player, "-" .. canbei.name .. "|" .. UPGRADE_SKILL)
   end,
 })
 
