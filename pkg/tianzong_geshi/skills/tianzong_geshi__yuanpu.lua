@@ -25,6 +25,17 @@ function yuanpu.setSuits(room, player, suits)
   room:setPlayerMark(player, "@[tianzong_geshi__yuanpu]", 1) -- 触发 mark 重绘
 end
 
+-- 矜名式动态描述：描述里只列出当前可触发的花色；背水永久移除一个后，
+-- 该花色不再出现在描述中，触发花色数相应减少。
+yuanpu.dynamic_desc = function(self, player)
+  local suits = yuanpu.getSuits(player)
+  local syms = {}
+  for _, s in ipairs(DISPLAY_SUITS) do
+    if table.contains(suits, s) then table.insert(syms, suit_symbol(s)) end
+  end
+  return "tianzong_geshi__yuanpu_inner" .. ":" .. table.concat(syms, "/")
+end
+
 Fk:addQmlMark{
   name = "tianzong_geshi__yuanpu",
   how_to_show = function(_, value, p)
@@ -134,5 +145,10 @@ yuanpu:addEffect(fk.CardUseFinished, {
     end
   end,
 })
+
+Fk:loadTranslationTable{
+  -- 矜名式动态描述：{1}=当前可触发的花色（背水永久移除后相应减少）
+  [":tianzong_geshi__yuanpu_inner"] = "锁定技，当你使用{1}花色的牌结算完毕后，你令一名角色选择一项：1.弃置一张花色相同的牌；2.受到一点来自你的火焰伤害。背水：若剩余花色数不为1则永久移除一个“元瀑”可选数。",
+}
 
 return yuanpu
