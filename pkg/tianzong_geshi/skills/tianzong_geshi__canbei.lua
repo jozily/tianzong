@@ -5,7 +5,7 @@ local INVALID_MARK = "tianzong_geshi__canbei_invalid"
 local INVALID_SHOW = "@[tianzong_geshi__canbei_invalid]"
 
 -- 参北：体力值变化后，交换你的体力值与已损失体力值并摸差值张牌，
--- 然后此技能失效（技能图标加锁）直至有其他角色进入濒死状态。
+-- 然后此技能失效（技能图标加锁）直至有角色进入濒死状态。
 canbei:addEffect(fk.HpChanged, {
   anim_type = "special",
   can_trigger = function(self, event, target, player, data)
@@ -46,14 +46,14 @@ canbei:addEffect(fk.HpChanged, {
   end,
 })
 
--- 有其他角色进入濒死状态时，参北恢复。
+-- 有角色进入濒死状态时，参北恢复。
 -- 注意：此前已 invalidateSkill，player:hasSkill(canbei.name) 会返回 false，
 -- 故此处不能依赖 hasSkill，改用 INVALID_MARK 判断。
 -- 用 refresh 通道（对所有在场 player 调用），确保技能失效时仍能触发恢复。
 canbei:addEffect(fk.EnterDying, {
   mute = true,
   can_refresh = function(self, event, target, player, data)
-    return target ~= player and not target.dead
+    return not target.dead
       and player:getMark(INVALID_MARK) ~= 0
   end,
   on_refresh = function(self, event, target, player, data)
