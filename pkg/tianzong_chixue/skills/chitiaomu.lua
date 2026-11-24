@@ -49,7 +49,7 @@ chitiaomu:addEffect("viewas", {
     room:obtainCard(player, id, true, fk.ReasonPrey, player, chitiaomu.name)
     -- 随机拿到的是哪张要摆出来，否则玩家只看到牌直接没了
     room:showCards({ id }, player, player)
-    use.card:addSubcard(id)
+    -- 不再 addSubcard：这张牌是"获得"进手牌并保留，而非当作虚拟牌的实体子牌被消耗
     -- 记录是否同名，真正的"刷新"放到 after_use（技能使用计数在之后才写入）
     if same_name then player.room:setPlayerMark(player, "chitiaomu_refresh_flag", 1) end
   end,
@@ -57,6 +57,11 @@ chitiaomu:addEffect("viewas", {
     if player:getMark("chitiaomu_refresh_flag") > 0 then
       player:setSkillUseHistory(chitiaomu.name, 0, Player.HistoryRound)
       player.room:setPlayerMark(player, "chitiaomu_refresh_flag", 0)
+      -- 同名刷新：技能保持可用，解除可能的加锁
+      player.room:validateSkill(player, chitiaomu.name)
+    else
+      -- 次数用尽：加锁置灰（限定技特效）
+      player.room:invalidateSkill(player, chitiaomu.name)
     end
   end,
   -- 按钮左下角：本轮还剩几次
@@ -69,6 +74,17 @@ chitiaomu:addEffect("viewas", {
   end,
   enabled_at_response = function(self, player, response)
     return player:usedSkillTimes(chitiaomu.name, Player.HistoryRound) < 1 and #names(player) > 0
+  end,
+})
+
+-- 每轮开始解锁（每轮限一次）
+chitiaomu:addEffect(fk.RoundStart, {
+  mute = true,
+  can_refresh = function(self, event, target, player, data)
+    return player:hasSkill(chitiaomu.name, true)
+  end,
+  on_refresh = function(self, event, target, player, data)
+    player.room:validateSkill(player, chitiaomu.name)
   end,
 })
 
