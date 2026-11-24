@@ -159,6 +159,7 @@ Fk:loadTranslationTable {
   ["#tianzong_geshi__anmeng_anxing"] = "黯星：概率偷取（其失去，你恢复）对方体力值，你的体力值越高，概率越大。",
   ["#tianzong_geshi__anmeng-choose"] = "黯梦：选择“黯星”攻击的目标",
   ["tianzong_geshi__canbei"] = "参北",
+  ["tianzong_geshi__canbei_up"] = "参北",
   [":tianzong_geshi__canbei"] = "当你的体力值变化后，你可以交换你的体力值与已损失体力值并摸差值张牌（至少为1），此技能失效直至有角色进入濒死状态。若该角色为你，你修改“<a href=':tianzong_geshi__canbei_up'>参北</a>”。",
   [":tianzong_geshi__canbei_up"] = "#\"<b>参北</b>\"：当你的体力值变化后，若你未处于濒死状态，你可以交换你的体力值与已损失体力值并摸差值张牌（至少为1），此技能失效直至有角色进入濒死状态。",
   ["#tianzong_geshi__canbei-invoke"] = "参北：交换体力值与已损失体力值并摸牌？",
