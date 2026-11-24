@@ -159,7 +159,7 @@ Fk:loadTranslationTable {
   ["#tianzong_geshi__anmeng_anxing"] = "黯星：概率偷取（其失去，你恢复）对方体力值，你的体力值越高，概率越大。",
   ["#tianzong_geshi__anmeng-choose"] = "黯梦：选择“黯星”攻击的目标",
   ["tianzong_geshi__canbei"] = "参北",
-  [":tianzong_geshi__canbei"] = "当你的体力值变化后，你可以交换你的体力值与已损失体力值并摸X张牌（X为体力值与已损失体力值的差值，至少为1），然后此技能失效直至有其他角色进入濒死状态。",
+  [":tianzong_geshi__canbei"] = "当你的体力值变化后，你可以交换你的体力值与已损失体力值并摸X张牌（X为体力值与已损失体力值的差值，至少为1），然后此技能失效直至有角色进入濒死状态。",
   ["#tianzong_geshi__canbei-invoke"] = "参北：交换体力值与已损失体力值并摸牌？",
 
   -- 恍若隔世 · 奇亚娜（套用炽李煜 览华/遗代）
@@ -168,7 +168,7 @@ Fk:loadTranslationTable {
   ["designer:tianzong_geshi__qiyana"] = "公冶天纵",
   ["illustrator:tianzong_geshi__qiyana"] = "拳头游戏",
   ["tianzong_geshi__yuanpu"] = "元瀑",
-  [":tianzong_geshi__yuanpu"] = "锁定技，当你使用♥/♠/♦/♣花色的牌结算完毕后，你令一名角色选择一项：1.弃置一张花色相同的牌；2.受到一点来自你的火焰伤害。背水：若剩余花色数不为1则永久移除一个“元瀑”花色。",
+  [":tianzong_geshi__yuanpu"] = "锁定技，当你使用♥/♠/♦/♣花色的牌结算完毕后，你令一名角色选择一项：1.弃置一张花色相同的牌；2.受到一点来自你的火焰伤害。背水：若剩余花色数不为1则永久移除一个“元瀑”可选数。",
   ["@[tianzong_geshi__yuanpu]"] = "元瀑",
   ["#tianzong_geshi__yuanpu-choose"] = "元瀑：选择一名角色，令其选择一项",
   ["#tianzong_geshi__yuanpu-choice"] = "元瀑：请选择一项",
@@ -182,7 +182,7 @@ Fk:loadTranslationTable {
   ["tianzong_geshi__yuanpu_rm_3"] = "♥",
   ["tianzong_geshi__yuanpu_rm_4"] = "♦",
   ["tianzong_geshi__hongmeng"] = "虹梦",
-  [":tianzong_geshi__hongmeng"] = "当你受到伤害后，你可以从当前“元瀑”花色中任选若干花色重新构成“元瀑”花色，然后摸X张牌（X为新“元瀑”花色数，至少为1）。",
+  [":tianzong_geshi__hongmeng"] = "当你受到伤害后，你可以从四种花色中重新选择触发“虹梦”的花色并摸等量张牌。",
   ["#tianzong_geshi__hongmeng-invoke"] = "虹梦：是否重新选择“元瀑”花色并摸牌？",
   ["#tianzong_geshi__hongmeng-choose-suit"] = "虹梦：选择要纳入“元瀑”的花色（可多选）",
   ["tianzong_geshi__hongmeng_done"] = "完成",
