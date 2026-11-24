@@ -1,16 +1,24 @@
 local chikuili = fk.CreateSkill{ name = "chikuili" }
 
--- 符合条件的手牌：与 used 牌名字数和类别均相同（且不在 used 的子牌里）
-local function candidates(player, used)
+-- 触发候选：与 used「牌名字数或类别相同」的手牌（排除 used 自身子牌）
+local function triggerCandidates(player, used)
   local used_length = used:getNameLength(true)
   local used_type = used.type
-  local used_common = used:isCommonTrick()
   return table.filter(player:getCardIds("h"), function(id)
     if table.contains(used.subcards, id) then return false end
     local card = Fk:getCardById(id)
-    if card.type ~= used_type then return false end
-    if used_common and not card:isCommonTrick() then return false end
-    return card:getNameLength(true) == used_length
+    return card.type == used_type or card:getNameLength(true) == used_length
+  end)
+end
+
+-- 刷新候选（「均符合」）：从展示出来的牌里筛出牌名字数「且」类别均相同的
+local function refreshCandidates(shownIds, used)
+  local used_length = used:getNameLength(true)
+  local used_type = used.type
+  return table.filter(shownIds, function(id)
+    if table.contains(used.subcards, id) then return false end
+    local card = Fk:getCardById(id)
+    return card.type == used_type and card:getNameLength(true) == used_length
   end)
 end
 
@@ -20,38 +28,32 @@ chikuili:addEffect(fk.TargetSpecified, {
     return target == player and player:hasSkill(chikuili.name) and data.firstTarget and
       player:usedSkillTimes(chikuili.name, Player.HistoryTurn) == 0 and
       (data.card.type == Card.TypeBasic or data.card:isCommonTrick()) and
-      #candidates(player, data.card) > 0
+      #triggerCandidates(player, data.card) > 0
   end,
   on_cost = function(self, event, target, player, data)
-    local room = player.room
-    -- 展示所有手牌
-    player:showCards(player:getCardIds("h"))
-    local choice = room:askToChoice(player, {
-      choices = { "chikuili_extra_target", "chikuili_extra_effect" },
-      skill_name = chikuili.name,
-      prompt = "#chikuili-choice",
-    })
-    event:setCostData(self, { choice = choice })
+    -- 展示所有手牌，并把展示的牌固定下来供刷新判定
+    local shown = player:getCardIds("h")
+    player:showCards(shown)
+    event:setCostData(self, { shown = shown })
     return true
   end,
   on_use = function(self, event, target, player, data)
     local room = player.room
-    local choice = event:getCostData(self).choice
-    if choice == "chikuili_extra_effect" then
-      data.use.additionalEffect = (data.use.additionalEffect or 0) + 1
-    else
-      local extra = data:getExtraTargets()
-      if #extra > 0 then
-        local chosen = room:askToChoosePlayers(player, {
-          targets = extra, min_num = 1, max_num = 1,
-          cancelable = false, skill_name = chikuili.name, prompt = "#chikuili-target",
-        })
-        for _, p in ipairs(chosen) do data:addTarget(p) end
-      end
+    -- 额外结算 1 次
+    data.use.additionalEffect = (data.use.additionalEffect or 0) + 1
+    -- 额外指定 1 个目标
+    local extra = data:getExtraTargets()
+    if #extra > 0 then
+      local chosen = room:askToChoosePlayers(player, {
+        targets = extra, min_num = 1, max_num = 1,
+        cancelable = false, skill_name = chikuili.name, prompt = "#chikuili-target",
+      })
+      for _, p in ipairs(chosen) do data:addTarget(p) end
     end
-    -- 然后你可以弃置所有符合条件的展示牌并令此技能视为未发动过
+    -- 若展示牌中有「均符合」（字数且类别均相同）的牌，可弃置所有这样的牌并刷新
     local refreshed = false
-    local ids = candidates(player, data.card)
+    local shown = event:getCostData(self).shown
+    local ids = refreshCandidates(shown, data.card)
     if #ids > 0 and room:askToSkillInvoke(player, {
       skill_name = chikuili.name,
       prompt = "#chikuili-refresh",
