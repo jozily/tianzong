@@ -1,35 +1,17 @@
 local chikuili = fk.CreateSkill{ name = "chikuili" }
 
-local function target_num(player, card)
-  if not card or player:prohibitUse(card) or not player:canUse(card, { bypass_times = true }) then return 0 end
-  if card.skill:getMinTargetNum() == 0 and not card.multiple_targets then return 1 end
-  local n = 0
-  for _, p in ipairs(Fk:currentRoom().alive_players) do
-    if not player:isProhibited(p, card) and card.skill:modTargetFilter(player, p, {}, card) then n = n + 1 end
-  end
-  return n
-end
-
-local function candidates(player, used, choice)
-  local used_length, used_targets = used:getNameLength(true), target_num(player, used)
+-- 符合条件的手牌：与 used 牌名字数和类别均相同（且不在 used 的子牌里）
+local function candidates(player, used)
+  local used_length = used:getNameLength(true)
+  local used_type = used.type
+  local used_common = used:isCommonTrick()
   return table.filter(player:getCardIds("h"), function(id)
     if table.contains(used.subcards, id) then return false end
     local card = Fk:getCardById(id)
-    if card.type ~= Card.TypeBasic and not card:isCommonTrick() then return false end
-    if choice == "chikuili_effect" then return card:getNameLength(true) == used_length end
-    return target_num(player, card) == used_targets
+    if card.type ~= used_type then return false end
+    if used_common and not card:isCommonTrick() then return false end
+    return card:getNameLength(true) == used_length
   end)
-end
-
-local function available_choices(player, card)
-  local choices = {}
-  if #candidates(player, card, "chikuili_effect") > 0 then
-    table.insert(choices, "chikuili_effect")
-  end
-  if #candidates(player, card, "chikuili_targets") > 0 then
-    table.insert(choices, "chikuili_targets")
-  end
-  return choices
 end
 
 chikuili:addEffect(fk.TargetSpecified, {
@@ -38,52 +20,63 @@ chikuili:addEffect(fk.TargetSpecified, {
     return target == player and player:hasSkill(chikuili.name) and data.firstTarget and
       player:usedSkillTimes(chikuili.name, Player.HistoryTurn) == 0 and
       (data.card.type == Card.TypeBasic or data.card:isCommonTrick()) and
-      #available_choices(player, data.card) > 0
+      #candidates(player, data.card) > 0
   end,
   on_cost = function(self, event, target, player, data)
     local room = player.room
-    local choices = available_choices(player, data.card)
-    local choice = #choices == 1 and choices[1] or room:askToChoice(player, {
-      choices = choices,
+    -- 展示所有手牌
+    player:showCards(player:getCardIds("h"))
+    local choice = room:askToChoice(player, {
+      choices = { "chikuili_extra_target", "chikuili_extra_effect" },
       skill_name = chikuili.name,
       prompt = "#chikuili-choice",
     })
-    local ids = candidates(player, data.card, choice)
-    local cards = player.room:askToCards(player, {
-      min_num = 1, max_num = #ids, skill_name = chikuili.name, cancelable = true,
-      pattern = tostring(Exppattern{ id = ids }), prompt = "#chikuili-show",
-    })
-    if #cards > 0 then
-      local used_length, used_targets = data.card:getNameLength(true), target_num(player, data.card)
-      local x = choice == "chikuili_effect" and used_length - #cards or used_targets - #cards
-      event:setCostData(self, {
-        cards = cards,
-        choice = choice,
-        x = x,
-      })
-      return true
-    end
+    event:setCostData(self, { choice = choice })
+    return true
   end,
   on_use = function(self, event, target, player, data)
     local room = player.room
-    local cost = event:getCostData(self)
-    local x, choice = cost.x, cost.choice
-    player:showCards(cost.cards)
-    if choice == "chikuili_effect" and x > 0 then
-      data.use.additionalEffect = (data.use.additionalEffect or 0) + x
-    elseif x > 0 then
+    local choice = event:getCostData(self).choice
+    if choice == "chikuili_extra_effect" then
+      data.use.additionalEffect = (data.use.additionalEffect or 0) + 1
+    else
       local extra = data:getExtraTargets()
       if #extra > 0 then
         local chosen = room:askToChoosePlayers(player, {
-          targets = extra, min_num = math.min(x, #extra), max_num = math.min(x, #extra),
-          cancelable = false, skill_name = chikuili.name, prompt = "#chikuili-target:::" .. x,
+          targets = extra, min_num = 1, max_num = 1,
+          cancelable = false, skill_name = chikuili.name, prompt = "#chikuili-target",
         })
         for _, p in ipairs(chosen) do data:addTarget(p) end
       end
     end
-    if x <= 1 then
+    -- 然后你可以弃置所有符合条件的展示牌并令此技能视为未发动过
+    local refreshed = false
+    local ids = candidates(player, data.card)
+    if #ids > 0 and room:askToSkillInvoke(player, {
+      skill_name = chikuili.name,
+      prompt = "#chikuili-refresh",
+    }) then
+      room:throwCard(ids, chikuili.name, player, player)
+      -- addSkillUseHistory 已在 on_use 之前写入，此处清零即可视为未发动过
       player:setSkillUseHistory(chikuili.name, 0, Player.HistoryTurn)
+      refreshed = true
     end
+    -- 次数用尽则加锁置灰（限定技特效）；刷新后保持可用
+    if not refreshed and player:usedSkillTimes(chikuili.name, Player.HistoryTurn) > 0 then
+      room:invalidateSkill(player, chikuili.name)
+    end
+  end,
+})
+
+-- 每个回合开始解锁（每回合限一次）
+chikuili:addEffect(fk.EventPhaseStart, {
+  mute = true,
+  can_refresh = function(self, event, target, player, data)
+    return target == player and player.phase == Player.Start
+      and player:hasSkill(chikuili.name, true)
+  end,
+  on_refresh = function(self, event, target, player, data)
+    player.room:validateSkill(player, chikuili.name)
   end,
 })
 
