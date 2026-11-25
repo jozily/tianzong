@@ -31,6 +31,11 @@ chikuili:addEffect(fk.TargetSpecified, {
       #triggerCandidates(player, data.card) > 0
   end,
   on_cost = function(self, event, target, player, data)
+    -- 先让玩家自选是否发动；点取消则技能不发动、不消耗次数
+    if not player.room:askToSkillInvoke(player, {
+      skill_name = chikuili.name,
+      prompt = "#chikuili-invoke",
+    }) then return false end
     -- 展示所有手牌，并把展示的牌固定下来供刷新判定
     local shown = player:getCardIds("h")
     player:showCards(shown)
