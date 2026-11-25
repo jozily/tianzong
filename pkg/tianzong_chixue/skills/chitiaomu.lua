@@ -2,7 +2,8 @@ local chitiaomu = fk.CreateSkill{ name = "chitiaomu" }
 
 local function target_num(player, card)
   if player:prohibitUse(card) or not player:canUse(card, { bypass_times = true }) then return 0 end
-  if card.skill:getMinTargetNum() == 0 and not card.multiple_targets then return 1 end
+  -- 闪、无懈可击这类牌没有合法目标，走合法目标分支时必须剔除
+  if card.skill:getMinTargetNum() == 0 and not card.multiple_targets then return 0 end
   local n = 0
   for _, p in ipairs(Fk:currentRoom().alive_players) do
     if not player:isProhibited(p, card) and card.skill:modTargetFilter(player, p, {}, card) then n = n + 1 end
@@ -14,8 +15,12 @@ local function discard_candidates(player, wanted)
   local length, targets = wanted:getNameLength(true), target_num(player, wanted)
   return table.filter(Fk:currentRoom().discard_pile, function(id)
     local card = Fk:getCardById(id)
-    return (card.type == Card.TypeBasic or card:isCommonTrick()) and
-      (card:getNameLength(true) == length or target_num(player, card) == targets)
+    if not (card.type == Card.TypeBasic or card:isCommonTrick()) then return false end
+    -- 牌名字数相同即可（闪/无懈这类无目标牌仍可走此分支）
+    if card:getNameLength(true) == length then return true end
+    -- 合法目标分支：wanted 与候选牌都须有合法目标，剔除闪/无懈这类无目标牌
+    local card_targets = target_num(player, card)
+    return targets > 0 and card_targets > 0 and card_targets == targets
   end)
 end
 
