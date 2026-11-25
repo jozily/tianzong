@@ -5,10 +5,30 @@ local junshi = fk.CreateSkill {
 
 Fk:loadTranslationTable {
   ["tianzong_toaru__junshi"] = "钧世",
-  [":tianzong_toaru__junshi"] = "锁定技，当你受到雷属性伤害后，你立刻恢复等量点体力值（优先于濒死状态）；场上有角色受到雷属性伤害后，你摸等同于此数值张牌且随机获得一个技能描述中带有“杀”/“雷”/“电”的技能。",
+  [":tianzong_toaru__junshi"] = "锁定技，当你受到雷属性伤害后，你立刻恢复等量点体力值（优先于濒死状态）且随机获得一个技能描述中带有“杀”/“雷”/“电”的技能；场上有角色受到雷属性伤害后，你摸等同于此数值张牌且随机获得一个此类技能。",
 }
 
--- 第一段：你即将受到雷属性伤害时，防止伤害并立刻恢复等量体力（优先于濒死）
+-- 技能池：描述含"杀/雷/电"的技能；剔除国战包（hegemony / fengsui）
+local function gainThunderSkill(player)
+  if player.dead then return end
+  local names = {}
+  for name, skill in pairs(Fk.skills) do
+    local ext = skill.package and skill.package.extensionName
+    if ext ~= "hegemony" and ext ~= "fengsui" and
+      skill.visible and not player:hasSkill(name, true) then
+      local desc = Fk:getDescription(name, "zh_CN")
+      if type(desc) == "string" and
+        (desc:find("杀", 1, true) or desc:find("雷", 1, true) or desc:find("电", 1, true)) then
+        table.insert(names, name)
+      end
+    end
+  end
+  if #names > 0 then
+    player.room:handleAddLoseSkills(player, player.room:tableRandomPick(names), junshi.name)
+  end
+end
+
+-- 第一段：你即将受到雷属性伤害时，防止伤害、立刻恢复等量体力（优先于濒死）并立刻获得技能
 junshi:addEffect(fk.DamageInflicted, {
   can_trigger = function(self, event, target, player, data)
     return target == player and player:hasSkill(junshi.name) and
@@ -24,6 +44,7 @@ junshi:addEffect(fk.DamageInflicted, {
       recoverBy = player,
       skillName = junshi.name,
     }
+    gainThunderSkill(player)
   end,
 })
 
@@ -36,22 +57,8 @@ junshi:addEffect(fk.Damaged, {
   end,
   on_cost = Util.TrueFunc,
   on_use = function(self, event, target, player, data)
-    local room = player.room
     player:drawCards(data.damage, junshi.name)
-    if player.dead then return end
-    local names = {}
-    for name, skill in pairs(Fk.skills) do
-      if skill.visible and not player:hasSkill(name, true) then
-        local desc = Fk:getDescription(name, "zh_CN")
-        if type(desc) == "string" and
-          (desc:find("杀", 1, true) or desc:find("雷", 1, true) or desc:find("电", 1, true)) then
-          table.insert(names, name)
-        end
-      end
-    end
-    if #names > 0 then
-      room:handleAddLoseSkills(player, room:tableRandomPick(names), junshi.name)
-    end
+    gainThunderSkill(player)
   end,
 })
 
