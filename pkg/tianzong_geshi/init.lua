@@ -24,7 +24,7 @@ for _, spec in ipairs(fengji_equips) do
 end
 
 General:new(extension, "tianzong_toaru__misaka", "tianzong_science", 4, 4, General.Female)
-  :addSkills { "tianzong_toaru__leibi", "tianzong_toaru__cipao" }
+  :addSkills { "tianzong_toaru__leibi", "tianzong_toaru__cipao", "tianzong_toaru__junshi" }
 General:new(extension, "tianzong_toaru__shirai", "tianzong_science", 3, 3, General.Female)
   :addSkills { "tianzong_toaru__shunyi", "tianzong_toaru__fengji" }
 General:new(extension, "tianzong_toaru__uiharu", "tianzong_science", 3, 3, General.Female)
@@ -55,9 +55,11 @@ Fk:loadTranslationTable {
   ["designer:tianzong_toaru__misaka"] = "公冶天纵",
   ["illustrator:tianzong_toaru__misaka"] = "灰村清孝",
   ["tianzong_toaru__leibi"] = "雷壁",
-  [":tianzong_toaru__leibi"] = "其他角色使用的技能每回合首次即将作用于你时，你可视为对其使用一张雷【杀】，若此【杀】造成伤害，此技能无效。当你即将受到雷属性伤害时，你可令其取消之，然后你恢复等量点体力值。当场上有角色即将受到雷属性伤害后，你摸等同于此次伤害值张牌。",
+  [":tianzong_toaru__leibi"] = "当其他角色使用的技能即将作用于你后，你可以与其依次横置，视为对其使用一张雷【杀】，若此【杀】造成伤害，其技能对你无效。",
   ["tianzong_toaru__cipao"] = "磁炮",
-  [":tianzong_toaru__cipao"] = "每回合限一次，你可以将任意张牌当作一张不计入次数且无视防具的雷【杀】使用。若这些牌的牌名字数均不同，此【杀】伤害改为X（X为以此法转化的牌数）；若这些牌的类别均不同，目标需打出等同于以此法转化牌数量的【闪】。<a href='#ChengShi'>乘势</a>：你随机获得一个技能描述中含有【杀】的技能。",
+  [":tianzong_toaru__cipao"] = "每回合限一次，你可以将任意张牌名字数不同的牌当作一张不计入次数、无距离限制、伤害改为X且需要使用X张闪响应的雷【杀】使用或打出（X为以此法转化的牌数）。",
+  ["tianzong_toaru__junshi"] = "钧世",
+  [":tianzong_toaru__junshi"] = "锁定技，当你受到雷属性伤害后，你立刻恢复等量点体力值（优先于濒死状态）；场上有角色受到雷属性伤害后，你摸等同于此数值张牌且随机获得一个技能描述中带有“杀”/“雷”/“电”的技能。",
 
   ["tianzong_toaru__shirai"] = "白井黑子",
   ["#tianzong_toaru__shirai"] = "正义的风纪委员",
