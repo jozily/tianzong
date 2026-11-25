@@ -10,7 +10,8 @@ local GENERAL_MARK = "@&chimiling"
 local function target_count(player, name)
   local card = Fk:cloneCard(name)
   if not card or player:prohibitUse(card) then return 0 end
-  if card.skill:getMinTargetNum(player) == 0 and not card.multiple_targets then return 1 end
+  -- 闪、无懈可击这类牌没有合法目标，目标数按 0 计，阴状态不可转出
+  if card.skill:getMinTargetNum(player) == 0 and not card.multiple_targets then return 0 end
 
   local n = 0
   for _, target in ipairs(Fk:currentRoom().alive_players) do
@@ -43,8 +44,10 @@ end
 Fk:loadTranslationTable{
   ["chicangsheng"] = "苍生",
   [":chicangsheng"] = "转换技，你可以弃置X张“麋”视为使用或打出一张：①牌名字数为X的基本牌或普通锦囊牌；②合法目标数为X的基本牌或普通锦囊牌。",
-  ["#chicangsheng-yang"] = "苍生-阳：选择一张牌，弃置等同于其牌名字数的“麋”",
-  ["#chicangsheng-yin"] = "苍生-阴：选择一张牌，弃置等同于其合法目标数的“麋”",
+  [":chicangsheng_yang"] = "转换技，阳：你可以弃置X张“麋”视为使用或打出一张牌名字数为X的基本牌或普通锦囊牌。",
+  [":chicangsheng_yin"] = "转换技，阴：你可以弃置X张“麋”视为使用或打出一张合法目标数为X的基本牌或普通锦囊牌（无合法目标的牌不可转出）。",
+  ["#chicangsheng-yang"] = "苍生-阳：选择一张牌名字数为X的牌，弃置X张“麋”视为使用或打出之",
+  ["#chicangsheng-yin"] = "苍生-阴：选择一张合法目标数为X的牌，弃置X张“麋”视为使用或打出之",
   ["#chicangsheng-discard"] = "苍生：请选择弃置 %arg 张“麋”",
   ["$chicangsheng1"] = "眼底无限恨，爱而不得，有情难相守。",
   ["$chicangsheng2"] = "愿化清风伴君侧，奈何独留长夜寄相思。",
