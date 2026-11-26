@@ -5,7 +5,7 @@ local junshi = fk.CreateSkill {
 
 Fk:loadTranslationTable {
   ["tianzong_toaru__junshi"] = "钧世",
-  [":tianzong_toaru__junshi"] = "锁定技，当你受到雷属性伤害后，你立刻恢复等量点体力值（优先于濒死状态）且随机获得一个技能描述中带有“杀”/“雷”/“电”的技能；场上有角色受到雷属性伤害后，你摸等同于此数值张牌且随机获得一个此类技能。",
+  [":tianzong_toaru__junshi"] = "锁定技，当你受到雷属性伤害后，你立刻恢复等量点体力值（优先于濒死状态）；场上有角色受到雷属性伤害的瞬间，你随机获得一个技能描述中带有“杀”/“雷”/“电”的技能；场上有角色受到雷属性伤害后，你摸等同于此数值张牌。",
 }
 
 -- 技能池：描述含"杀/雷/电"的技能；剔除国战包（hegemony / fengsui）
@@ -28,27 +28,29 @@ local function gainThunderSkill(player)
   end
 end
 
--- 第一段：你即将受到雷属性伤害时，防止伤害、立刻恢复等量体力（优先于濒死）并立刻获得技能
+-- 第一段（伤害瞬间，DamageInflicted）：自己挨雷则防止并恢复；任意角色（含被雷杀致死者）挨雷都立刻获得技能
 junshi:addEffect(fk.DamageInflicted, {
   can_trigger = function(self, event, target, player, data)
-    return target == player and player:hasSkill(junshi.name) and
+    return player:hasSkill(junshi.name) and
       data.damageType == fk.ThunderDamage and data.damage > 0
   end,
   on_cost = Util.TrueFunc,
   on_use = function(self, event, target, player, data)
-    local damage = data.damage
-    data:preventDamage()
-    player.room:recover {
-      who = player,
-      num = damage,
-      recoverBy = player,
-      skillName = junshi.name,
-    }
+    if target == player then
+      local damage = data.damage
+      data:preventDamage()
+      player.room:recover {
+        who = player,
+        num = damage,
+        recoverBy = player,
+        skillName = junshi.name,
+      }
+    end
     gainThunderSkill(player)
   end,
 })
 
--- 第二段：场上任意角色受到雷属性伤害后，摸等同伤害值张牌 + 随机获得含"杀/雷/电"的技能
+-- 第二段（伤害后，Damaged）：场上任意角色受到雷属性伤害后，摸等同伤害值张牌
 junshi:addEffect(fk.Damaged, {
   anim_type = "drawcard",
   can_trigger = function(self, event, target, player, data)
@@ -58,7 +60,6 @@ junshi:addEffect(fk.Damaged, {
   on_cost = Util.TrueFunc,
   on_use = function(self, event, target, player, data)
     player:drawCards(data.damage, junshi.name)
-    gainThunderSkill(player)
   end,
 })
 
