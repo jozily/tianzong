@@ -2,7 +2,7 @@ local cipao = fk.CreateSkill { name = "tianzong_toaru__cipao" }
 
 Fk:loadTranslationTable {
   ["tianzong_toaru__cipao"] = "磁炮",
-  [":tianzong_toaru__cipao"] = "每回合限一次，你可以将任意张牌名字数不同的牌当作一张不计入次数、无距离限制、伤害改为X且需要使用X张闪响应的雷【杀】使用或打出（X为以此法转化的牌数）。",
+  [":tianzong_toaru__cipao"] = "每回合限一次，你可以将任意张牌名字数不同的牌当作一张无次数及距离限制、伤害改为X且需要使用X张闪响应的雷【杀】使用或打出（X为以此法转化的牌数）。",
   ["#tianzong_toaru__cipao"] = "磁炮：将牌名字数不同的牌当作一张雷【杀】使用或打出",
 }
 
@@ -35,6 +35,7 @@ cipao:addEffect("viewas", {
     -- X = 转化牌数；伤害改为 X、需 X 张闪
     use.extra_data.tianzong_toaru__cipao_x = #use.card.subcards
   end,
+  -- 技能本身每回合限一次（"无次数限制"修饰的是杀，不是技能释放）
   enabled_at_play = function(self, player)
     return player:usedSkillTimes(cipao.name, Player.HistoryPhase) == 0
   end,
@@ -43,13 +44,27 @@ cipao:addEffect("viewas", {
   end,
 })
 
--- 无距离限制 + 需 X 张闪响应
+-- 这张雷【杀】无次数上限、无距离限制
+-- （此前误用 addQinggangTag，那是无视防具，不是无距离）
+cipao:addEffect("targetmod", {
+  distance_limit_func = function(self, player, skill, card)
+    if card and card.skillName == cipao.name then
+      return 999
+    end
+  end,
+  residue_func = function(self, player, skill, scope, card)
+    if card and card.skillName == cipao.name then
+      return 999
+    end
+  end,
+})
+
+-- 需 X 张闪响应
 cipao:addEffect(fk.TargetSpecified, {
   can_refresh = function(self, event, target, player, data)
     return target == player and data.card and data.card.skillName == cipao.name
   end,
   on_refresh = function(self, event, target, player, data)
-    data.to:addQinggangTag(data) -- 无距离限制
     local x = data.use.extra_data and data.use.extra_data.tianzong_toaru__cipao_x
     if x then
       data.fixedResponseTimesList = data.fixedResponseTimesList or {}
